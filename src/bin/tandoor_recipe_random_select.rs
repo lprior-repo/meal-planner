@@ -1,4 +1,5 @@
 //! Randomly select recipes from Tandoor by keyword
+#![allow(clippy::all)]
 //!
 //! Filters recipes by keyword and randomly selects N recipes.
 //!

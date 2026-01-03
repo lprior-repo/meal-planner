@@ -14,6 +14,8 @@
 //! - Know about FatSecret API endpoints
 //! - Reference Tandoor API structure
 
+#![allow(dead_code)]
+
 use crate::helpers::support::binary_runner::run_binary;
 use serde_json::{json, Value};
 

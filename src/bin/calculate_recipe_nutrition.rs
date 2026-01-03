@@ -1,4 +1,10 @@
 //! Calculate nutrition for a Tandoor recipe using FatSecret data
+#![allow(
+    clippy::redundant_closure_for_method_calls,
+    clippy::ref_option,
+    clippy::too_many_lines,
+    clippy::needless_pass_by_value
+)]
 //!
 //! This binary implements the core workflow:
 //! 1. Get recipe from Tandoor (ingredients, steps)
@@ -192,6 +198,7 @@ fn fetch_fatsecret_nutrition(_config: &FatSecretInput) -> HashMap<String, Ingred
 #[cfg(test)]
 mod tests {
     use super::*;
+    use meal_planner::tandoor::nutrition::core::convert_to_grams;
 
     #[test]
     fn test_output_serialize_with_nutrition() {

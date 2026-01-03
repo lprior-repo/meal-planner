@@ -18,7 +18,7 @@ pub fn validate_exercise_entry_id(id: &str) -> Result<(), String> {
 /// Validates a duration in minutes.
 /// FatSecret accepts 1-1440 minutes (24 hours).
 pub fn validate_duration_min(duration: i32) -> Result<(), String> {
-    if duration < 1 || duration > 1440 {
+    if !(1..=1440).contains(&duration) {
         return Err("duration_min must be between 1 and 1440".to_string());
     }
     Ok(())

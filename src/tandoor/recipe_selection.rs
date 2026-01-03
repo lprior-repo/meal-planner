@@ -9,8 +9,12 @@
 //! These functions form the FUNCTIONAL CORE.
 //! The IMPERATIVE SHELL (binaries) handles all I/O.
 
+#![allow(clippy::cast_precision_loss)]
+
+use serde::{Deserialize, Serialize};
+
 /// Summary of a recipe with key fields for selection
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct RecipeSummary {
     pub id: u32,
     pub name: String,
@@ -47,9 +51,10 @@ pub fn calculate_stats(recipes: &[RecipeSummary]) -> CalorieStats {
         };
     }
 
-    let calories: Vec<f64> = recipes.iter().map(|r| r.calories as f64).collect();
+    let calories: Vec<f64> = recipes.iter().map(|r| f64::from(r.calories)).collect();
     let total: f64 = calories.iter().sum();
     let count = calories.len();
+    #[allow(clippy::cast_precision_loss)]
     let average = total / count as f64;
     let min = calories.iter().fold(f64::MAX, |m, v| v.min(m));
     let max = calories.iter().fold(f64::MIN, |m, v| v.max(m));
@@ -81,7 +86,7 @@ pub fn random_select(recipes: &[RecipeSummary], count: usize, seed: u64) -> Vec<
     indices
         .into_iter()
         .take(count)
-        .map(|i| recipes[i].clone())
+        .filter_map(|i| recipes.get(i).cloned())
         .collect()
 }
 

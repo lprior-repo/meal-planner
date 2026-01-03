@@ -64,10 +64,8 @@ pub fn calculate_recipe_nutrition(
                 result.protein += calculated.protein_per_100g;
                 result.fat += calculated.fat_per_100g;
                 result.carbohydrate += calculated.carbohydrate_per_100g;
-            } else {
-                if let Some(name) = extract_ingredient_name(ingredient) {
-                    result.failed_ingredients.push(name);
-                }
+            } else if let Some(name) = extract_ingredient_name(ingredient) {
+                result.failed_ingredients.push(name);
             }
         }
     }
@@ -106,7 +104,7 @@ fn extract_ingredient_name(ingredient: &Value) -> Option<String> {
         .get("food")
         .and_then(|f| f.get("name"))
         .and_then(|n| n.as_str())
-        .map(|s| s.to_lowercase())
+        .map(str::to_lowercase)
 }
 
 /// Extract unit from ingredient
@@ -137,12 +135,11 @@ fn find_nutrition(
 /// Convert amount in various units to grams
 ///
 /// # Function Size: 21 lines (≤25 ✓)
+#[allow(clippy::match_same_arms)]
 pub fn convert_to_grams(amount: f64, unit: &str, _ingredient_name: &str) -> f64 {
     match unit.to_lowercase().as_str() {
-        "g" | "gram" | "grams" => amount,
-        "kg" | "kilogram" | "kilograms" => amount * 1000.0,
-        "ml" | "milliliter" | "milliliters" => amount,
-        "l" | "liter" | "liters" => amount * 1000.0,
+        "g" | "gram" | "grams" | "ml" | "milliliter" | "milliliters" => amount,
+        "kg" | "kilogram" | "kilograms" | "l" | "liter" | "liters" => amount * 1000.0,
         "oz" | "ounce" | "ounces" => amount * 28.3495,
         "lb" | "pound" | "pounds" => amount * 453.592,
         "cup" | "cups" => amount * 240.0,

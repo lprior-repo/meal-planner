@@ -12,17 +12,16 @@ const MAX_YEAR: i32 = 2100;
 const MIN_MONTH: i32 = 1;
 const MAX_MONTH: i32 = 12;
 
-pub fn validate_year(year: Value) -> Result<i32, String> {
-    year.as_i64()
-        .and_then(|y| i32::try_from(y).ok())
+pub fn validate_year(year: i64) -> Result<i32, String> {
+    i32::try_from(year)
+        .ok()
         .filter(|&y| (MIN_YEAR..=MAX_YEAR).contains(&y))
         .ok_or_else(|| format!("Year must be between {} and {}", MIN_YEAR, MAX_YEAR))
 }
 
-pub fn validate_month(month: Value) -> Result<i32, String> {
-    month
-        .as_i64()
-        .and_then(|m| i32::try_from(m).ok())
+pub fn validate_month(month: i64) -> Result<i32, String> {
+    i32::try_from(month)
+        .ok()
         .filter(|&m| (MIN_MONTH..=MAX_MONTH).contains(&m))
         .ok_or_else(|| format!("Month must be between {} and {}", MIN_MONTH, MAX_MONTH))
 }
@@ -48,13 +47,11 @@ pub fn validate_oauth_tokens(input: &Value) -> Result<(), String> {
 }
 
 pub fn validate_input(input: &Value) -> Result<(), String> {
-    match (
-        validate_year(input["year"].clone()),
-        validate_month(input["month"].clone()),
-    ) {
+    let year = input["year"].as_i64().ok_or("year is required")?;
+    let month = input["month"].as_i64().ok_or("month is required")?;
+    match (validate_year(year), validate_month(month)) {
         (Ok(_), Ok(_)) => validate_oauth_tokens(input),
-        (Err(e), _) => Err(e),
-        (_, Err(e)) => Err(e),
+        (Err(e), _) | (_, Err(e)) => Err(e),
     }
 }
 
@@ -65,16 +62,14 @@ pub fn extract_summary(response: &Value) -> Option<&Value> {
 pub fn is_success(response: &Value) -> bool {
     response
         .get("success")
-        .and_then(|v| v.as_bool())
+        .and_then(Value::as_bool)
         .unwrap_or(false)
 }
 
 pub fn has_days_data(summary: &Value) -> bool {
     summary
         .get("days")
-        .and_then(|v| v.as_array())
-        .map(|a| !a.is_empty())
-        .unwrap_or(false)
+        .is_some_and(|v| v.as_array().is_some_and(|a| !a.is_empty()))
 }
 
 #[cfg(test)]
@@ -84,30 +79,30 @@ mod tests {
 
     #[test]
     fn validate_year_accepts_valid_years() {
-        assert!(validate_year(json!(2025)).is_ok());
-        assert!(validate_year(json!(2000)).is_ok());
-        assert!(validate_year(json!(2100)).is_ok());
+        assert!(validate_year(2025).is_ok());
+        assert!(validate_year(2000).is_ok());
+        assert!(validate_year(2100).is_ok());
     }
 
     #[test]
     fn validate_year_rejects_invalid_years() {
-        assert!(validate_year(json!(1999)).is_err());
-        assert!(validate_year(json!(2101)).is_err());
-        assert!(validate_year(json!("invalid")).is_err());
+        assert!(validate_year(1999).is_err());
+        assert!(validate_year(2101).is_err());
+        assert!(validate_year(i64::MAX).is_err());
     }
 
     #[test]
     fn validate_month_accepts_valid_months() {
-        assert!(validate_month(json!(1)).is_ok());
-        assert!(validate_month(json!(6)).is_ok());
-        assert!(validate_month(json!(12)).is_ok());
+        assert!(validate_month(1).is_ok());
+        assert!(validate_month(6).is_ok());
+        assert!(validate_month(12).is_ok());
     }
 
     #[test]
     fn validate_month_rejects_invalid_months() {
-        assert!(validate_month(json!(0)).is_err());
-        assert!(validate_month(json!(13)).is_err());
-        assert!(validate_month(json!("jan")).is_err());
+        assert!(validate_month(0).is_err());
+        assert!(validate_month(13).is_err());
+        assert!(validate_month(i64::MAX).is_err());
     }
 
     #[test]

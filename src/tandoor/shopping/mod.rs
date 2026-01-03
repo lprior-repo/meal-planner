@@ -110,7 +110,7 @@ mod tests {
         let input = result.unwrap();
         assert_eq!(input.mealplan_id, 1);
         assert_eq!(input.recipe_id, 2);
-        assert_eq!(input.servings, 4.0);
+        assert!((input.servings - 4.0).abs() < 0.001);
     }
 
     #[test]

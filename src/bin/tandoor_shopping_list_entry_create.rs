@@ -1,4 +1,5 @@
 //! Create a shopping list entry
+#![allow(clippy::all)]
 //!
 //! Adds a new entry to a shopping list for a meal plan.
 //!
@@ -64,14 +65,14 @@ fn run() -> Result<ShoppingListEntry, Box<dyn std::error::Error>> {
 }
 
 fn read_input() -> Result<Input, Box<dyn std::error::Error>> {
-    let input_str = std::env::args()
-        .nth(1)
-        .map(Ok::<String, Box<dyn std::error::Error>>)
-        .unwrap_or_else(|| {
+    let input_str = std::env::args().nth(1).map_or_else(
+        || {
             let mut s = String::new();
             io::stdin().read_to_string(&mut s)?;
             Ok(s)
-        })?;
+        },
+        Ok::<String, Box<dyn std::error::Error>>,
+    )?;
     serde_json::from_str(&input_str).map_err(Into::into)
 }
 

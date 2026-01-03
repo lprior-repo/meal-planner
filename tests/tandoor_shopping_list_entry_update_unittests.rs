@@ -5,11 +5,12 @@
 //!
 //! GATE-2: Write failing unit test for the core logic
 
+#![allow(dead_code, unused_imports)]
+
 #[cfg(test)]
 mod unit_tests {
     use meal_planner::tandoor::UpdateShoppingListEntryRequest;
     use serde::Deserialize;
-    use serde_json::json;
 
     #[derive(Deserialize)]
     struct Input {

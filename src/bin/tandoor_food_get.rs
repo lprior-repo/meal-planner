@@ -1,4 +1,9 @@
 //! Get a specific food from Tandoor
+#![allow(
+    clippy::too_many_lines,
+    clippy::needless_pass_by_value,
+    clippy::redundant_closure_for_method_calls
+)]
 //!
 //! ## Functional Core / Imperative Shell
 //!
@@ -50,7 +55,7 @@ fn main() {
         Err(e) => Output {
             success: false,
             food: None,
-            error: Some(e.to_string()),
+            error: Some(e),
         },
     };
     print_output(&output);

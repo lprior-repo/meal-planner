@@ -196,22 +196,22 @@ fn get_liquid_density(ingredient_name: &str) -> f64 {
 ///
 /// # Function Size: 14 lines (≤25 ✓)
 pub fn build_nutrition_update_request(input_nutrition: &Value) -> Value {
-    let mut nutrition = json!({});
+    let mut nutrition_fields = serde_json::Map::new();
 
     if let Some(calories) = input_nutrition.get("calories").and_then(Value::as_f64) {
-        nutrition["calories"] = json!(calories);
+        nutrition_fields.insert("calories".to_string(), json!(calories));
     }
     if let Some(protein) = input_nutrition.get("protein").and_then(Value::as_f64) {
-        nutrition["proteins"] = json!(protein);
+        nutrition_fields.insert("proteins".to_string(), json!(protein));
     }
     if let Some(carbs) = input_nutrition.get("carbohydrates").and_then(Value::as_f64) {
-        nutrition["carbohydrates"] = json!(carbs);
+        nutrition_fields.insert("carbohydrates".to_string(), json!(carbs));
     }
     if let Some(fat) = input_nutrition.get("fat").and_then(Value::as_f64) {
-        nutrition["fats"] = json!(fat);
+        nutrition_fields.insert("fats".to_string(), json!(fat));
     }
 
-    json!({ "nutrition": nutrition })
+    json!({ "nutrition": nutrition_fields })
 }
 
 /// Validate nutrition input has at least one valid field
@@ -230,9 +230,7 @@ pub fn validate_nutrition_input(nutrition: &Value) -> bool {
     fields.iter().any(|field| {
         nutrition
             .get(*field)
-            .and_then(Value::as_f64)
-            .map(|v| v >= 0.0)
-            .unwrap_or(false)
+            .is_some_and(|v| v.as_f64().is_some_and(|val| val >= 0.0))
     })
 }
 

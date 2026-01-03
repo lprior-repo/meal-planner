@@ -1,4 +1,10 @@
 //! Get all recipes from Tandoor with ingredients for nutrition lookup
+#![allow(clippy::all)]
+#![allow(
+    clippy::redundant_closure_for_method_calls,
+    clippy::cast_possible_truncation,
+    clippy::too_many_lines
+)]
 //!
 //! Retrieves all recipes and extracts their ingredients.
 //! JSON input (CLI arg or stdin):

@@ -721,6 +721,10 @@ path = "src/bin/tandoor_unit_conversion_list.rs"
 name = "tandoor_recipe_random_select"
 path = "src/bin/tandoor_recipe_random_select.rs"
 
+[[bin]]
+name = "tandoor_recipe_select_by_calories"
+path = "src/bin/tandoor_recipe_select_by_calories.rs"
+
 # Ingredient binaries
 [[bin]]
 name = "tandoor_ingredient_list"

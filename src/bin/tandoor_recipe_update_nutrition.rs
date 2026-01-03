@@ -1,4 +1,10 @@
 //! Update nutrition values for a Tandoor recipe
+#![allow(
+    clippy::redundant_closure_for_method_calls,
+    clippy::ref_option,
+    clippy::too_many_lines,
+    clippy::needless_pass_by_value
+)]
 //!
 //! Updates the nutrition information (calories, protein, carbohydrates, fat)
 //! for a recipe in Tandoor Recipes.

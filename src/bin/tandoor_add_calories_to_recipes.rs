@@ -1,4 +1,9 @@
 //! Add calories to Tandoor recipes
+#![allow(
+    clippy::too_many_lines,
+    clippy::needless_pass_by_value,
+    clippy::redundant_closure_for_method_calls
+)]
 //!
 //! Fetches all recipes, calculates calories from ingredients, updates nutrition field.
 //! BORING CODE: Standard libs, strict typing, obvious logic.

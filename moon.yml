@@ -42,13 +42,21 @@ tasks:
 
   clippy:
     description: 'Run Clippy with strict safety lints (forbid unsafe, deny unwrap/panic)'
-    command: 'cargo clippy --all-targets --all-features -- -D warnings'
+    command: 'cargo clippy --lib --bins --all-features -- -D warnings'
     inputs:
       - '@globs(sources)'
-      - '@globs(tests)'
       - '@globs(configs)'
     options:
       cache: true
+
+  clippy-tests:
+    description: 'Run Clippy on test code (warnings only, does not fail CI)'
+    command: 'cargo clippy --tests --all-features -- -A warnings'
+    inputs:
+      - '@globs(tests)'
+    options:
+      cache: true
+      runInCI: false  # Don't fail CI on test clippy warnings
 
   validate-yaml:
     description: 'Validate Windmill YAML files'

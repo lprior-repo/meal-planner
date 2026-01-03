@@ -64,14 +64,12 @@ fn parse_input() -> anyhow::Result<Input> {
 }
 
 fn read_input() -> anyhow::Result<String> {
-    let arg = std::env::args().nth(1);
-    match arg {
-        Some(json) => Ok(json),
-        None => {
-            let mut buf = String::new();
-            io::stdin().read_to_string(&mut buf)?;
-            Ok(buf)
-        }
+    if let Some(json) = std::env::args().nth(1) {
+        Ok(json)
+    } else {
+        let mut buf = String::new();
+        io::stdin().read_to_string(&mut buf)?;
+        Ok(buf)
     }
 }
 

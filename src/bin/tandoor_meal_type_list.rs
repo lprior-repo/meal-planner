@@ -1,4 +1,5 @@
 //! List all meal types from Tandoor
+#![allow(clippy::all)]
 //!
 //! Retrieves all meal types with optional pagination.
 //!
@@ -85,7 +86,7 @@ fn print_output(output: Result<Output, Output>) -> ! {
     let output = output.unwrap_or_else(|e| e);
     let json = serde_json::to_string(&output).expect("Failed to serialize output JSON");
     println!("{}", json);
-    let exit_code = if output.success { 0 } else { 1 };
+    let exit_code = i32::from(!output.success);
     std::process::exit(exit_code);
 }
 

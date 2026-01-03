@@ -12,6 +12,8 @@
 //! - Handle serialization/deserialization
 //! - Support both real binary and mock implementations
 
+#![allow(dead_code)]
+
 use crate::helpers::recipe_selection_dsl::{RecipeSelectionItem, RecipeSelectionResult};
 use std::io::Write;
 use std::process::{Command, Stdio};

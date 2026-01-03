@@ -7,6 +7,8 @@
 //! - This DSL remains implementation-agnostic and delegates to Layer 3 (Protocol Driver).
 //! - The driver handles serialization, binary invocation, and I/O boundaries.
 
+#![allow(dead_code)]
+
 use crate::helpers::recipe_selection_driver::RecipeSelectionDriver;
 
 #[derive(Clone, Debug)]

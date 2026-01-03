@@ -9,12 +9,11 @@
 //!
 //! These tests verify the Windmill script shell wrapper, not the underlying binary.
 
-#![allow(clippy::unwrap_used, clippy::too_many_lines)]
+#![allow(dead_code, clippy::unwrap_used, clippy::too_many_lines)]
 
 use std::fs;
 use std::path::Path;
 
-const SCRIPT_NAME: &str = "exercise_entry_edit";
 const SCRIPT_PATH: &str = "windmill/f/fatsecret/exercise_entry_edit.sh";
 const SCRIPT_YAML_PATH: &str = "windmill/f/fatsecret/exercise_entry_edit.script.yaml";
 

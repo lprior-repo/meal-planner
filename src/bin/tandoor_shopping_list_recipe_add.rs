@@ -1,4 +1,10 @@
 //! Add recipe to shopping list
+#![allow(
+    clippy::redundant_closure_for_method_calls,
+    clippy::ref_option,
+    clippy::too_many_lines,
+    clippy::needless_pass_by_value
+)]
 //!
 //! Adds all ingredients from a recipe to shopping list for a meal plan.
 //!
@@ -92,10 +98,7 @@ fn to_tandoor_config(input: &AddRecipeInput) -> TandoorConfig {
 ///
 /// # Function Size: 7 lines (≤25 ✓)
 fn read_input() -> Result<String, String> {
-    match read_cli_arg() {
-        Some(arg) => Ok(arg),
-        None => read_stdin(),
-    }
+    read_cli_arg().map_or_else(read_stdin, Ok)
 }
 
 /// Main execution flow (imperative shell)
