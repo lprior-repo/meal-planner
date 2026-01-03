@@ -1,9 +1,0 @@
----
-doc_id: ref/type-aliases/checkid
-chunk_id: ref/type-aliases/checkid#chunk-3
-heading_path: ["checkid", "See Also"]
-chunk_type: prose
-tokens: 4
-summary: "- [Documentation Overview](."
----
-- [Documentation Overview](./COMPASS.md)
