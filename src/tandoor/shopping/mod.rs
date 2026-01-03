@@ -179,7 +179,7 @@ mod tests {
     fn test_validate_empty_base_url() {
         let input = AddRecipeInput {
             tandoor: TandoorConfigInput {
-                base_url: "".to_string(),
+                base_url: String::new(),
                 api_token: "token".to_string(),
             },
             mealplan_id: 1,
@@ -194,7 +194,7 @@ mod tests {
         let input = AddRecipeInput {
             tandoor: TandoorConfigInput {
                 base_url: "http://localhost".to_string(),
-                api_token: "".to_string(),
+                api_token: String::new(),
             },
             mealplan_id: 1,
             recipe_id: 2,

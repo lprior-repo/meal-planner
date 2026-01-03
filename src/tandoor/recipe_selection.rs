@@ -85,6 +85,18 @@ pub fn random_select(recipes: &[RecipeSummary], count: usize, seed: u64) -> Vec<
         .collect()
 }
 
+pub fn filter_by_calorie_range(
+    recipes: &[RecipeSummary],
+    min_calories: u32,
+    max_calories: u32,
+) -> Vec<RecipeSummary> {
+    recipes
+        .iter()
+        .filter(|r| r.calories >= min_calories && r.calories <= max_calories)
+        .cloned()
+        .collect()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -117,10 +129,10 @@ mod tests {
         let stats = calculate_stats(&recipes);
 
         assert_eq!(stats.count, 4);
-        assert_eq!(stats.total, 2000.0);
+        assert!((stats.total - 2000.0).abs() < 0.001);
         assert!((stats.average - 500.0).abs() < 0.001);
-        assert_eq!(stats.min, 400.0);
-        assert_eq!(stats.max, 600.0);
+        assert!((stats.min - 400.0).abs() < 0.001);
+        assert!((stats.max - 600.0).abs() < 0.001);
     }
 
     #[test]
@@ -129,10 +141,10 @@ mod tests {
         let stats = calculate_stats(&recipes);
 
         assert_eq!(stats.count, 0);
-        assert_eq!(stats.total, 0.0);
-        assert_eq!(stats.average, 0.0);
-        assert_eq!(stats.min, 0.0);
-        assert_eq!(stats.max, 0.0);
+        assert!((stats.total - 0.0).abs() < 0.001);
+        assert!((stats.average - 0.0).abs() < 0.001);
+        assert!((stats.min - 0.0).abs() < 0.001);
+        assert!((stats.max - 0.0).abs() < 0.001);
     }
 
     #[test]
@@ -146,10 +158,10 @@ mod tests {
         let stats = calculate_stats(&recipes);
 
         assert_eq!(stats.count, 1);
-        assert_eq!(stats.total, 750.0);
-        assert_eq!(stats.average, 750.0);
-        assert_eq!(stats.min, 750.0);
-        assert_eq!(stats.max, 750.0);
+        assert!((stats.total - 750.0).abs() < 0.001);
+        assert!((stats.average - 750.0).abs() < 0.001);
+        assert!((stats.min - 750.0).abs() < 0.001);
+        assert!((stats.max - 750.0).abs() < 0.001);
     }
 
     #[test]
