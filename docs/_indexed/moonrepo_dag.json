@@ -1,0 +1,3053 @@
+{
+  "system": "moonrepo",
+  "version": "1.0.0",
+  "generated": "2026-01-02T19:55:29.062018",
+  "nodes": [
+    {
+      "id": "concept",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "concept/general/ai-documentation-system",
+        "concept/general/recipe-import-pipeline",
+        "concept/fatsecret/guides-localization",
+        "concept/moonrepo/cheat-sheet",
+        "concept/moonrepo/migrate"
+      ]
+    },
+    {
+      "id": "rust",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/general/architecture",
+        "concept/moonrepo/file-pattern",
+        "ops/moonrepo/handbook",
+        "ops/moonrepo/wasm-plugins",
+        "concept/tandoor/permissions"
+      ]
+    },
+    {
+      "id": "tutorial",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "tutorial/general/fatsecret-oauth-setup",
+        "tutorial/fatsecret/guides-oauth1-three-legged",
+        "tutorial/fatsecret/guides-welcome",
+        "tutorial/moonrepo/angular",
+        "tutorial/moonrepo/nest"
+      ]
+    },
+    {
+      "id": "beginner",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "tutorial/general/fatsecret-oauth-setup",
+        "tutorial/fatsecret/guides-oauth1-three-legged",
+        "tutorial/fatsecret/guides-welcome",
+        "tutorial/moonrepo/angular",
+        "tutorial/moonrepo/nest"
+      ]
+    },
+    {
+      "id": "cheat",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "concept/moonrepo/cheat-sheet"
+      ]
+    },
+    {
+      "id": "moonrepo",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "concept/moonrepo/cheat-sheet",
+        "ops/moonrepo/commands",
+        "ops/moonrepo/action-graph",
+        "ops/moonrepo/bin",
+        "ops/moonrepo/check"
+      ]
+    },
+    {
+      "id": "cheat_sheet",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "concept/moonrepo/cheat-sheet"
+      ]
+    },
+    {
+      "id": "commands",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/commands",
+        "ops/moonrepo/commands"
+      ]
+    },
+    {
+      "id": "actiongraph",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/action-graph"
+      ]
+    },
+    {
+      "id": "action-graph",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/action-graph"
+      ]
+    },
+    {
+      "id": "bin",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/bin",
+        "ops/moonrepo/bin"
+      ]
+    },
+    {
+      "id": "check",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/check",
+        "ops/moonrepo/check"
+      ]
+    },
+    {
+      "id": "ci",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/ci"
+      ]
+    },
+    {
+      "id": "clean",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/clean",
+        "ops/moonrepo/clean"
+      ]
+    },
+    {
+      "id": "completions",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/completions",
+        "ops/moonrepo/completions"
+      ]
+    },
+    {
+      "id": "docker",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/docker",
+        "ops/moonrepo/docker",
+        "ops/moonrepo/file",
+        "ops/moonrepo/prune",
+        "ops/moonrepo/scaffold"
+      ]
+    },
+    {
+      "id": "docker_file",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/file"
+      ]
+    },
+    {
+      "id": "docker_prune",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/prune"
+      ]
+    },
+    {
+      "id": "docker_scaffold",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/scaffold"
+      ]
+    },
+    {
+      "id": "docker_setup",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/setup"
+      ]
+    },
+    {
+      "id": "ext",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/ext",
+        "ops/moonrepo/ext"
+      ]
+    },
+    {
+      "id": "generate",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/generate",
+        "ops/moonrepo/generate"
+      ]
+    },
+    {
+      "id": "init",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/init",
+        "ops/moonrepo/init"
+      ]
+    },
+    {
+      "id": "mcp",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/mcp",
+        "ops/moonrepo/mcp",
+        "ops/moonrepo/mcp-2"
+      ]
+    },
+    {
+      "id": "migrate",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "concept/moonrepo/migrate",
+        "concept/moonrepo/migrate",
+        "ops/moonrepo/from-package-json",
+        "concept/moonrepo/from-turborepo",
+        "ops/moonrepo/migrate-to-moon"
+      ]
+    },
+    {
+      "id": "migrate_from-package-json",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/from-package-json"
+      ]
+    },
+    {
+      "id": "migrate_from-turborepo",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "concept/moonrepo/from-turborepo"
+      ]
+    },
+    {
+      "id": "overview",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/overview",
+        "ops/moonrepo/overview"
+      ]
+    },
+    {
+      "id": "projectgraph",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/project-graph"
+      ]
+    },
+    {
+      "id": "project-graph",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/project-graph"
+      ]
+    },
+    {
+      "id": "project",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/project",
+        "ops/moonrepo/project",
+        "ops/moonrepo/project-graph-2"
+      ]
+    },
+    {
+      "id": "query",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/query",
+        "ops/moonrepo/query",
+        "ops/moonrepo/hash-diff",
+        "ops/moonrepo/hash",
+        "ops/moonrepo/projects"
+      ]
+    },
+    {
+      "id": "query_hash-diff",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/hash-diff"
+      ]
+    },
+    {
+      "id": "query_hash",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/hash"
+      ]
+    },
+    {
+      "id": "query_projects",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/projects"
+      ]
+    },
+    {
+      "id": "query_tasks",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/tasks"
+      ]
+    },
+    {
+      "id": "query_touched-files",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/touched-files"
+      ]
+    },
+    {
+      "id": "run",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/run",
+        "ops/moonrepo/run",
+        "ops/moonrepo/run-task",
+        "ops/windmill/run-locally",
+        "meta/windmill/index-18"
+      ]
+    },
+    {
+      "id": "setup",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/setup-2",
+        "ops/moonrepo/setup-2",
+        "ops/moonrepo/setup-toolchain",
+        "ops/moonrepo/setup-workspace"
+      ]
+    },
+    {
+      "id": "sync",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "concept/moonrepo/sync",
+        "concept/moonrepo/sync",
+        "ops/moonrepo/codeowners",
+        "ops/moonrepo/config-schemas",
+        "ops/moonrepo/hooks"
+      ]
+    },
+    {
+      "id": "sync_codeowners",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/codeowners"
+      ]
+    },
+    {
+      "id": "sync_config-schemas",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/config-schemas"
+      ]
+    },
+    {
+      "id": "sync_hooks",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/hooks"
+      ]
+    },
+    {
+      "id": "sync_projects",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/projects-2"
+      ]
+    },
+    {
+      "id": "taskgraph",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/task-graph"
+      ]
+    },
+    {
+      "id": "task-graph",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/task-graph"
+      ]
+    },
+    {
+      "id": "task",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/task",
+        "ops/moonrepo/task",
+        "ops/moonrepo/task-inheritance",
+        "ops/moonrepo/profile",
+        "concept/moonrepo/task-graph"
+      ]
+    },
+    {
+      "id": "teardown",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/teardown",
+        "ops/moonrepo/teardown"
+      ]
+    },
+    {
+      "id": "templates",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/templates",
+        "ops/moonrepo/templates"
+      ]
+    },
+    {
+      "id": "toolchain",
+      "type": "tool",
+      "layer": 3,
+      "doc_ids": [
+        "concept/moonrepo/toolchain",
+        "concept/moonrepo/toolchain",
+        "ops/moonrepo/add",
+        "ops/moonrepo/info",
+        "ops/moonrepo/toolchain"
+      ]
+    },
+    {
+      "id": "toolchain_add",
+      "type": "tool",
+      "layer": 3,
+      "doc_ids": [
+        "ops/moonrepo/add"
+      ]
+    },
+    {
+      "id": "toolchain_info",
+      "type": "tool",
+      "layer": 3,
+      "doc_ids": [
+        "ops/moonrepo/info"
+      ]
+    },
+    {
+      "id": "upgrade",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/upgrade",
+        "ops/moonrepo/upgrade"
+      ]
+    },
+    {
+      "id": "feature",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/comparison"
+      ]
+    },
+    {
+      "id": "feature_comparison",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/comparison"
+      ]
+    },
+    {
+      "id": "concepts",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/concepts",
+        "ops/moonrepo/concepts"
+      ]
+    },
+    {
+      "id": "cache",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/cache",
+        "ops/moonrepo/cache"
+      ]
+    },
+    {
+      "id": "file",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ref/moonrepo/file-group",
+        "concept/moonrepo/file-pattern"
+      ]
+    },
+    {
+      "id": "file_groups",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ref/moonrepo/file-group"
+      ]
+    },
+    {
+      "id": "javascript",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "concept/moonrepo/file-pattern",
+        "ops/moonrepo/solid",
+        "ops/moonrepo/sveltekit",
+        "ops/moonrepo/typescript",
+        "ops/moonrepo/bun-handbook"
+      ]
+    },
+    {
+      "id": "file_patterns",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "concept/moonrepo/file-pattern"
+      ]
+    },
+    {
+      "id": "projects",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ref/moonrepo/project",
+        "ref/moonrepo/project"
+      ]
+    },
+    {
+      "id": "sql",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "concept/moonrepo/query-lang",
+        "ops/tandoor/manual",
+        "ops/tandoor/migration-sqlite-postgres",
+        "ops/windmill/key-value-stores",
+        "tutorial/windmill/structured-databases"
+      ]
+    },
+    {
+      "id": "query_language",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "concept/moonrepo/query-lang"
+      ]
+    },
+    {
+      "id": "targets",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/target",
+        "ops/moonrepo/target"
+      ]
+    },
+    {
+      "id": "task_inheritance",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/task-inheritance"
+      ]
+    },
+    {
+      "id": "tasks",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ref/moonrepo/task",
+        "ref/moonrepo/task"
+      ]
+    },
+    {
+      "id": "tokens",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "concept/moonrepo/token",
+        "concept/moonrepo/token"
+      ]
+    },
+    {
+      "id": "workspace",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ref/moonrepo/workspace",
+        "ref/moonrepo/workspace",
+        "meta/windmill/index-12",
+        "ops/windmill/workspace-management",
+        "meta/windmill/index-47"
+      ]
+    },
+    {
+      "id": "config",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "concept/moonrepo/config"
+      ]
+    },
+    {
+      "id": "config_files",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "concept/moonrepo/config"
+      ]
+    },
+    {
+      "id": "moonpklyml",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/project-2",
+        "ops/moonrepo/project-2"
+      ]
+    },
+    {
+      "id": "moontaskspklyml",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "concept/moonrepo/tasks",
+        "concept/moonrepo/tasks"
+      ]
+    },
+    {
+      "id": "templatepklyml",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "concept/moonrepo/template",
+        "concept/moonrepo/template"
+      ]
+    },
+    {
+      "id": "moontoolchainpklyml",
+      "type": "tool",
+      "layer": 3,
+      "doc_ids": [
+        "ops/moonrepo/toolchain-2",
+        "ops/moonrepo/toolchain-2"
+      ]
+    },
+    {
+      "id": "moonworkspacepklyml",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/workspace",
+        "ops/moonrepo/workspace"
+      ]
+    },
+    {
+      "id": "create",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "concept/moonrepo/create-project",
+        "ops/moonrepo/create-task"
+      ]
+    },
+    {
+      "id": "create_a_project",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "concept/moonrepo/create-project"
+      ]
+    },
+    {
+      "id": "create_a_task",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/create-task"
+      ]
+    },
+    {
+      "id": "introduction",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/docs",
+        "ops/moonrepo/docs"
+      ]
+    },
+    {
+      "id": "editors",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "concept/moonrepo/editors",
+        "concept/moonrepo/editors"
+      ]
+    },
+    {
+      "id": "vs_code_extension",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/vscode",
+        "meta/windmill/index-22"
+      ]
+    },
+    {
+      "id": "faq",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/faq",
+        "ops/moonrepo/faq",
+        "ops/tandoor/faq",
+        "ops/tandoor/faq"
+      ]
+    },
+    {
+      "id": "continuous",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/ci-2"
+      ]
+    },
+    {
+      "id": "continuous_integration_ci",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/ci-2"
+      ]
+    },
+    {
+      "id": "code",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/codegen",
+        "ops/moonrepo/codeowners-2"
+      ]
+    },
+    {
+      "id": "code_generation",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/codegen"
+      ]
+    },
+    {
+      "id": "code_owners",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/codeowners-2"
+      ]
+    },
+    {
+      "id": "debugging",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/debug-task"
+      ]
+    },
+    {
+      "id": "debugging_a_task",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/debug-task"
+      ]
+    },
+    {
+      "id": "docker_integration",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/docker-2"
+      ]
+    },
+    {
+      "id": "angular",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "tutorial/moonrepo/angular"
+      ]
+    },
+    {
+      "id": "angular_example",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "tutorial/moonrepo/angular"
+      ]
+    },
+    {
+      "id": "astro",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/astro"
+      ]
+    },
+    {
+      "id": "astro_example",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/astro"
+      ]
+    },
+    {
+      "id": "eslint",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/eslint"
+      ]
+    },
+    {
+      "id": "eslint_example",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/eslint"
+      ]
+    },
+    {
+      "id": "jest",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/jest"
+      ]
+    },
+    {
+      "id": "jest_example",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/jest"
+      ]
+    },
+    {
+      "id": "nest",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "tutorial/moonrepo/nest"
+      ]
+    },
+    {
+      "id": "nest_example",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "tutorial/moonrepo/nest"
+      ]
+    },
+    {
+      "id": "next",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "tutorial/moonrepo/next"
+      ]
+    },
+    {
+      "id": "next_example",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "tutorial/moonrepo/next"
+      ]
+    },
+    {
+      "id": "nuxt",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "tutorial/moonrepo/nuxt"
+      ]
+    },
+    {
+      "id": "nuxt_example",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "tutorial/moonrepo/nuxt"
+      ]
+    },
+    {
+      "id": "packemon",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/packemon"
+      ]
+    },
+    {
+      "id": "packemon_example",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/packemon"
+      ]
+    },
+    {
+      "id": "prettier",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/prettier"
+      ]
+    },
+    {
+      "id": "prettier_example",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/prettier"
+      ]
+    },
+    {
+      "id": "react",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "concept/moonrepo/react"
+      ]
+    },
+    {
+      "id": "react_example",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "concept/moonrepo/react"
+      ]
+    },
+    {
+      "id": "remix",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "tutorial/moonrepo/remix"
+      ]
+    },
+    {
+      "id": "remix_example",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "tutorial/moonrepo/remix"
+      ]
+    },
+    {
+      "id": "solid",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/solid"
+      ]
+    },
+    {
+      "id": "solid_example",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/solid"
+      ]
+    },
+    {
+      "id": "storybook",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/storybook"
+      ]
+    },
+    {
+      "id": "storybook_example",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/storybook"
+      ]
+    },
+    {
+      "id": "sveltekit",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/sveltekit"
+      ]
+    },
+    {
+      "id": "sveltekit_example",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/sveltekit"
+      ]
+    },
+    {
+      "id": "typescript",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/typescript",
+        "ops/moonrepo/bun-handbook",
+        "concept/moonrepo/deno-handbook",
+        "ops/moonrepo/node-handbook",
+        "ops/moonrepo/typescript-eslint"
+      ]
+    },
+    {
+      "id": "typescript_example",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/typescript"
+      ]
+    },
+    {
+      "id": "vite",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/vite"
+      ]
+    },
+    {
+      "id": "vite__vitest_example",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/vite"
+      ]
+    },
+    {
+      "id": "vue",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/vue"
+      ]
+    },
+    {
+      "id": "vue_example",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/vue"
+      ]
+    },
+    {
+      "id": "extensions",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/extensions",
+        "ops/moonrepo/extensions"
+      ]
+    },
+    {
+      "id": "bun",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/bun-handbook"
+      ]
+    },
+    {
+      "id": "bun_handbook",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/bun-handbook"
+      ]
+    },
+    {
+      "id": "deno",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "concept/moonrepo/deno-handbook"
+      ]
+    },
+    {
+      "id": "deno_handbook",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "concept/moonrepo/deno-handbook"
+      ]
+    },
+    {
+      "id": "nodejs",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/node-handbook",
+        "concept/moonrepo/examples"
+      ]
+    },
+    {
+      "id": "nodejs_handbook",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/node-handbook"
+      ]
+    },
+    {
+      "id": "typescripteslint",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/typescript-eslint"
+      ]
+    },
+    {
+      "id": "typescript-eslint",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/typescript-eslint"
+      ]
+    },
+    {
+      "id": "typescript_project_references",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ref/moonrepo/typescript-project-refs"
+      ]
+    },
+    {
+      "id": "mcp_integration",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/mcp-2"
+      ]
+    },
+    {
+      "id": "nodejs_examples",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "concept/moonrepo/examples"
+      ]
+    },
+    {
+      "id": "terminal",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "concept/moonrepo/notifications"
+      ]
+    },
+    {
+      "id": "terminal_notifications",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "concept/moonrepo/notifications"
+      ]
+    },
+    {
+      "id": "offline",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/offline-mode"
+      ]
+    },
+    {
+      "id": "offline_mode",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/offline-mode"
+      ]
+    },
+    {
+      "id": "open",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/open-source"
+      ]
+    },
+    {
+      "id": "open_source_usage",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/open-source"
+      ]
+    },
+    {
+      "id": "pkl",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/pkl-config"
+      ]
+    },
+    {
+      "id": "pkl_configuration",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/pkl-config"
+      ]
+    },
+    {
+      "id": "task_profiling",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/profile"
+      ]
+    },
+    {
+      "id": "remote",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "concept/moonrepo/remote-cache"
+      ]
+    },
+    {
+      "id": "remote_caching",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "concept/moonrepo/remote-cache"
+      ]
+    },
+    {
+      "id": "rootlevel",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "concept/moonrepo/root-project"
+      ]
+    },
+    {
+      "id": "root-level_project",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "concept/moonrepo/root-project"
+      ]
+    },
+    {
+      "id": "rust_handbook",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/handbook"
+      ]
+    },
+    {
+      "id": "sharing",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "concept/moonrepo/sharing-config",
+        "meta/windmill/index-16"
+      ]
+    },
+    {
+      "id": "sharing_workspace_configuration",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "concept/moonrepo/sharing-config"
+      ]
+    },
+    {
+      "id": "vcs",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/vcs-hooks"
+      ]
+    },
+    {
+      "id": "vcs_hooks",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/vcs-hooks"
+      ]
+    },
+    {
+      "id": "wasm",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/wasm-plugins"
+      ]
+    },
+    {
+      "id": "wasm_plugins",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/wasm-plugins"
+      ]
+    },
+    {
+      "id": "how",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "concept/moonrepo/how-it-works",
+        "ops/tandoor/migration-sqlite-postgres"
+      ]
+    },
+    {
+      "id": "how_it_works",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "concept/moonrepo/how-it-works"
+      ]
+    },
+    {
+      "id": "action",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/action-graph-2"
+      ]
+    },
+    {
+      "id": "action_graph",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/action-graph-2"
+      ]
+    },
+    {
+      "id": "languages",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/languages",
+        "ops/moonrepo/languages"
+      ]
+    },
+    {
+      "id": "project_graph",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/project-graph-2"
+      ]
+    },
+    {
+      "id": "task_graph",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "concept/moonrepo/task-graph"
+      ]
+    },
+    {
+      "id": "install",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/install"
+      ]
+    },
+    {
+      "id": "install_moon",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/install"
+      ]
+    },
+    {
+      "id": "migrate_to_moon",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/migrate-to-moon"
+      ]
+    },
+    {
+      "id": "run_a_task",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/run-task"
+      ]
+    },
+    {
+      "id": "setup_toolchain",
+      "type": "tool",
+      "layer": 3,
+      "doc_ids": [
+        "ops/moonrepo/setup-toolchain"
+      ]
+    },
+    {
+      "id": "setup_workspace",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/setup-workspace"
+      ]
+    },
+    {
+      "id": "terminology",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "ops/moonrepo/terminology",
+        "ops/moonrepo/terminology"
+      ]
+    },
+    {
+      "id": "moon",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "tutorial/moonrepo/urls"
+      ]
+    },
+    {
+      "id": "moon_monorepo_documentation_urls",
+      "type": "concept",
+      "layer": 2,
+      "doc_ids": [
+        "tutorial/moonrepo/urls"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "from": "documentation",
+      "to": "rust",
+      "relationship": "uses"
+    },
+    {
+      "from": "concept",
+      "to": "windmill",
+      "relationship": "uses"
+    },
+    {
+      "from": "concept",
+      "to": "rust",
+      "relationship": "uses"
+    },
+    {
+      "from": "concept",
+      "to": "architecture",
+      "relationship": "uses"
+    },
+    {
+      "from": "concept",
+      "to": "build",
+      "relationship": "uses"
+    },
+    {
+      "from": "concept",
+      "to": "operations",
+      "relationship": "uses"
+    },
+    {
+      "from": "documentation",
+      "to": "tutorial",
+      "relationship": "uses"
+    },
+    {
+      "from": "documentation",
+      "to": "beginner",
+      "relationship": "uses"
+    },
+    {
+      "from": "concept",
+      "to": "tutorial",
+      "relationship": "uses"
+    },
+    {
+      "from": "concept",
+      "to": "beginner",
+      "relationship": "uses"
+    },
+    {
+      "from": "concept",
+      "to": "fatsecret",
+      "relationship": "uses"
+    },
+    {
+      "from": "rust",
+      "to": "build",
+      "relationship": "uses"
+    },
+    {
+      "from": "rust",
+      "to": "operations",
+      "relationship": "uses"
+    },
+    {
+      "from": "build",
+      "to": "rust",
+      "relationship": "uses"
+    },
+    {
+      "from": "operations",
+      "to": "rust",
+      "relationship": "uses"
+    },
+    {
+      "from": "meta",
+      "to": "rust",
+      "relationship": "uses"
+    },
+    {
+      "from": "meta",
+      "to": "tutorial",
+      "relationship": "uses"
+    },
+    {
+      "from": "meta",
+      "to": "beginner",
+      "relationship": "uses"
+    },
+    {
+      "from": "meta",
+      "to": "concept",
+      "relationship": "uses"
+    },
+    {
+      "from": "documentation",
+      "to": "concept",
+      "relationship": "uses"
+    },
+    {
+      "from": "tandoor",
+      "to": "rust",
+      "relationship": "uses"
+    },
+    {
+      "from": "recipe",
+      "to": "rust",
+      "relationship": "uses"
+    },
+    {
+      "from": "api",
+      "to": "tutorial",
+      "relationship": "uses"
+    },
+    {
+      "from": "api",
+      "to": "beginner",
+      "relationship": "uses"
+    },
+    {
+      "from": "fatsecret",
+      "to": "tutorial",
+      "relationship": "uses"
+    },
+    {
+      "from": "fatsecret",
+      "to": "beginner",
+      "relationship": "uses"
+    },
+    {
+      "from": "reference",
+      "to": "tutorial",
+      "relationship": "uses"
+    },
+    {
+      "from": "reference",
+      "to": "beginner",
+      "relationship": "uses"
+    },
+    {
+      "from": "tutorial",
+      "to": "api",
+      "relationship": "uses"
+    },
+    {
+      "from": "tutorial",
+      "to": "fatsecret",
+      "relationship": "uses"
+    },
+    {
+      "from": "tutorial",
+      "to": "reference",
+      "relationship": "uses"
+    },
+    {
+      "from": "tutorial",
+      "to": "oauth",
+      "relationship": "uses"
+    },
+    {
+      "from": "tutorial",
+      "to": "advanced",
+      "relationship": "uses"
+    },
+    {
+      "from": "advanced",
+      "to": "rust",
+      "relationship": "uses"
+    },
+    {
+      "from": "implementation",
+      "to": "rust",
+      "relationship": "uses"
+    },
+    {
+      "from": "faq",
+      "to": "tandoor",
+      "relationship": "uses"
+    },
+    {
+      "from": "faq",
+      "to": "advanced",
+      "relationship": "uses"
+    },
+    {
+      "from": "faq",
+      "to": "operations",
+      "relationship": "uses"
+    },
+    {
+      "from": "tutorial",
+      "to": "windmill",
+      "relationship": "uses"
+    },
+    {
+      "from": "tutorial",
+      "to": "operations",
+      "relationship": "uses"
+    },
+    {
+      "from": "beginner",
+      "to": "windmill",
+      "relationship": "uses"
+    },
+    {
+      "from": "beginner",
+      "to": "advanced",
+      "relationship": "uses"
+    },
+    {
+      "from": "beginner",
+      "to": "operations",
+      "relationship": "uses"
+    },
+    {
+      "from": "windmill",
+      "to": "tutorial",
+      "relationship": "uses"
+    },
+    {
+      "from": "tutorial",
+      "to": "suspend",
+      "relationship": "uses"
+    },
+    {
+      "from": "beginner",
+      "to": "tutorial",
+      "relationship": "uses"
+    },
+    {
+      "from": "beginner",
+      "to": "suspend",
+      "relationship": "uses"
+    },
+    {
+      "from": "tutorial",
+      "to": "meta",
+      "relationship": "uses"
+    },
+    {
+      "from": "beginner",
+      "to": "meta",
+      "relationship": "uses"
+    },
+    {
+      "from": "windmill",
+      "to": "sync",
+      "relationship": "uses"
+    },
+    {
+      "from": "meta",
+      "to": "sync",
+      "relationship": "uses"
+    },
+    {
+      "from": "advanced",
+      "to": "sync",
+      "relationship": "uses"
+    },
+    {
+      "from": "windmill",
+      "to": "typescript",
+      "relationship": "uses"
+    },
+    {
+      "from": "advanced",
+      "to": "typescript",
+      "relationship": "uses"
+    },
+    {
+      "from": "typescript",
+      "to": "windmill",
+      "relationship": "uses"
+    },
+    {
+      "from": "typescript",
+      "to": "meta",
+      "relationship": "uses"
+    },
+    {
+      "from": "typescript",
+      "to": "dependency",
+      "relationship": "uses"
+    },
+    {
+      "from": "windmill",
+      "to": "sharing",
+      "relationship": "uses"
+    },
+    {
+      "from": "advanced",
+      "to": "sharing",
+      "relationship": "uses"
+    },
+    {
+      "from": "typescript",
+      "to": "sharing",
+      "relationship": "uses"
+    },
+    {
+      "from": "typescript",
+      "to": "versioning",
+      "relationship": "uses"
+    },
+    {
+      "from": "typescript",
+      "to": "advanced",
+      "relationship": "uses"
+    },
+    {
+      "from": "typescript",
+      "to": "draft",
+      "relationship": "uses"
+    },
+    {
+      "from": "typescript",
+      "to": "jobs",
+      "relationship": "uses"
+    },
+    {
+      "from": "typescript",
+      "to": "sync",
+      "relationship": "uses"
+    },
+    {
+      "from": "typescript",
+      "to": "commandline",
+      "relationship": "uses"
+    },
+    {
+      "from": "windmill",
+      "to": "concept",
+      "relationship": "uses"
+    },
+    {
+      "from": "advanced",
+      "to": "concept",
+      "relationship": "uses"
+    },
+    {
+      "from": "typescript",
+      "to": "concept",
+      "relationship": "uses"
+    },
+    {
+      "from": "typescript",
+      "to": "codebases",
+      "relationship": "uses"
+    },
+    {
+      "from": "python",
+      "to": "typescript",
+      "relationship": "uses"
+    },
+    {
+      "from": "python",
+      "to": "sync",
+      "relationship": "uses"
+    },
+    {
+      "from": "python",
+      "to": "concept",
+      "relationship": "uses"
+    },
+    {
+      "from": "python",
+      "to": "sharing",
+      "relationship": "uses"
+    },
+    {
+      "from": "workspace",
+      "to": "windmill",
+      "relationship": "uses"
+    },
+    {
+      "from": "workspace",
+      "to": "meta",
+      "relationship": "uses"
+    },
+    {
+      "from": "workspace",
+      "to": "advanced",
+      "relationship": "uses"
+    },
+    {
+      "from": "workspace",
+      "to": "deploy",
+      "relationship": "uses"
+    },
+    {
+      "from": "branchspecific",
+      "to": "sync",
+      "relationship": "uses"
+    },
+    {
+      "from": "concept",
+      "to": "dependency",
+      "relationship": "uses"
+    },
+    {
+      "from": "concept",
+      "to": "meta",
+      "relationship": "uses"
+    },
+    {
+      "from": "flows",
+      "to": "concept",
+      "relationship": "uses"
+    },
+    {
+      "from": "concept",
+      "to": "advanced",
+      "relationship": "uses"
+    },
+    {
+      "from": "operations",
+      "to": "sync",
+      "relationship": "uses"
+    },
+    {
+      "from": "commandline",
+      "to": "sync",
+      "relationship": "uses"
+    },
+    {
+      "from": "concept",
+      "to": "resources",
+      "relationship": "uses"
+    },
+    {
+      "from": "concept",
+      "to": "flows",
+      "relationship": "uses"
+    },
+    {
+      "from": "concept",
+      "to": "typescript",
+      "relationship": "uses"
+    },
+    {
+      "from": "sync",
+      "to": "windmill",
+      "relationship": "uses"
+    },
+    {
+      "from": "sync",
+      "to": "branchspecific",
+      "relationship": "uses"
+    },
+    {
+      "from": "sync",
+      "to": "advanced",
+      "relationship": "uses"
+    },
+    {
+      "from": "sync",
+      "to": "meta",
+      "relationship": "uses"
+    },
+    {
+      "from": "windmill",
+      "to": "workspace",
+      "relationship": "uses"
+    },
+    {
+      "from": "advanced",
+      "to": "workspace",
+      "relationship": "uses"
+    },
+    {
+      "from": "sync",
+      "to": "workspace",
+      "relationship": "uses"
+    },
+    {
+      "from": "workspace",
+      "to": "sync",
+      "relationship": "uses"
+    },
+    {
+      "from": "meta",
+      "to": "typescript",
+      "relationship": "uses"
+    },
+    {
+      "from": "windmill",
+      "to": "run",
+      "relationship": "uses"
+    },
+    {
+      "from": "meta",
+      "to": "run",
+      "relationship": "uses"
+    },
+    {
+      "from": "advanced",
+      "to": "run",
+      "relationship": "uses"
+    },
+    {
+      "from": "run",
+      "to": "windmill",
+      "relationship": "uses"
+    },
+    {
+      "from": "run",
+      "to": "meta",
+      "relationship": "uses"
+    },
+    {
+      "from": "run",
+      "to": "advanced",
+      "relationship": "uses"
+    },
+    {
+      "from": "run",
+      "to": "commandline",
+      "relationship": "uses"
+    },
+    {
+      "from": "sharing",
+      "to": "windmill",
+      "relationship": "uses"
+    },
+    {
+      "from": "sharing",
+      "to": "meta",
+      "relationship": "uses"
+    },
+    {
+      "from": "sharing",
+      "to": "python",
+      "relationship": "uses"
+    },
+    {
+      "from": "sharing",
+      "to": "typescript",
+      "relationship": "uses"
+    },
+    {
+      "from": "sharing",
+      "to": "commandline",
+      "relationship": "uses"
+    },
+    {
+      "from": "sharing",
+      "to": "advanced",
+      "relationship": "uses"
+    },
+    {
+      "from": "sharing",
+      "to": "roles",
+      "relationship": "uses"
+    },
+    {
+      "from": "sharing",
+      "to": "codebases",
+      "relationship": "uses"
+    },
+    {
+      "from": "sharing",
+      "to": "dependency",
+      "relationship": "uses"
+    },
+    {
+      "from": "dependency",
+      "to": "typescript",
+      "relationship": "uses"
+    },
+    {
+      "from": "dependency",
+      "to": "sharing",
+      "relationship": "uses"
+    },
+    {
+      "from": "meta",
+      "to": "sharing",
+      "relationship": "uses"
+    },
+    {
+      "from": "dependency",
+      "to": "sync",
+      "relationship": "uses"
+    },
+    {
+      "from": "dependency",
+      "to": "concept",
+      "relationship": "uses"
+    },
+    {
+      "from": "meta",
+      "to": "workspace",
+      "relationship": "uses"
+    },
+    {
+      "from": "windmill",
+      "to": "beginner",
+      "relationship": "uses"
+    },
+    {
+      "from": "advanced",
+      "to": "tutorial",
+      "relationship": "uses"
+    },
+    {
+      "from": "advanced",
+      "to": "beginner",
+      "relationship": "uses"
+    },
+    {
+      "from": "tutorial",
+      "to": "persistent",
+      "relationship": "uses"
+    },
+    {
+      "from": "beginner",
+      "to": "persistent",
+      "relationship": "uses"
+    },
+    {
+      "from": "sql",
+      "to": "windmill",
+      "relationship": "uses"
+    },
+    {
+      "from": "sql",
+      "to": "meta",
+      "relationship": "uses"
+    },
+    {
+      "from": "sql",
+      "to": "persistent",
+      "relationship": "uses"
+    },
+    {
+      "from": "tutorial",
+      "to": "quickstart",
+      "relationship": "uses"
+    },
+    {
+      "from": "tutorial",
+      "to": "python",
+      "relationship": "uses"
+    },
+    {
+      "from": "tutorial",
+      "to": "typescript",
+      "relationship": "uses"
+    },
+    {
+      "from": "big",
+      "to": "typescript",
+      "relationship": "uses"
+    },
+    {
+      "from": "concept",
+      "to": "persistent",
+      "relationship": "uses"
+    },
+    {
+      "from": "concept",
+      "to": "trigger",
+      "relationship": "uses"
+    },
+    {
+      "from": "concept",
+      "to": "for",
+      "relationship": "uses"
+    },
+    {
+      "from": "concept",
+      "to": "jobs",
+      "relationship": "uses"
+    },
+    {
+      "from": "concept",
+      "to": "suspend",
+      "relationship": "uses"
+    },
+    {
+      "from": "deploy",
+      "to": "tutorial",
+      "relationship": "manages"
+    },
+    {
+      "from": "deploy",
+      "to": "beginner",
+      "relationship": "manages"
+    },
+    {
+      "from": "schedules",
+      "to": "tutorial",
+      "relationship": "uses"
+    },
+    {
+      "from": "schedules",
+      "to": "beginner",
+      "relationship": "uses"
+    },
+    {
+      "from": "job",
+      "to": "tutorial",
+      "relationship": "uses"
+    },
+    {
+      "from": "job",
+      "to": "beginner",
+      "relationship": "uses"
+    },
+    {
+      "from": "instant",
+      "to": "tutorial",
+      "relationship": "uses"
+    },
+    {
+      "from": "instant",
+      "to": "beginner",
+      "relationship": "uses"
+    },
+    {
+      "from": "caching",
+      "to": "concept",
+      "relationship": "uses"
+    },
+    {
+      "from": "dedicated",
+      "to": "typescript",
+      "relationship": "uses"
+    },
+    {
+      "from": "dedicated",
+      "to": "tutorial",
+      "relationship": "uses"
+    },
+    {
+      "from": "dedicated",
+      "to": "beginner",
+      "relationship": "uses"
+    },
+    {
+      "from": "data",
+      "to": "tutorial",
+      "relationship": "uses"
+    },
+    {
+      "from": "data",
+      "to": "beginner",
+      "relationship": "uses"
+    },
+    {
+      "from": "data",
+      "to": "concept",
+      "relationship": "uses"
+    },
+    {
+      "from": "workspace",
+      "to": "environment",
+      "relationship": "uses"
+    },
+    {
+      "from": "workflows",
+      "to": "tutorial",
+      "relationship": "uses"
+    },
+    {
+      "from": "workflows",
+      "to": "beginner",
+      "relationship": "uses"
+    },
+    {
+      "from": "workflows",
+      "to": "typescript",
+      "relationship": "uses"
+    },
+    {
+      "from": "codebases",
+      "to": "typescript",
+      "relationship": "uses"
+    },
+    {
+      "from": "resources",
+      "to": "typescript",
+      "relationship": "uses"
+    },
+    {
+      "from": "resources",
+      "to": "tutorial",
+      "relationship": "uses"
+    },
+    {
+      "from": "resources",
+      "to": "beginner",
+      "relationship": "uses"
+    },
+    {
+      "from": "workspace",
+      "to": "roles",
+      "relationship": "uses"
+    },
+    {
+      "from": "workspace",
+      "to": "commandline",
+      "relationship": "uses"
+    },
+    {
+      "from": "assets",
+      "to": "typescript",
+      "relationship": "uses"
+    },
+    {
+      "from": "workspace",
+      "to": "dependency",
+      "relationship": "uses"
+    },
+    {
+      "from": "workspace",
+      "to": "migration",
+      "relationship": "uses"
+    },
+    {
+      "from": "workspace",
+      "to": "operations",
+      "relationship": "uses"
+    },
+    {
+      "from": "migration",
+      "to": "workspace",
+      "relationship": "uses"
+    },
+    {
+      "from": "operations",
+      "to": "workspace",
+      "relationship": "uses"
+    },
+    {
+      "from": "autogenerated",
+      "to": "tutorial",
+      "relationship": "uses"
+    },
+    {
+      "from": "autogenerated",
+      "to": "beginner",
+      "relationship": "uses"
+    },
+    {
+      "from": "windmill",
+      "to": "rust",
+      "relationship": "uses"
+    },
+    {
+      "from": "core",
+      "to": "tutorial",
+      "relationship": "uses"
+    },
+    {
+      "from": "core",
+      "to": "beginner",
+      "relationship": "uses"
+    },
+    {
+      "from": "trigger",
+      "to": "tutorial",
+      "relationship": "uses"
+    },
+    {
+      "from": "tutorial",
+      "to": "concept",
+      "relationship": "uses"
+    },
+    {
+      "from": "tutorial",
+      "to": "early",
+      "relationship": "uses"
+    },
+    {
+      "from": "suspend",
+      "to": "concept",
+      "relationship": "uses"
+    },
+    {
+      "from": "tutorial",
+      "to": "beginner",
+      "relationship": "uses"
+    },
+    {
+      "from": "suspend",
+      "to": "tutorial",
+      "relationship": "uses"
+    },
+    {
+      "from": "suspend",
+      "to": "beginner",
+      "relationship": "uses"
+    },
+    {
+      "from": "tutorial",
+      "to": "retries",
+      "relationship": "uses"
+    },
+    {
+      "from": "tutorial",
+      "to": "schedules",
+      "relationship": "uses"
+    },
+    {
+      "from": "suspend",
+      "to": "typescript",
+      "relationship": "uses"
+    },
+    {
+      "from": "tutorial",
+      "to": "branches",
+      "relationship": "uses"
+    },
+    {
+      "from": "tutorial",
+      "to": "roles",
+      "relationship": "uses"
+    },
+    {
+      "from": "tutorial",
+      "to": "groups",
+      "relationship": "uses"
+    },
+    {
+      "from": "tutorial",
+      "to": "triggers",
+      "relationship": "uses"
+    },
+    {
+      "from": "for",
+      "to": "tutorial",
+      "relationship": "uses"
+    },
+    {
+      "from": "for",
+      "to": "beginner",
+      "relationship": "uses"
+    },
+    {
+      "from": "for",
+      "to": "typescript",
+      "relationship": "uses"
+    },
+    {
+      "from": "tutorial",
+      "to": "dedicated",
+      "relationship": "uses"
+    },
+    {
+      "from": "tutorial",
+      "to": "instant",
+      "relationship": "uses"
+    },
+    {
+      "from": "operations",
+      "to": "concept",
+      "relationship": "uses"
+    },
+    {
+      "from": "retries",
+      "to": "concept",
+      "relationship": "uses"
+    },
+    {
+      "from": "beginner",
+      "to": "schedules",
+      "relationship": "uses"
+    },
+    {
+      "from": "beginner",
+      "to": "retries",
+      "relationship": "uses"
+    },
+    {
+      "from": "beginner",
+      "to": "concept",
+      "relationship": "uses"
+    },
+    {
+      "from": "beginner",
+      "to": "early",
+      "relationship": "uses"
+    },
+    {
+      "from": "tutorial",
+      "to": "flows",
+      "relationship": "uses"
+    },
+    {
+      "from": "beginner",
+      "to": "flows",
+      "relationship": "uses"
+    },
+    {
+      "from": "tutorial",
+      "to": "jobs",
+      "relationship": "uses"
+    },
+    {
+      "from": "beginner",
+      "to": "jobs",
+      "relationship": "uses"
+    },
+    {
+      "from": "tutorial",
+      "to": "scripts",
+      "relationship": "uses"
+    },
+    {
+      "from": "beginner",
+      "to": "scripts",
+      "relationship": "uses"
+    },
+    {
+      "from": "beginner",
+      "to": "python",
+      "relationship": "uses"
+    },
+    {
+      "from": "beginner",
+      "to": "roles",
+      "relationship": "uses"
+    },
+    {
+      "from": "beginner",
+      "to": "typescript",
+      "relationship": "uses"
+    },
+    {
+      "from": "beginner",
+      "to": "quickstart",
+      "relationship": "uses"
+    },
+    {
+      "from": "tutorial",
+      "to": "run",
+      "relationship": "uses"
+    },
+    {
+      "from": "beginner",
+      "to": "run",
+      "relationship": "uses"
+    },
+    {
+      "from": "tutorial",
+      "to": "trigger",
+      "relationship": "uses"
+    },
+    {
+      "from": "beginner",
+      "to": "trigger",
+      "relationship": "uses"
+    },
+    {
+      "from": "tutorial",
+      "to": "for",
+      "relationship": "uses"
+    },
+    {
+      "from": "beginner",
+      "to": "for",
+      "relationship": "uses"
+    },
+    {
+      "from": "beginner",
+      "to": "branches",
+      "relationship": "uses"
+    },
+    {
+      "from": "tutorial",
+      "to": "resources",
+      "relationship": "uses"
+    },
+    {
+      "from": "beginner",
+      "to": "resources",
+      "relationship": "uses"
+    },
+    {
+      "from": "testing",
+      "to": "tutorial",
+      "relationship": "uses"
+    },
+    {
+      "from": "testing",
+      "to": "beginner",
+      "relationship": "uses"
+    },
+    {
+      "from": "operations",
+      "to": "tutorial",
+      "relationship": "uses"
+    },
+    {
+      "from": "operations",
+      "to": "beginner",
+      "relationship": "uses"
+    },
+    {
+      "from": "tutorial",
+      "to": "error",
+      "relationship": "requires"
+    },
+    {
+      "from": "beginner",
+      "to": "error",
+      "relationship": "requires"
+    },
+    {
+      "from": "beginner",
+      "to": "dedicated",
+      "relationship": "uses"
+    },
+    {
+      "from": "beginner",
+      "to": "instant",
+      "relationship": "uses"
+    },
+    {
+      "from": "tutorial",
+      "to": "draft",
+      "relationship": "uses"
+    },
+    {
+      "from": "beginner",
+      "to": "draft",
+      "relationship": "uses"
+    },
+    {
+      "from": "tutorial",
+      "to": "aigenerated",
+      "relationship": "uses"
+    },
+    {
+      "from": "beginner",
+      "to": "aigenerated",
+      "relationship": "uses"
+    },
+    {
+      "from": "tutorial",
+      "to": "sticky",
+      "relationship": "uses"
+    },
+    {
+      "from": "beginner",
+      "to": "sticky",
+      "relationship": "uses"
+    },
+    {
+      "from": "beginner",
+      "to": "groups",
+      "relationship": "uses"
+    },
+    {
+      "from": "beginner",
+      "to": "triggers",
+      "relationship": "uses"
+    },
+    {
+      "from": "tutorial",
+      "to": "autogenerated",
+      "relationship": "uses"
+    },
+    {
+      "from": "beginner",
+      "to": "autogenerated",
+      "relationship": "uses"
+    },
+    {
+      "from": "tutorial",
+      "to": "rest",
+      "relationship": "uses"
+    },
+    {
+      "from": "beginner",
+      "to": "rest",
+      "relationship": "uses"
+    },
+    {
+      "from": "tutorial",
+      "to": "concurrency",
+      "relationship": "uses"
+    },
+    {
+      "from": "beginner",
+      "to": "reference",
+      "relationship": "uses"
+    },
+    {
+      "from": "beginner",
+      "to": "concurrency",
+      "relationship": "uses"
+    },
+    {
+      "from": "tutorial",
+      "to": "caching",
+      "relationship": "uses"
+    },
+    {
+      "from": "beginner",
+      "to": "caching",
+      "relationship": "uses"
+    },
+    {
+      "from": "tutorial",
+      "to": "step",
+      "relationship": "uses"
+    },
+    {
+      "from": "beginner",
+      "to": "step",
+      "relationship": "uses"
+    },
+    {
+      "from": "concept",
+      "to": "testing",
+      "relationship": "uses"
+    },
+    {
+      "from": "step",
+      "to": "tutorial",
+      "relationship": "uses"
+    },
+    {
+      "from": "concept",
+      "to": "caching",
+      "relationship": "uses"
+    },
+    {
+      "from": "concept",
+      "to": "retries",
+      "relationship": "uses"
+    },
+    {
+      "from": "error",
+      "to": "tutorial",
+      "relationship": "uses"
+    },
+    {
+      "from": "error",
+      "to": "beginner",
+      "relationship": "uses"
+    },
+    {
+      "from": "concept",
+      "to": "early",
+      "relationship": "uses"
+    },
+    {
+      "from": "error",
+      "to": "concept",
+      "relationship": "uses"
+    },
+    {
+      "from": "concept",
+      "to": "environment",
+      "relationship": "uses"
+    },
+    {
+      "from": "java",
+      "to": "tutorial",
+      "relationship": "uses"
+    },
+    {
+      "from": "java",
+      "to": "beginner",
+      "relationship": "uses"
+    },
+    {
+      "from": "typescript",
+      "to": "triggers",
+      "relationship": "uses"
+    },
+    {
+      "from": "typescript",
+      "to": "tutorial",
+      "relationship": "uses"
+    },
+    {
+      "from": "typescript",
+      "to": "beginner",
+      "relationship": "uses"
+    },
+    {
+      "from": "typescript",
+      "to": "apps",
+      "relationship": "uses"
+    },
+    {
+      "from": "typescript",
+      "to": "roles",
+      "relationship": "uses"
+    },
+    {
+      "from": "typescript",
+      "to": "groups",
+      "relationship": "uses"
+    },
+    {
+      "from": "typescript",
+      "to": "autogenerated",
+      "relationship": "uses"
+    },
+    {
+      "from": "typescript",
+      "to": "trigger",
+      "relationship": "uses"
+    },
+    {
+      "from": "typescript",
+      "to": "suspend",
+      "relationship": "uses"
+    },
+    {
+      "from": "typescript",
+      "to": "flows",
+      "relationship": "uses"
+    },
+    {
+      "from": "typescript",
+      "to": "resources",
+      "relationship": "uses"
+    },
+    {
+      "from": "typescript",
+      "to": "rest",
+      "relationship": "uses"
+    },
+    {
+      "from": "typescript",
+      "to": "workflows",
+      "relationship": "uses"
+    },
+    {
+      "from": "python",
+      "to": "tutorial",
+      "relationship": "uses"
+    },
+    {
+      "from": "python",
+      "to": "beginner",
+      "relationship": "uses"
+    },
+    {
+      "from": "quickstart",
+      "to": "tutorial",
+      "relationship": "uses"
+    },
+    {
+      "from": "quickstart",
+      "to": "beginner",
+      "relationship": "uses"
+    },
+    {
+      "from": "rest",
+      "to": "tutorial",
+      "relationship": "uses"
+    },
+    {
+      "from": "rest",
+      "to": "beginner",
+      "relationship": "uses"
+    },
+    {
+      "from": "rest",
+      "to": "typescript",
+      "relationship": "uses"
+    },
+    {
+      "from": "rust",
+      "to": "windmill",
+      "relationship": "uses"
+    },
+    {
+      "from": "rust",
+      "to": "meta",
+      "relationship": "uses"
+    },
+    {
+      "from": "rust",
+      "to": "advanced",
+      "relationship": "uses"
+    },
+    {
+      "from": "rust",
+      "to": "triggers",
+      "relationship": "uses"
+    },
+    {
+      "from": "rust",
+      "to": "tutorial",
+      "relationship": "uses"
+    },
+    {
+      "from": "rust",
+      "to": "beginner",
+      "relationship": "uses"
+    },
+    {
+      "from": "rust",
+      "to": "apps",
+      "relationship": "uses"
+    },
+    {
+      "from": "rust",
+      "to": "dependency",
+      "relationship": "uses"
+    },
+    {
+      "from": "rust",
+      "to": "roles",
+      "relationship": "uses"
+    },
+    {
+      "from": "rust",
+      "to": "groups",
+      "relationship": "uses"
+    },
+    {
+      "from": "rust",
+      "to": "autogenerated",
+      "relationship": "uses"
+    },
+    {
+      "from": "rust",
+      "to": "trigger",
+      "relationship": "uses"
+    },
+    {
+      "from": "rust",
+      "to": "suspend",
+      "relationship": "uses"
+    },
+    {
+      "from": "rust",
+      "to": "flows",
+      "relationship": "uses"
+    },
+    {
+      "from": "rust",
+      "to": "draft",
+      "relationship": "uses"
+    },
+    {
+      "from": "rust",
+      "to": "versioning",
+      "relationship": "uses"
+    },
+    {
+      "from": "rust",
+      "to": "jobs",
+      "relationship": "uses"
+    },
+    {
+      "from": "rust",
+      "to": "commandline",
+      "relationship": "uses"
+    },
+    {
+      "from": "rust",
+      "to": "resources",
+      "relationship": "uses"
+    },
+    {
+      "from": "rust",
+      "to": "api",
+      "relationship": "uses"
+    },
+    {
+      "from": "flows",
+      "to": "tutorial",
+      "relationship": "uses"
+    },
+    {
+      "from": "flows",
+      "to": "beginner",
+      "relationship": "uses"
+    },
+    {
+      "from": "flows",
+      "to": "typescript",
+      "relationship": "uses"
+    },
+    {
+      "from": "triggers",
+      "to": "typescript",
+      "relationship": "uses"
+    },
+    {
+      "from": "triggers",
+      "to": "tutorial",
+      "relationship": "uses"
+    },
+    {
+      "from": "triggers",
+      "to": "beginner",
+      "relationship": "uses"
+    },
+    {
+      "from": "triggers",
+      "to": "concept",
+      "relationship": "uses"
+    },
+    {
+      "from": "tutorial",
+      "to": "commandline",
+      "relationship": "uses"
+    },
+    {
+      "from": "beginner",
+      "to": "commandline",
+      "relationship": "uses"
+    },
+    {
+      "from": "tutorial",
+      "to": "dependency",
+      "relationship": "uses"
+    },
+    {
+      "from": "beginner",
+      "to": "dependency",
+      "relationship": "uses"
+    },
+    {
+      "from": "running",
+      "to": "tutorial",
+      "relationship": "uses"
+    },
+    {
+      "from": "running",
+      "to": "beginner",
+      "relationship": "uses"
+    },
+    {
+      "from": "tutorial",
+      "to": "audit",
+      "relationship": "uses"
+    },
+    {
+      "from": "beginner",
+      "to": "audit",
+      "relationship": "uses"
+    }
+  ],
+  "layers": {
+    "1": "Basic Features",
+    "2": "Core Concepts",
+    "3": "Tools and SDKs",
+    "4": "Deployment and Advanced"
+  }
+}

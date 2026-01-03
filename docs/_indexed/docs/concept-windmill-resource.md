@@ -7,6 +7,44 @@ tags: ["windmill", "resources", "concept"]
 
 <!--
 <doc_metadata>
+  <type>guide</type>
+  <category>windmill</category>
+  <title>Resources</title>
+  <description>&lt;!-- &lt;doc_metadata&gt; &lt;type&gt;reference&lt;/type&gt; &lt;category&gt;cli&lt;/category&gt; &lt;title&gt;Windmill CLI Resource Commands&lt;/title&gt; &lt;description&gt;Manage resources via CLI&lt;/description&gt; &lt;created_at&gt;2025-12-28T00:00:00Z&lt;/</description>
+  <created_at>2026-01-02T19:55:27.493210</created_at>
+  <updated_at>2026-01-02T19:55:27.493210</updated_at>
+  <language>en</language>
+  <sections count="4">
+    <section name="Listing resources" level="2"/>
+    <section name="Pushing a resource" level="2"/>
+    <section name="Arguments" level="3"/>
+    <section name="Resource specification" level="3"/>
+  </sections>
+  <features>
+    <feature>arguments</feature>
+    <feature>listing_resources</feature>
+    <feature>pushing_a_resource</feature>
+    <feature>resource_specification</feature>
+    <feature>wmill_resource</feature>
+  </features>
+  <dependencies>
+    <dependency type="crate">wmill</dependency>
+    <dependency type="feature">meta/windmill/index-57</dependency>
+  </dependencies>
+  <related_entities>
+    <entity relationship="uses">./../../core_concepts/3_resources_and_types/index.mdx</entity>
+  </related_entities>
+  <examples count="4">
+    <example type="code">Code examples included</example>
+  </examples>
+  <difficulty_level>intermediate</difficulty_level>
+  <estimated_reading_time>2</estimated_reading_time>
+  <tags>windmill,resources,concept</tags>
+</doc_metadata>
+-->
+
+<!--
+<doc_metadata>
   <type>reference</type>
   <category>cli</category>
   <title>Windmill CLI Resource Commands</title>

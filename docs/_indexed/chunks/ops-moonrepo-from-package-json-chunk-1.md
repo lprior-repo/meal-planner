@@ -3,9 +3,47 @@ doc_id: ops/moonrepo/from-package-json
 chunk_id: ops/moonrepo/from-package-json#chunk-1
 heading_path: ["migrate from-package-json"]
 chunk_type: prose
-tokens: 261
-summary: "migrate from-package-json"
+tokens: 364
+summary: "<!--"
 ---
+
+<!--
+<doc_metadata>
+  <type>guide</type>
+  <category>build-tools</category>
+  <title>migrate from-package-json</title>
+  <description>Use the `moon migrate from-package-json &lt;project&gt;` sub-command to migrate a project&apos;s `package.json` to our [`moon.yml`](/docs/config/project) format. When ran, the following changes are made:</description>
+  <created_at>2026-01-02T19:55:26.918410</created_at>
+  <updated_at>2026-01-02T19:55:26.918410</updated_at>
+  <language>en</language>
+  <sections count="2">
+    <section name="Arguments" level="3"/>
+    <section name="Caveats" level="2"/>
+  </sections>
+  <features>
+    <feature>arguments</feature>
+    <feature>caveats</feature>
+  </features>
+  <related_entities>
+    <entity relationship="uses">/docs/config/project</entity>
+    <entity relationship="uses">/docs/config/project</entity>
+    <entity relationship="uses">/docs/config/project</entity>
+    <entity relationship="uses">/docs/config/workspace</entity>
+    <entity relationship="uses"></entity>
+    <entity relationship="uses">/docs/config/project</entity>
+    <entity relationship="uses">/docs/config/workspace</entity>
+    <entity relationship="uses">/docs/config/project</entity>
+    <entity relationship="uses">/docs/faq</entity>
+    <entity relationship="uses">/docs/config/project</entity>
+  </related_entities>
+  <examples count="4">
+    <example type="code">Code examples included</example>
+  </examples>
+  <difficulty_level>intermediate</difficulty_level>
+  <estimated_reading_time>3</estimated_reading_time>
+  <tags>migrate,advanced,operations,moonrepo</tags>
+</doc_metadata>
+-->
 
 # migrate from-package-json
 

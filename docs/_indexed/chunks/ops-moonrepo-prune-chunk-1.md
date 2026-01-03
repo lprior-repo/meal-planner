@@ -3,9 +3,42 @@ doc_id: ops/moonrepo/prune
 chunk_id: ops/moonrepo/prune#chunk-1
 heading_path: ["docker prune"]
 chunk_type: prose
-tokens: 143
-summary: "docker prune"
+tokens: 237
+summary: "<!--"
 ---
+
+<!--
+<doc_metadata>
+  <type>guide</type>
+  <category>build-tools</category>
+  <title>docker prune</title>
+  <description>The `moon docker prune` command will reduce the overall filesize of the Docker environment by installing production only dependencies for projects that were scaffolded, and removing any applicable ext</description>
+  <created_at>2026-01-02T19:55:26.910122</created_at>
+  <updated_at>2026-01-02T19:55:26.910122</updated_at>
+  <language>en</language>
+  <sections count="1">
+    <section name="Configuration" level="3"/>
+  </sections>
+  <features>
+    <feature>configuration</feature>
+  </features>
+  <dependencies>
+    <dependency type="service">docker</dependency>
+  </dependencies>
+  <related_entities>
+    <entity relationship="uses">/docs/guides/docker</entity>
+    <entity relationship="uses">/docs/commands/docker/scaffold</entity>
+    <entity relationship="uses">/docs/commands/docker/file</entity>
+    <entity relationship="uses">/docs/config/workspace</entity>
+  </related_entities>
+  <examples count="1">
+    <example type="code">Code examples included</example>
+  </examples>
+  <difficulty_level>beginner</difficulty_level>
+  <estimated_reading_time>1</estimated_reading_time>
+  <tags>docker,operations,moonrepo</tags>
+</doc_metadata>
+-->
 
 # docker prune
 

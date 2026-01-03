@@ -3,9 +3,63 @@ doc_id: meta/windmill/index-13
 chunk_id: meta/windmill/index-13#chunk-1
 heading_path: ["Scaling workers"]
 chunk_type: code
-tokens: 478
-summary: "import DocCard from '@site/src/components/DocCard';"
+tokens: 611
+summary: "<!--"
 ---
+
+<!--
+<doc_metadata>
+  <type>reference</type>
+  <category>windmill</category>
+  <title>Script editor</title>
+  <description>import DocCard from &apos;@site/src/components/DocCard&apos;; import Tabs from &apos;@theme/Tabs&apos;; import TabItem from &apos;@theme/TabItem&apos;;</description>
+  <created_at>2026-01-02T19:55:28.165823</created_at>
+  <updated_at>2026-01-02T19:55:28.165823</updated_at>
+  <language>en</language>
+  <sections count="3">
+    <section name="Script editor features" level="2"/>
+    <section name="Workflows as code" level="2"/>
+    <section name="Code editor features" level="2"/>
+  </sections>
+  <features>
+    <feature>code_editor_features</feature>
+    <feature>js_main</feature>
+    <feature>python_main</feature>
+    <feature>script_editor_features</feature>
+    <feature>workflows_as_code</feature>
+  </features>
+  <dependencies>
+    <dependency type="feature">meta/windmill/index-97</dependency>
+    <dependency type="feature">meta/windmill/index-99</dependency>
+    <dependency type="feature">meta/windmill/index-87</dependency>
+    <dependency type="feature">meta/windmill/index-88</dependency>
+    <dependency type="feature">meta/windmill/index-89</dependency>
+    <dependency type="feature">meta/windmill/index-90</dependency>
+    <dependency type="feature">meta/windmill/index-91</dependency>
+    <dependency type="feature">meta/windmill/index-27</dependency>
+    <dependency type="feature">meta/windmill/index-17</dependency>
+    <dependency type="feature">tutorial/windmill/1-flow-editor</dependency>
+  </dependencies>
+  <related_entities>
+    <entity relationship="uses">../getting_started/6_flows_quickstart/index.mdx</entity>
+    <entity relationship="uses">../apps/3_app-runnable-panel.mdx</entity>
+    <entity relationship="uses">../getting_started/8_triggers/index.mdx</entity>
+    <entity relationship="uses">../getting_started/0_scripts_quickstart/1_typescript_quickstart/index.mdx</entity>
+    <entity relationship="uses">../getting_started/0_scripts_quickstart/2_python_quickstart/index.mdx</entity>
+    <entity relationship="uses">../getting_started/0_scripts_quickstart/3_go_quickstart/index.mdx</entity>
+    <entity relationship="uses">../getting_started/0_scripts_quickstart/4_bash_quickstart/index.mdx</entity>
+    <entity relationship="uses">../getting_started/0_scripts_quickstart/5_sql_quickstart/index.mdx</entity>
+    <entity relationship="uses">../core_concepts/13_json_schema_and_parsing/index.mdx</entity>
+    <entity relationship="uses">../code_editor/index.mdx</entity>
+  </related_entities>
+  <examples count="3">
+    <example type="code">Code examples included</example>
+  </examples>
+  <difficulty_level>intermediate</difficulty_level>
+  <estimated_reading_time>3</estimated_reading_time>
+  <tags>windmill,meta,advanced,script</tags>
+</doc_metadata>
+-->
 
 import DocCard from '@site/src/components/DocCard';
 import Tabs from '@theme/Tabs';

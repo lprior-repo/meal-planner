@@ -3,9 +3,41 @@ doc_id: ops/tandoor/unraid
 chunk_id: ops/tandoor/unraid#chunk-1
 heading_path: ["Unraid"]
 chunk_type: prose
-tokens: 163
-summary: "Unraid"
+tokens: 254
+summary: "<!--"
 ---
+
+<!--
+<doc_metadata>
+  <type>guide</type>
+  <category>recipes</category>
+  <title>Unraid</title>
+  <description>!!! info &quot;Community Contributed&quot; This guide was contributed by the community and is neither officially supported, nor updated or tested.</description>
+  <created_at>2026-01-02T19:55:27.317220</created_at>
+  <updated_at>2026-01-02T19:55:27.317220</updated_at>
+  <language>en</language>
+  <sections count="5">
+    <section name="Installation" level="2"/>
+    <section name="Install Community Applications" level="3"/>
+    <section name="Locate and install Tandoor Recipes" level="3"/>
+    <section name="Configure settings" level="3"/>
+    <section name="Access website" level="3"/>
+  </sections>
+  <features>
+    <feature>access_website</feature>
+    <feature>configure_settings</feature>
+    <feature>install_community_applications</feature>
+    <feature>installation</feature>
+    <feature>locate_and_install_tandoor_recipes</feature>
+  </features>
+  <dependencies>
+    <dependency type="service">docker</dependency>
+  </dependencies>
+  <difficulty_level>beginner</difficulty_level>
+  <estimated_reading_time>1</estimated_reading_time>
+  <tags>unraid,tandoor,operations</tags>
+</doc_metadata>
+-->
 
 # Unraid
 

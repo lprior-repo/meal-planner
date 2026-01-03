@@ -3,9 +3,43 @@ doc_id: ops/windmill/installation
 chunk_id: ops/windmill/installation#chunk-1
 heading_path: ["Installation"]
 chunk_type: code
-tokens: 236
+tokens: 317
 summary: "<!--"
 ---
+
+<!--
+<doc_metadata>
+  <type>guide</type>
+  <category>windmill</category>
+  <title>Installation</title>
+  <description>&lt;!-- &lt;doc_metadata&gt; &lt;type&gt;reference&lt;/type&gt; &lt;category&gt;cli&lt;/category&gt; &lt;title&gt;Windmill CLI Installation&lt;/title&gt; &lt;description&gt;Install and configure Windmill CLI&lt;/description&gt; &lt;created_at&gt;2025-12-28T00:00:</description>
+  <created_at>2026-01-02T19:55:27.491248</created_at>
+  <updated_at>2026-01-02T19:55:27.491248</updated_at>
+  <language>en</language>
+  <sections count="5">
+    <section name="Upgrade wmill" level="2"/>
+    <section name="Completion" level="2"/>
+    <section name="Bash" level="3"/>
+    <section name="Zsh" level="3"/>
+    <section name="Fish" level="3"/>
+  </sections>
+  <features>
+    <feature>bash</feature>
+    <feature>completion</feature>
+    <feature>fish</feature>
+    <feature>upgrade_wmill</feature>
+  </features>
+  <dependencies>
+    <dependency type="crate">wmill</dependency>
+  </dependencies>
+  <examples count="7">
+    <example type="code">Code examples included</example>
+  </examples>
+  <difficulty_level>beginner</difficulty_level>
+  <estimated_reading_time>1</estimated_reading_time>
+  <tags>windmill,installation,operations</tags>
+</doc_metadata>
+-->
 
 <!--
 <doc_metadata>

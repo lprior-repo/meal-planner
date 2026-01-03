@@ -2,8 +2,34 @@
 id: concept/tandoor/templating
 title: "Templating"
 category: concept
-tags: ["tandoor", "concept", "templating"]
+tags: ["templating", "tandoor", "concept"]
 ---
+
+<!--
+<doc_metadata>
+  <type>guide</type>
+  <category>recipes</category>
+  <title>Templating</title>
+  <description>!!! danger The version containing Templating is not yet released! This documentation is only to illustrate the pending changes facilitate the discussion.</description>
+  <created_at>2026-01-02T19:55:27.279659</created_at>
+  <updated_at>2026-01-02T19:55:27.279659</updated_at>
+  <language>en</language>
+  <sections count="2">
+    <section name="Using Templating" level="2"/>
+    <section name="Technical Reasoning" level="2"/>
+  </sections>
+  <features>
+    <feature>technical_reasoning</feature>
+    <feature>using_templating</feature>
+  </features>
+  <examples count="1">
+    <example type="code">Code examples included</example>
+  </examples>
+  <difficulty_level>intermediate</difficulty_level>
+  <estimated_reading_time>2</estimated_reading_time>
+  <tags>templating,tandoor,concept</tags>
+</doc_metadata>
+-->
 
 # Templating
 

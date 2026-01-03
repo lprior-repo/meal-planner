@@ -3,9 +3,50 @@ doc_id: tutorial/windmill/15-sleep
 chunk_id: tutorial/windmill/15-sleep#chunk-1
 heading_path: ["Sleeps / Delays in flows"]
 chunk_type: prose
-tokens: 434
+tokens: 540
 summary: "<!--"
 ---
+
+<!--
+<doc_metadata>
+  <type>tutorial</type>
+  <category>windmill</category>
+  <title>Sleeps / Delays in flows</title>
+  <description>&lt;!-- &lt;doc_metadata&gt; &lt;type&gt;reference&lt;/type&gt; &lt;category&gt;flows&lt;/category&gt; &lt;title&gt;Sleep/Delays&lt;/title&gt; &lt;description&gt;Suspend flow execution for a specified duration&lt;/description&gt; &lt;created_at&gt;2025-12-28T00:0</description>
+  <created_at>2026-01-02T19:55:27.952422</created_at>
+  <updated_at>2026-01-02T19:55:27.952422</updated_at>
+  <language>en</language>
+  <sections count="2">
+    <section name="How to do it" level="2"/>
+    <section name="Keep control of slept steps" level="2"/>
+  </sections>
+  <features>
+    <feature>how_to_do_it</feature>
+    <feature>keep_control_of_slept_steps</feature>
+  </features>
+  <dependencies>
+    <dependency type="feature">meta/windmill/index-34</dependency>
+    <dependency type="feature">tutorial/windmill/11-flow-approval</dependency>
+    <dependency type="feature">ops/windmill/14-retries</dependency>
+    <dependency type="feature">concept/windmill/2-early-stop</dependency>
+    <dependency type="feature">meta/windmill/index-97</dependency>
+    <dependency type="feature">meta/windmill/index-76</dependency>
+  </dependencies>
+  <related_entities>
+    <entity relationship="uses">../core_concepts/1_scheduling/index.mdx</entity>
+    <entity relationship="uses">./11_flow_approval.mdx</entity>
+    <entity relationship="uses">./14_retries.md</entity>
+    <entity relationship="uses">./2_early_stop.md</entity>
+    <entity relationship="uses">../getting_started/6_flows_quickstart/index.mdx</entity>
+    <entity relationship="uses">../assets/flows/sleep_toggle.png.webp</entity>
+    <entity relationship="uses">../core_concepts/5_monitor_past_and_future_runs/index.mdx</entity>
+    <entity relationship="uses">../assets/flows/sleep_run_menu.png.webp</entity>
+  </related_entities>
+  <difficulty_level>beginner</difficulty_level>
+  <estimated_reading_time>2</estimated_reading_time>
+  <tags>windmill,tutorial,beginner,sleeps</tags>
+</doc_metadata>
+-->
 
 <!--
 <doc_metadata>

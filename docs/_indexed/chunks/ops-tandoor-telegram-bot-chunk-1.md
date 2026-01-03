@@ -3,9 +3,35 @@ doc_id: ops/tandoor/telegram-bot
 chunk_id: ops/tandoor/telegram-bot#chunk-1
 heading_path: ["Telegram Bot"]
 chunk_type: prose
-tokens: 176
-summary: "Telegram Bot"
+tokens: 252
+summary: "<!--"
 ---
+
+<!--
+<doc_metadata>
+  <type>guide</type>
+  <category>recipes</category>
+  <title>Telegram Bot</title>
+  <description>The telegram bot is meant to simplify certain interactions with Tandoor. It is currently very basic but might be expanded in the future.</description>
+  <created_at>2026-01-02T19:55:27.278207</created_at>
+  <updated_at>2026-01-02T19:55:27.278207</updated_at>
+  <language>en</language>
+  <sections count="2">
+    <section name="Shopping Bot" level="2"/>
+    <section name="Resetting" level="3"/>
+  </sections>
+  <features>
+    <feature>resetting</feature>
+    <feature>shopping_bot</feature>
+  </features>
+  <examples count="1">
+    <example type="code">Code examples included</example>
+  </examples>
+  <difficulty_level>intermediate</difficulty_level>
+  <estimated_reading_time>2</estimated_reading_time>
+  <tags>telegram,tandoor,operations</tags>
+</doc_metadata>
+-->
 
 # Telegram Bot
 

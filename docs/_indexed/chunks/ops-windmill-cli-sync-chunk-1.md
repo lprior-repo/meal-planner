@@ -3,9 +3,31 @@ doc_id: ops/windmill/cli-sync
 chunk_id: ops/windmill/cli-sync#chunk-1
 heading_path: ["CLI sync"]
 chunk_type: prose
-tokens: 152
-summary: "import DocCard from '@site/src/components/DocCard';"
+tokens: 188
+summary: "<!--"
 ---
+
+<!--
+<doc_metadata>
+  <type>guide</type>
+  <category>windmill</category>
+  <title>CLI sync</title>
+  <description>import DocCard from &apos;@site/src/components/DocCard&apos;;</description>
+  <created_at>2026-01-02T19:55:27.376392</created_at>
+  <updated_at>2026-01-02T19:55:27.376392</updated_at>
+  <language>en</language>
+  <dependencies>
+    <dependency type="crate">wmill</dependency>
+    <dependency type="feature">meta/windmill/index-14</dependency>
+  </dependencies>
+  <related_entities>
+    <entity relationship="uses">../3_cli/index.mdx</entity>
+  </related_entities>
+  <difficulty_level>beginner</difficulty_level>
+  <estimated_reading_time>1</estimated_reading_time>
+  <tags>windmill,cli,operations</tags>
+</doc_metadata>
+-->
 
 import DocCard from '@site/src/components/DocCard';
 

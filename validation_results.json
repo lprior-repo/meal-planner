@@ -1,0 +1,39 @@
+{
+  "total_checked": 252,
+  "passed": 252,
+  "failed": 0,
+  "by_system": {
+    "tandoor": {
+      "total": 36,
+      "passed": 36,
+      "failed": 0,
+      "issues": []
+    },
+    "fatsecret": {
+      "total": 32,
+      "passed": 32,
+      "failed": 0,
+      "issues": []
+    },
+    "windmill": {
+      "total": 67,
+      "passed": 67,
+      "failed": 0,
+      "issues": []
+    },
+    "moonrepo": {
+      "total": 113,
+      "passed": 113,
+      "failed": 0,
+      "issues": []
+    },
+    "general": {
+      "total": 4,
+      "passed": 4,
+      "failed": 0,
+      "issues": []
+    }
+  },
+  "critical_issues": [],
+  "all_issues": []
+}

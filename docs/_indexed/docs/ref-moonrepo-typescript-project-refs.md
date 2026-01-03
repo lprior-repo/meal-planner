@@ -2,8 +2,67 @@
 id: ref/moonrepo/typescript-project-refs
 title: "TypeScript project references"
 category: ref
-tags: ["reference", "advanced", "typescript", "moonrepo"]
+tags: ["typescript", "advanced", "reference", "moonrepo"]
 ---
+
+<!--
+<doc_metadata>
+  <type>reference</type>
+  <category>build-tools</category>
+  <title>TypeScript project references</title>
+  <description>How to use TypeScript in a monorepo? What are project references? Why use project references? What is the best way to use project references? These are just a handful of questions that are *constantly</description>
+  <created_at>2026-01-02T19:55:27.151992</created_at>
+  <updated_at>2026-01-02T19:55:27.151992</updated_at>
+  <language>en</language>
+  <sections count="33">
+    <section name="Preface" level="2"/>
+    <section name="Configuration" level="2"/>
+    <section name="Root-level" level="3"/>
+    <section name="`tsconfig.json`" level="4"/>
+    <section name="`tsconfig.options.json`" level="4"/>
+    <section name="ECMAScript interoperability" level="5"/>
+    <section name="`.gitignore`" level="4"/>
+    <section name="Project-level" level="3"/>
+    <section name="`tsconfig.json`" level="4"/>
+    <section name="Includes and excludes" level="5"/>
+  </sections>
+  <features>
+    <feature>configuration</feature>
+    <feature>depending_on_other_projects</feature>
+    <feature>do_i_have_to_use_project_references</feature>
+    <feature>ecmascript_interoperability</feature>
+    <feature>editor_integration</feature>
+    <feature>enabling_importsexports_resolution</feature>
+    <feature>gitignore</feature>
+    <feature>how_to_handle_circular_references</feature>
+    <feature>how_to_integrate_with_eslint</feature>
+    <feature>includes_and_excludes</feature>
+    <feature>on_affected_projects</feature>
+    <feature>on_all_projects</feature>
+    <feature>on_an_individual_project</feature>
+    <feature>package_publishing</feature>
+    <feature>preface</feature>
+  </features>
+  <related_entities>
+    <entity relationship="uses"></entity>
+    <entity relationship="uses">/docs/config/toolchain</entity>
+    <entity relationship="uses"></entity>
+    <entity relationship="uses">/docs/config/toolchain</entity>
+    <entity relationship="uses">/docs/config/toolchain</entity>
+    <entity relationship="uses">/docs/config/toolchain</entity>
+    <entity relationship="uses"></entity>
+    <entity relationship="uses">/docs/config/toolchain</entity>
+    <entity relationship="uses"></entity>
+    <entity relationship="uses">/docs/config/toolchain</entity>
+  </related_entities>
+  <examples count="21">
+    <example type="code">Code examples included</example>
+  </examples>
+  <difficulty_level>advanced</difficulty_level>
+  <estimated_reading_time>20</estimated_reading_time>
+  <tags>typescript,advanced,reference,moonrepo</tags>
+</doc_metadata>
+-->
 
 # TypeScript project references
 

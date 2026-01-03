@@ -3,9 +3,40 @@ doc_id: tutorial/windmill/customize-ui
 chunk_id: tutorial/windmill/customize-ui#chunk-1
 heading_path: ["Generated UI"]
 chunk_type: prose
-tokens: 510
-summary: "import DocCard from '@site/src/components/DocCard';"
+tokens: 570
+summary: "<!--"
 ---
+
+<!--
+<doc_metadata>
+  <type>tutorial</type>
+  <category>windmill</category>
+  <title>Generated UI</title>
+  <description>import DocCard from &apos;@site/src/components/DocCard&apos;;</description>
+  <created_at>2026-01-02T19:55:28.163164</created_at>
+  <updated_at>2026-01-02T19:55:28.163164</updated_at>
+  <language>en</language>
+  <dependencies>
+    <dependency type="feature">meta/windmill/index-77</dependency>
+    <dependency type="feature">meta/windmill/index-27</dependency>
+    <dependency type="feature">tutorial/windmill/settings</dependency>
+    <dependency type="feature">meta/windmill/index-88</dependency>
+    <dependency type="feature">meta/windmill/index-46</dependency>
+    <dependency type="feature">meta/windmill/index-57</dependency>
+  </dependencies>
+  <related_entities>
+    <entity relationship="uses">../core_concepts/6_auto_generated_uis/index.mdx</entity>
+    <entity relationship="uses">../core_concepts/13_json_schema_and_parsing/index.mdx</entity>
+    <entity relationship="uses">./settings.mdx</entity>
+    <entity relationship="uses">../getting_started/0_scripts_quickstart/2_python_quickstart/index.mdx</entity>
+    <entity relationship="uses">../core_concepts/2_variables_and_secrets/index.mdx</entity>
+    <entity relationship="uses">../core_concepts/3_resources_and_types/index.mdx</entity>
+  </related_entities>
+  <difficulty_level>beginner</difficulty_level>
+  <estimated_reading_time>2</estimated_reading_time>
+  <tags>windmill,tutorial,beginner,generated</tags>
+</doc_metadata>
+-->
 
 import DocCard from '@site/src/components/DocCard';
 

@@ -1,0 +1,157 @@
+{
+  "total_docs": 252,
+  "type_distribution": {
+    "guide": 187,
+    "reference": 37,
+    "tutorial": 28
+  },
+  "category_distribution": {
+    "api": 31,
+    "core": 6,
+    "build-tools": 112,
+    "recipes": 36,
+    "windmill": 67
+  },
+  "difficulty_distribution": {
+    "intermediate": 100,
+    "beginner": 120,
+    "advanced": 32
+  },
+  "avg_reading_time": 2.9047619047619047,
+  "avg_sections": 5.682539682539683,
+  "avg_features": 6.670634920634921,
+  "avg_tags": 3.488095238095238,
+  "quality_issues": [
+    {
+      "file": "concept-tandoor-ai.md",
+      "issue": "Title too short: \"Ai\""
+    },
+    {
+      "file": "concept-windmill-flow.md",
+      "issue": "Duplicate section names: {'Examples', 'Arguments'}"
+    },
+    {
+      "file": "concept-windmill-script.md",
+      "issue": "Duplicate section names: {'Examples', 'Arguments'}"
+    },
+    {
+      "file": "concept-windmill-user.md",
+      "issue": "Duplicate section names: {'Examples', 'Arguments'}"
+    },
+    {
+      "file": "concept-windmill-variable.md",
+      "issue": "Duplicate section names: {'Arguments', 'Options'}"
+    },
+    {
+      "file": "ops-moonrepo-extensions.md",
+      "issue": "Duplicate section names: {'Arguments'}"
+    },
+    {
+      "file": "ops-moonrepo-profile.md",
+      "issue": "Duplicate section names: {'Record a profile', 'Analyze in Chrome'}"
+    },
+    {
+      "file": "ops-moonrepo-toolchain.md",
+      "issue": "Duplicate section names: {'`version`'}"
+    },
+    {
+      "file": "ops-windmill-gitsync-settings.md",
+      "issue": "Duplicate section names: {'Options'}"
+    },
+    {
+      "file": "ops-windmill-rust-client.md",
+      "issue": "Duplicate section names: {'Usage'}"
+    },
+    {
+      "file": "ops-windmill-sync.md",
+      "issue": "Duplicate section names: {'Options'}"
+    },
+    {
+      "file": "ops-windmill-workspace-management.md",
+      "issue": "Duplicate section names: {'Examples', 'Arguments'}"
+    },
+    {
+      "file": "ref-moonrepo-typescript-project-refs.md",
+      "issue": "Duplicate section names: {'`tsconfig.json`'}"
+    },
+    {
+      "file": "tutorial-windmill-22-while-loops.md",
+      "issue": "Duplicate section names: {'Early stop / Break'}"
+    }
+  ],
+  "by_system": {
+    "fatsecret": {
+      "count": 32,
+      "avg_reading_time": 2.25,
+      "avg_sections": 7.8125,
+      "types": {
+        "guide": 5,
+        "reference": 24,
+        "tutorial": 3
+      },
+      "difficulties": {
+        "intermediate": 16,
+        "advanced": 2,
+        "beginner": 14
+      }
+    },
+    "general": {
+      "count": 4,
+      "avg_reading_time": 1.5,
+      "avg_sections": 7.5,
+      "types": {
+        "guide": 3,
+        "reference": 1
+      },
+      "difficulties": {
+        "intermediate": 2,
+        "beginner": 2
+      }
+    },
+    "moonrepo": {
+      "count": 113,
+      "avg_reading_time": 2.7787610619469025,
+      "avg_sections": 5.433628318584071,
+      "types": {
+        "guide": 102,
+        "reference": 5,
+        "tutorial": 6
+      },
+      "difficulties": {
+        "intermediate": 45,
+        "beginner": 54,
+        "advanced": 14
+      }
+    },
+    "tandoor": {
+      "count": 36,
+      "avg_reading_time": 3.138888888888889,
+      "avg_sections": 5.111111111111111,
+      "types": {
+        "guide": 33,
+        "reference": 1,
+        "tutorial": 2
+      },
+      "difficulties": {
+        "beginner": 13,
+        "intermediate": 15,
+        "advanced": 8
+      }
+    },
+    "windmill": {
+      "count": 67,
+      "avg_reading_time": 3.388059701492537,
+      "avg_sections": 5.2835820895522385,
+      "types": {
+        "guide": 44,
+        "reference": 6,
+        "tutorial": 17
+      },
+      "difficulties": {
+        "intermediate": 22,
+        "beginner": 37,
+        "advanced": 8
+      }
+    }
+  }
+}

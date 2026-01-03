@@ -2,8 +2,28 @@
 id: ops/tandoor/wsl
 title: "Ubuntu Installation on Windows (WSL) and Docker Desktop"
 category: ops
-tags: ["tandoor", "ubuntu", "operations", "docker"]
+tags: ["ubuntu", "tandoor", "operations", "docker"]
 ---
+
+<!--
+<doc_metadata>
+  <type>guide</type>
+  <category>recipes</category>
+  <title>Ubuntu Installation on Windows (WSL) and Docker Desktop</title>
+  <description>!!! info &quot;Community Contributed&quot; This guide was contributed by the community and is neither officially supported, nor updated or tested. Since I cannot test it myself, feedback and improvements are al</description>
+  <created_at>2026-01-02T19:55:27.318481</created_at>
+  <updated_at>2026-01-02T19:55:27.318481</updated_at>
+  <language>en</language>
+  <dependencies>
+    <dependency type="service">postgres</dependency>
+    <dependency type="service">postgresql</dependency>
+    <dependency type="service">docker</dependency>
+  </dependencies>
+  <difficulty_level>intermediate</difficulty_level>
+  <estimated_reading_time>3</estimated_reading_time>
+  <tags>ubuntu,tandoor,operations,docker</tags>
+</doc_metadata>
+-->
 
 !!! info "Community Contributed"
     This guide was contributed by the community and is neither officially supported, nor updated or tested. Since I cannot test it myself, feedback and improvements are always very welcome.

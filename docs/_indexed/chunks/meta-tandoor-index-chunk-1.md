@@ -3,9 +3,51 @@ doc_id: meta/tandoor/index
 chunk_id: meta/tandoor/index#chunk-1
 heading_path: ["Index"]
 chunk_type: prose
-tokens: 167
-summary: "Index"
+tokens: 278
+summary: "<!--"
 ---
+
+<!--
+<doc_metadata>
+  <type>reference</type>
+  <category>recipes</category>
+  <title>Index</title>
+  <description>&lt;h1 align=&quot;center&quot;&gt; &lt;br&gt; &lt;a href=&quot;https://tandoor.dev&quot;&gt;&lt;img src=&quot;https://github.com/vabene1111/recipes/raw/develop/docs/logo_color.svg&quot; height=&quot;256px&quot; width=&quot;256px&quot;&gt;&lt;/a&gt; &lt;br&gt; Tandoor Recipes &lt;br&gt; &lt;/h1</description>
+  <created_at>2026-01-02T19:55:27.281094</created_at>
+  <updated_at>2026-01-02T19:55:27.281094</updated_at>
+  <language>en</language>
+  <sections count="7">
+    <section name="Core Features" level="2"/>
+    <section name="Made by and for power users" level="2"/>
+    <section name="All the must haves" level="2"/>
+    <section name="Your Feedback" level="2"/>
+    <section name="Get in touch" level="2"/>
+    <section name="Roadmap" level="2"/>
+    <section name="About" level="2"/>
+  </sections>
+  <features>
+    <feature>about</feature>
+    <feature>all_the_must_haves</feature>
+    <feature>core_features</feature>
+    <feature>get_in_touch</feature>
+    <feature>made_by_and_for_power_users</feature>
+    <feature>roadmap</feature>
+    <feature>your_feedback</feature>
+  </features>
+  <dependencies>
+    <dependency type="library">requests</dependency>
+    <dependency type="service">postgres</dependency>
+    <dependency type="service">docker</dependency>
+    <dependency type="service">kubernetes</dependency>
+  </dependencies>
+  <related_entities>
+    <entity relationship="uses">preview.png</entity>
+  </related_entities>
+  <difficulty_level>advanced</difficulty_level>
+  <estimated_reading_time>3</estimated_reading_time>
+  <tags>meta,tandoor,index</tags>
+</doc_metadata>
+-->
 
 # Index
 

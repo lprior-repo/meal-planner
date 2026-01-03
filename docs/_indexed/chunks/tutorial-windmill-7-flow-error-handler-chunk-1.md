@@ -3,9 +3,35 @@ doc_id: tutorial/windmill/7-flow-error-handler
 chunk_id: tutorial/windmill/7-flow-error-handler#chunk-1
 heading_path: ["Error handler"]
 chunk_type: prose
-tokens: 327
+tokens: 391
 summary: "<!--"
 ---
+
+<!--
+<doc_metadata>
+  <type>tutorial</type>
+  <category>windmill</category>
+  <title>Error handler</title>
+  <description>&lt;!-- &lt;doc_metadata&gt; &lt;type&gt;reference&lt;/type&gt; &lt;category&gt;flows&lt;/category&gt; &lt;title&gt;Error Handler&lt;/title&gt; &lt;description&gt;Special flow step executed when an error occurs in flow&lt;/description&gt; &lt;created_at&gt;2025-1</description>
+  <created_at>2026-01-02T19:55:27.994997</created_at>
+  <updated_at>2026-01-02T19:55:27.994997</updated_at>
+  <language>en</language>
+  <dependencies>
+    <dependency type="feature">meta/windmill/index-88</dependency>
+    <dependency type="feature">meta/windmill/index-87</dependency>
+    <dependency type="feature">meta/windmill/index-89</dependency>
+  </dependencies>
+  <related_entities>
+    <entity relationship="uses">../getting_started/0_scripts_quickstart/2_python_quickstart/index.mdx</entity>
+    <entity relationship="uses">../getting_started/0_scripts_quickstart/1_typescript_quickstart/index.mdx</entity>
+    <entity relationship="uses">../getting_started/0_scripts_quickstart/3_go_quickstart/index.mdx</entity>
+    <entity relationship="uses">../assets/flows/error_handler_example.png.webp</entity>
+  </related_entities>
+  <difficulty_level>beginner</difficulty_level>
+  <estimated_reading_time>1</estimated_reading_time>
+  <tags>windmill,tutorial,beginner,error</tags>
+</doc_metadata>
+-->
 
 <!--
 <doc_metadata>

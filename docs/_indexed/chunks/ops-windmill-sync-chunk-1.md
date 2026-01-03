@@ -3,9 +3,74 @@ doc_id: ops/windmill/sync
 chunk_id: ops/windmill/sync#chunk-1
 heading_path: ["Sync"]
 chunk_type: code
-tokens: 513
-summary: "import DocCard from '@site/src/components/DocCard';"
+tokens: 660
+summary: "<!--"
 ---
+
+<!--
+<doc_metadata>
+  <type>guide</type>
+  <category>windmill</category>
+  <title>Sync</title>
+  <description>import DocCard from &apos;@site/src/components/DocCard&apos;;</description>
+  <created_at>2026-01-02T19:55:27.500165</created_at>
+  <updated_at>2026-01-02T19:55:27.500165</updated_at>
+  <language>en</language>
+  <sections count="15">
+    <section name="Pulling" level="3"/>
+    <section name="Pushing" level="3"/>
+    <section name="Pull API" level="2"/>
+    <section name="Options" level="3"/>
+    <section name="Push API" level="2"/>
+    <section name="Options" level="3"/>
+    <section name="wmill.yaml" level="2"/>
+    <section name="Basic configuration" level="3"/>
+    <section name="Git branch-specific configuration" level="3"/>
+    <section name="Configuration resolution priority" level="3"/>
+  </sections>
+  <features>
+    <feature>basic_configuration</feature>
+    <feature>cloning_an_instance</feature>
+    <feature>codebase_configuration</feature>
+    <feature>configuration_resolution_priority</feature>
+    <feature>git_branch-specific_configuration</feature>
+    <feature>options</feature>
+    <feature>pull_api</feature>
+    <feature>pulling</feature>
+    <feature>pulling_an_instance</feature>
+    <feature>push_api</feature>
+    <feature>pushing</feature>
+    <feature>pushing_an_instance</feature>
+    <feature>wmill_init</feature>
+    <feature>wmill_sync</feature>
+    <feature>wmillyaml</feature>
+  </features>
+  <dependencies>
+    <dependency type="crate">wmill</dependency>
+    <dependency type="library">react</dependency>
+    <dependency type="service">postgres</dependency>
+    <dependency type="feature">ops/windmill/branch-specific-items</dependency>
+    <dependency type="feature">meta/windmill/index-22</dependency>
+    <dependency type="feature">meta/windmill/index-2</dependency>
+    <dependency type="feature">ops/windmill/workspace-management</dependency>
+  </dependencies>
+  <related_entities>
+    <entity relationship="uses">./branch-specific-items.mdx</entity>
+    <entity relationship="uses">../../cli_local_dev/1_vscode-extension/index.mdx</entity>
+    <entity relationship="uses"></entity>
+    <entity relationship="uses">../11_git_sync/index.mdx</entity>
+    <entity relationship="uses">./workspace-management.md</entity>
+    <entity relationship="uses">./workspace-management.md</entity>
+    <entity relationship="uses">./workspace-management.md</entity>
+  </related_entities>
+  <examples count="8">
+    <example type="code">Code examples included</example>
+  </examples>
+  <difficulty_level>advanced</difficulty_level>
+  <estimated_reading_time>10</estimated_reading_time>
+  <tags>windmill,advanced,sync,operations</tags>
+</doc_metadata>
+-->
 
 import DocCard from '@site/src/components/DocCard';
 

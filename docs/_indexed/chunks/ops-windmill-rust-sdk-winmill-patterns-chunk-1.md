@@ -3,9 +3,65 @@ doc_id: ops/windmill/rust-sdk-winmill-patterns
 chunk_id: ops/windmill/rust-sdk-winmill-patterns#chunk-1
 heading_path: ["Windmill Rust SDK: Complete Reference Guide for AI Coding Agents"]
 chunk_type: prose
-tokens: 261
+tokens: 445
 summary: "<!--"
 ---
+
+<!--
+<doc_metadata>
+  <type>guide</type>
+  <category>windmill</category>
+  <title>Windmill Rust SDK: Complete Reference Guide for AI Coding Agents</title>
+  <description>&lt;!-- &lt;doc_metadata&gt; &lt;type&gt;reference&lt;/type&gt; &lt;category&gt;sdk&lt;/category&gt; &lt;title&gt;Windmill Rust SDK: Complete Reference Guide&lt;/title&gt; &lt;description&gt;Complete reference guide for Windmill Rust scripts including</description>
+  <created_at>2026-01-02T19:55:27.906817</created_at>
+  <updated_at>2026-01-02T19:55:27.906817</updated_at>
+  <language>en</language>
+  <sections count="43">
+    <section name="SDK fundamentals and crate setup" level="2"/>
+    <section name="Inline dependency declaration" level="3"/>
+    <section name="Environment variables automatically available" level="3"/>
+    <section name="Main function signature patterns" level="2"/>
+    <section name="Basic synchronous script" level="3"/>
+    <section name="Async script with SDK access" level="3"/>
+    <section name="Parameter type mappings" level="3"/>
+    <section name="Required versus optional parameters" level="3"/>
+    <section name="Complex input types" level="3"/>
+    <section name="Return types and output serialization" level="2"/>
+  </sections>
+  <features>
+    <feature>async_script_with_sdk_access</feature>
+    <feature>asynchronous_execution_fire_and_forget</feature>
+    <feature>basic_synchronous_script</feature>
+    <feature>build_modes_and_caching</feature>
+    <feature>calling_other_scripts_and_managing_jobs</feature>
+    <feature>complete_code_examples</feature>
+    <feature>complex_input_types</feature>
+    <feature>conclusion</feature>
+    <feature>creating_and_updating_resources</feature>
+    <feature>custom_error_types_with_thiserror</feature>
+    <feature>database_queries_with_tokio-postgres</feature>
+    <feature>error_handling_patterns</feature>
+    <feature>flow_composition_and_data_passing</feature>
+    <feature>how_windmill_surfaces_errors</feature>
+    <feature>http_requests_with_reqwest</feature>
+  </features>
+  <dependencies>
+    <dependency type="crate">wmill</dependency>
+    <dependency type="crate">tokio</dependency>
+    <dependency type="crate">anyhow</dependency>
+    <dependency type="crate">serde</dependency>
+    <dependency type="library">requests</dependency>
+    <dependency type="service">postgres</dependency>
+    <dependency type="service">postgresql</dependency>
+  </dependencies>
+  <examples count="36">
+    <example type="code">Code examples included</example>
+  </examples>
+  <difficulty_level>advanced</difficulty_level>
+  <estimated_reading_time>12</estimated_reading_time>
+  <tags>windmill,rust,advanced,operations</tags>
+</doc_metadata>
+-->
 
 <!--
 <doc_metadata>

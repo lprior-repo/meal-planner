@@ -5,6 +5,31 @@ category: tutorial
 tags: ["windmill", "tutorial", "beginner", "flow"]
 ---
 
+<!--
+<doc_metadata>
+  <type>tutorial</type>
+  <category>windmill</category>
+  <title>Flow editor</title>
+  <description>import DocCard from &apos;@site/src/components/DocCard&apos;; import { Timer, TerminalSquare } from &apos;lucide-react&apos;;</description>
+  <created_at>2026-01-02T19:55:27.964475</created_at>
+  <updated_at>2026-01-02T19:55:27.964475</updated_at>
+  <language>en</language>
+  <dependencies>
+    <dependency type="library">react</dependency>
+    <dependency type="feature">concept/windmill/8-error-handling</dependency>
+    <dependency type="feature">ops/windmill/19-early-return</dependency>
+  </dependencies>
+  <related_entities>
+    <entity relationship="uses">./8_error_handling.mdx</entity>
+    <entity relationship="uses">./19_early_return.mdx</entity>
+    <entity relationship="uses">../assets/flows/flow_example.png</entity>
+  </related_entities>
+  <difficulty_level>beginner</difficulty_level>
+  <estimated_reading_time>4</estimated_reading_time>
+  <tags>windmill,tutorial,beginner,flow</tags>
+</doc_metadata>
+-->
+
 import DocCard from '@site/src/components/DocCard';
 import { Timer, TerminalSquare } from 'lucide-react';
 

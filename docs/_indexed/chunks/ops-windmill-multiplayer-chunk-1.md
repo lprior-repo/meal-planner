@@ -3,9 +3,27 @@ doc_id: ops/windmill/multiplayer
 chunk_id: ops/windmill/multiplayer#chunk-1
 heading_path: ["Multiplayer"]
 chunk_type: prose
-tokens: 101
-summary: "import DocCard from '@site/src/components/DocCard';"
+tokens: 128
+summary: "<!--"
 ---
+
+<!--
+<doc_metadata>
+  <type>guide</type>
+  <category>windmill</category>
+  <title>Multiplayer</title>
+  <description>import DocCard from &apos;@site/src/components/DocCard&apos;;</description>
+  <created_at>2026-01-02T19:55:28.170866</created_at>
+  <updated_at>2026-01-02T19:55:28.170866</updated_at>
+  <language>en</language>
+  <related_entities>
+    <entity relationship="uses">/pricing</entity>
+  </related_entities>
+  <difficulty_level>beginner</difficulty_level>
+  <estimated_reading_time>1</estimated_reading_time>
+  <tags>windmill,multiplayer,operations</tags>
+</doc_metadata>
+-->
 
 import DocCard from '@site/src/components/DocCard';
 

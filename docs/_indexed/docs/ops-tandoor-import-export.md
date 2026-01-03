@@ -2,8 +2,58 @@
 id: ops/tandoor/import-export
 title: "Import Export"
 category: ops
-tags: ["tandoor", "operations", "advanced", "import"]
+tags: ["import", "tandoor", "advanced", "operations"]
 ---
+
+<!--
+<doc_metadata>
+  <type>guide</type>
+  <category>recipes</category>
+  <title>Import Export</title>
+  <description>This application features a very versatile import and export feature in order to offer the best experience possible and allow you to freely choose where your data goes.</description>
+  <created_at>2026-01-02T19:55:27.268853</created_at>
+  <updated_at>2026-01-02T19:55:27.268853</updated_at>
+  <language>en</language>
+  <sections count="23">
+    <section name="Default" level="2"/>
+    <section name="RecipeSage" level="2"/>
+    <section name="Domestica" level="2"/>
+    <section name="Nextcloud" level="2"/>
+    <section name="Mealie" level="2"/>
+    <section name="Chowdown" level="2"/>
+    <section name="Safron" level="2"/>
+    <section name="Paprika" level="2"/>
+    <section name="Pepperplate" level="2"/>
+    <section name="ChefTap" level="2"/>
+  </sections>
+  <features>
+    <feature>cheftap</feature>
+    <feature>chowdown</feature>
+    <feature>cookbookapp</feature>
+    <feature>cookmate</feature>
+    <feature>copymethat</feature>
+    <feature>default</feature>
+    <feature>domestica</feature>
+    <feature>gourmet</feature>
+    <feature>mealie</feature>
+    <feature>mealmaster</feature>
+    <feature>melarecipes</feature>
+    <feature>nextcloud</feature>
+    <feature>openeats</feature>
+    <feature>paprika</feature>
+    <feature>pepperplate</feature>
+  </features>
+  <dependencies>
+    <dependency type="service">docker</dependency>
+  </dependencies>
+  <examples count="2">
+    <example type="code">Code examples included</example>
+  </examples>
+  <difficulty_level>advanced</difficulty_level>
+  <estimated_reading_time>10</estimated_reading_time>
+  <tags>import,tandoor,advanced,operations</tags>
+</doc_metadata>
+-->
 
 # Import Export
 

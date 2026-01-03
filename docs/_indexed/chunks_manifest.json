@@ -1,12 +1,12 @@
 {
-  "generated_at": "2026-01-02T19:47:37.412268",
+  "generated_at": "2026-01-02T19:55:28.692501",
   "total_chunks": 2412,
   "chunks": [
     {
       "chunk_id": "concept/general/ai-documentation-system#chunk-1",
       "doc_id": "concept/general/ai-documentation-system",
       "path": "chunks/concept-general-ai-documentation-system-chunk-1.md",
-      "tokens": 44,
+      "tokens": 169,
       "type": "prose"
     },
     {
@@ -76,7 +76,7 @@
       "chunk_id": "ops/general/architecture#chunk-1",
       "doc_id": "ops/general/architecture",
       "path": "chunks/ops-general-architecture-chunk-1.md",
-      "tokens": 71,
+      "tokens": 202,
       "type": "prose"
     },
     {
@@ -146,7 +146,7 @@
       "chunk_id": "tutorial/general/fatsecret-oauth-setup#chunk-1",
       "doc_id": "tutorial/general/fatsecret-oauth-setup",
       "path": "chunks/tutorial-general-fatsecret-oauth-setup-chunk-1.md",
-      "tokens": 84,
+      "tokens": 201,
       "type": "prose"
     },
     {
@@ -202,7 +202,7 @@
       "chunk_id": "ops/general/moon-ci-pipeline#chunk-1",
       "doc_id": "ops/general/moon-ci-pipeline",
       "path": "chunks/ops-general-moon-ci-pipeline-chunk-1.md",
-      "tokens": 48,
+      "tokens": 149,
       "type": "prose"
     },
     {
@@ -265,7 +265,7 @@
       "chunk_id": "meta/general/readme#chunk-1",
       "doc_id": "meta/general/readme",
       "path": "chunks/meta-general-readme-chunk-1.md",
-      "tokens": 79,
+      "tokens": 230,
       "type": "prose"
     },
     {
@@ -321,7 +321,7 @@
       "chunk_id": "concept/general/recipe-import-pipeline#chunk-1",
       "doc_id": "concept/general/recipe-import-pipeline",
       "path": "chunks/concept-general-recipe-import-pipeline-chunk-1.md",
-      "tokens": 63,
+      "tokens": 178,
       "type": "prose"
     },
     {
@@ -384,7 +384,7 @@
       "chunk_id": "ref/fatsecret/api-food-add-favorite#chunk-1",
       "doc_id": "ref/fatsecret/api-food-add-favorite",
       "path": "chunks/ref-fatsecret-api-food-add-favorite-chunk-1.md",
-      "tokens": 42,
+      "tokens": 118,
       "type": "prose"
     },
     {
@@ -433,7 +433,7 @@
       "chunk_id": "ref/fatsecret/api-food-brands-get#chunk-1",
       "doc_id": "ref/fatsecret/api-food-brands-get",
       "path": "chunks/ref-fatsecret-api-food-brands-get-chunk-1.md",
-      "tokens": 33,
+      "tokens": 136,
       "type": "prose"
     },
     {
@@ -496,7 +496,7 @@
       "chunk_id": "ref/fatsecret/api-food-categories-get#chunk-1",
       "doc_id": "ref/fatsecret/api-food-categories-get",
       "path": "chunks/ref-fatsecret-api-food-categories-get-chunk-1.md",
-      "tokens": 26,
+      "tokens": 114,
       "type": "prose"
     },
     {
@@ -559,7 +559,7 @@
       "chunk_id": "ref/fatsecret/api-food-delete-favorite#chunk-1",
       "doc_id": "ref/fatsecret/api-food-delete-favorite",
       "path": "chunks/ref-fatsecret-api-food-delete-favorite-chunk-1.md",
-      "tokens": 42,
+      "tokens": 118,
       "type": "prose"
     },
     {
@@ -608,7 +608,7 @@
       "chunk_id": "ref/fatsecret/api-food-entries-get#chunk-1",
       "doc_id": "ref/fatsecret/api-food-entries-get",
       "path": "chunks/ref-fatsecret-api-food-entries-get-chunk-1.md",
-      "tokens": 59,
+      "tokens": 135,
       "type": "prose"
     },
     {
@@ -657,7 +657,7 @@
       "chunk_id": "ref/fatsecret/api-food-entry-create#chunk-1",
       "doc_id": "ref/fatsecret/api-food-entry-create",
       "path": "chunks/ref-fatsecret-api-food-entry-create-chunk-1.md",
-      "tokens": 42,
+      "tokens": 118,
       "type": "prose"
     },
     {
@@ -706,7 +706,7 @@
       "chunk_id": "ref/fatsecret/api-food-entry-delete#chunk-1",
       "doc_id": "ref/fatsecret/api-food-entry-delete",
       "path": "chunks/ref-fatsecret-api-food-entry-delete-chunk-1.md",
-      "tokens": 35,
+      "tokens": 106,
       "type": "prose"
     },
     {
@@ -755,7 +755,7 @@
       "chunk_id": "ref/fatsecret/api-food-get-v1#chunk-1",
       "doc_id": "ref/fatsecret/api-food-get-v1",
       "path": "chunks/ref-fatsecret-api-food-get-v1-chunk-1.md",
-      "tokens": 33,
+      "tokens": 154,
       "type": "prose"
     },
     {
@@ -818,7 +818,7 @@
       "chunk_id": "ref/fatsecret/api-food-sub-categories-get#chunk-1",
       "doc_id": "ref/fatsecret/api-food-sub-categories-get",
       "path": "chunks/ref-fatsecret-api-food-sub-categories-get-chunk-1.md",
-      "tokens": 27,
+      "tokens": 115,
       "type": "prose"
     },
     {
@@ -881,7 +881,7 @@
       "chunk_id": "ref/fatsecret/api-foods-get-favorites#chunk-1",
       "doc_id": "ref/fatsecret/api-foods-get-favorites",
       "path": "chunks/ref-fatsecret-api-foods-get-favorites-chunk-1.md",
-      "tokens": 57,
+      "tokens": 131,
       "type": "prose"
     },
     {
@@ -930,7 +930,7 @@
       "chunk_id": "ref/fatsecret/api-foods-search-v1#chunk-1",
       "doc_id": "ref/fatsecret/api-foods-search-v1",
       "path": "chunks/ref-fatsecret-api-foods-search-v1-chunk-1.md",
-      "tokens": 36,
+      "tokens": 148,
       "type": "prose"
     },
     {
@@ -993,7 +993,7 @@
       "chunk_id": "ref/fatsecret/api-foods-search-v3#chunk-1",
       "doc_id": "ref/fatsecret/api-foods-search-v3",
       "path": "chunks/ref-fatsecret-api-foods-search-v3-chunk-1.md",
-      "tokens": 32,
+      "tokens": 119,
       "type": "prose"
     },
     {
@@ -1049,7 +1049,7 @@
       "chunk_id": "ref/fatsecret/api-image-recognition#chunk-1",
       "doc_id": "ref/fatsecret/api-image-recognition",
       "path": "chunks/ref-fatsecret-api-image-recognition-chunk-1.md",
-      "tokens": 29,
+      "tokens": 141,
       "type": "prose"
     },
     {
@@ -1126,7 +1126,7 @@
       "chunk_id": "ref/fatsecret/api-natural-language-processing#chunk-1",
       "doc_id": "ref/fatsecret/api-natural-language-processing",
       "path": "chunks/ref-fatsecret-api-natural-language-processing-chunk-1.md",
-      "tokens": 33,
+      "tokens": 153,
       "type": "prose"
     },
     {
@@ -1210,7 +1210,7 @@
       "chunk_id": "ref/fatsecret/api-profile-create#chunk-1",
       "doc_id": "ref/fatsecret/api-profile-create",
       "path": "chunks/ref-fatsecret-api-profile-create-chunk-1.md",
-      "tokens": 44,
+      "tokens": 131,
       "type": "prose"
     },
     {
@@ -1266,7 +1266,7 @@
       "chunk_id": "ref/fatsecret/api-profile-get-auth#chunk-1",
       "doc_id": "ref/fatsecret/api-profile-get-auth",
       "path": "chunks/ref-fatsecret-api-profile-get-auth-chunk-1.md",
-      "tokens": 42,
+      "tokens": 118,
       "type": "prose"
     },
     {
@@ -1315,7 +1315,7 @@
       "chunk_id": "ref/fatsecret/api-profile-get#chunk-1",
       "doc_id": "ref/fatsecret/api-profile-get",
       "path": "chunks/ref-fatsecret-api-profile-get-chunk-1.md",
-      "tokens": 42,
+      "tokens": 118,
       "type": "prose"
     },
     {
@@ -1364,7 +1364,7 @@
       "chunk_id": "ref/fatsecret/api-recipe-get-v1#chunk-1",
       "doc_id": "ref/fatsecret/api-recipe-get-v1",
       "path": "chunks/ref-fatsecret-api-recipe-get-v1-chunk-1.md",
-      "tokens": 37,
+      "tokens": 141,
       "type": "prose"
     },
     {
@@ -1420,7 +1420,7 @@
       "chunk_id": "ref/fatsecret/api-recipe-types-get#chunk-1",
       "doc_id": "ref/fatsecret/api-recipe-types-get",
       "path": "chunks/ref-fatsecret-api-recipe-types-get-chunk-1.md",
-      "tokens": 35,
+      "tokens": 133,
       "type": "prose"
     },
     {
@@ -1476,7 +1476,7 @@
       "chunk_id": "ref/fatsecret/api-recipes-search-v2#chunk-1",
       "doc_id": "ref/fatsecret/api-recipes-search-v2",
       "path": "chunks/ref-fatsecret-api-recipes-search-v2-chunk-1.md",
-      "tokens": 35,
+      "tokens": 120,
       "type": "prose"
     },
     {
@@ -1532,7 +1532,7 @@
       "chunk_id": "ref/fatsecret/guides-authentication#chunk-1",
       "doc_id": "ref/fatsecret/guides-authentication",
       "path": "chunks/ref-fatsecret-guides-authentication-chunk-1.md",
-      "tokens": 44,
+      "tokens": 183,
       "type": "prose"
     },
     {
@@ -1574,7 +1574,7 @@
       "chunk_id": "ops/fatsecret/guides-error-codes#chunk-1",
       "doc_id": "ops/fatsecret/guides-error-codes",
       "path": "chunks/ops-fatsecret-guides-error-codes-chunk-1.md",
-      "tokens": 40,
+      "tokens": 182,
       "type": "prose"
     },
     {
@@ -1651,7 +1651,7 @@
       "chunk_id": "ops/fatsecret/guides-libraries#chunk-1",
       "doc_id": "ops/fatsecret/guides-libraries",
       "path": "chunks/ops-fatsecret-guides-libraries-chunk-1.md",
-      "tokens": 40,
+      "tokens": 162,
       "type": "prose"
     },
     {
@@ -1714,7 +1714,7 @@
       "chunk_id": "concept/fatsecret/guides-localization#chunk-1",
       "doc_id": "concept/fatsecret/guides-localization",
       "path": "chunks/concept-fatsecret-guides-localization-chunk-1.md",
-      "tokens": 65,
+      "tokens": 213,
       "type": "prose"
     },
     {
@@ -1777,7 +1777,7 @@
       "chunk_id": "tutorial/fatsecret/guides-oauth1-three-legged#chunk-1",
       "doc_id": "tutorial/fatsecret/guides-oauth1-three-legged",
       "path": "chunks/tutorial-fatsecret-guides-oauth1-three-legged-chunk-1.md",
-      "tokens": 81,
+      "tokens": 232,
       "type": "prose"
     },
     {
@@ -1924,7 +1924,7 @@
       "chunk_id": "ref/fatsecret/guides-oauth1#chunk-1",
       "doc_id": "ref/fatsecret/guides-oauth1",
       "path": "chunks/ref-fatsecret-guides-oauth1-chunk-1.md",
-      "tokens": 39,
+      "tokens": 185,
       "type": "prose"
     },
     {
@@ -1994,7 +1994,7 @@
       "chunk_id": "ref/fatsecret/guides-oauth2#chunk-1",
       "doc_id": "ref/fatsecret/guides-oauth2",
       "path": "chunks/ref-fatsecret-guides-oauth2-chunk-1.md",
-      "tokens": 44,
+      "tokens": 172,
       "type": "prose"
     },
     {
@@ -2064,7 +2064,7 @@
       "chunk_id": "ref/fatsecret/guides-parameters#chunk-1",
       "doc_id": "ref/fatsecret/guides-parameters",
       "path": "chunks/ref-fatsecret-guides-parameters-chunk-1.md",
-      "tokens": 40,
+      "tokens": 159,
       "type": "prose"
     },
     {
@@ -2127,7 +2127,7 @@
       "chunk_id": "tutorial/fatsecret/guides-welcome#chunk-1",
       "doc_id": "tutorial/fatsecret/guides-welcome",
       "path": "chunks/tutorial-fatsecret-guides-welcome-chunk-1.md",
-      "tokens": 44,
+      "tokens": 189,
       "type": "prose"
     },
     {
@@ -2176,7 +2176,7 @@
       "chunk_id": "ops/fatsecret/impl-scope-food-brands-get#chunk-1",
       "doc_id": "ops/fatsecret/impl-scope-food-brands-get",
       "path": "chunks/ops-fatsecret-impl-scope-food-brands-get-chunk-1.md",
-      "tokens": 40,
+      "tokens": 201,
       "type": "prose"
     },
     {
@@ -2323,7 +2323,7 @@
       "chunk_id": "ops/fatsecret/impl-scope-food-categories-get#chunk-1",
       "doc_id": "ops/fatsecret/impl-scope-food-categories-get",
       "path": "chunks/ops-fatsecret-impl-scope-food-categories-get-chunk-1.md",
-      "tokens": 42,
+      "tokens": 205,
       "type": "prose"
     },
     {
@@ -2463,7 +2463,7 @@
       "chunk_id": "concept/moonrepo/cheat-sheet#chunk-1",
       "doc_id": "concept/moonrepo/cheat-sheet",
       "path": "chunks/concept-moonrepo-cheat-sheet-chunk-1.md",
-      "tokens": 48,
+      "tokens": 247,
       "type": "prose"
     },
     {
@@ -2519,7 +2519,7 @@
       "chunk_id": "ops/moonrepo/commands#chunk-1",
       "doc_id": "ops/moonrepo/commands",
       "path": "chunks/ops-moonrepo-commands-chunk-1.md",
-      "tokens": 18,
+      "tokens": 117,
       "type": "prose"
     },
     {
@@ -2708,7 +2708,7 @@
       "chunk_id": "ops/moonrepo/action-graph#chunk-1",
       "doc_id": "ops/moonrepo/action-graph",
       "path": "chunks/ops-moonrepo-action-graph-chunk-1.md",
-      "tokens": 113,
+      "tokens": 243,
       "type": "prose"
     },
     {
@@ -2736,7 +2736,7 @@
       "chunk_id": "ops/moonrepo/bin#chunk-1",
       "doc_id": "ops/moonrepo/bin",
       "path": "chunks/ops-moonrepo-bin-chunk-1.md",
-      "tokens": 153,
+      "tokens": 241,
       "type": "prose"
     },
     {
@@ -2757,7 +2757,7 @@
       "chunk_id": "ops/moonrepo/check#chunk-1",
       "doc_id": "ops/moonrepo/check",
       "path": "chunks/ops-moonrepo-check-chunk-1.md",
-      "tokens": 87,
+      "tokens": 192,
       "type": "prose"
     },
     {
@@ -2799,7 +2799,7 @@
       "chunk_id": "ops/moonrepo/ci#chunk-1",
       "doc_id": "ops/moonrepo/ci",
       "path": "chunks/ops-moonrepo-ci-chunk-1.md",
-      "tokens": 105,
+      "tokens": 284,
       "type": "prose"
     },
     {
@@ -2925,7 +2925,7 @@
       "chunk_id": "ops/moonrepo/clean#chunk-1",
       "doc_id": "ops/moonrepo/clean",
       "path": "chunks/ops-moonrepo-clean-chunk-1.md",
-      "tokens": 85,
+      "tokens": 167,
       "type": "prose"
     },
     {
@@ -2946,7 +2946,7 @@
       "chunk_id": "ops/moonrepo/completions#chunk-1",
       "doc_id": "ops/moonrepo/completions",
       "path": "chunks/ops-moonrepo-completions-chunk-1.md",
-      "tokens": 85,
+      "tokens": 184,
       "type": "prose"
     },
     {
@@ -2981,7 +2981,7 @@
       "chunk_id": "ops/moonrepo/docker#chunk-1",
       "doc_id": "ops/moonrepo/docker",
       "path": "chunks/ops-moonrepo-docker-chunk-1.md",
-      "tokens": 87,
+      "tokens": 257,
       "type": "prose"
     },
     {
@@ -3268,7 +3268,7 @@
       "chunk_id": "ops/moonrepo/file#chunk-1",
       "doc_id": "ops/moonrepo/file",
       "path": "chunks/ops-moonrepo-file-chunk-1.md",
-      "tokens": 249,
+      "tokens": 367,
       "type": "prose"
     },
     {
@@ -3289,7 +3289,7 @@
       "chunk_id": "ops/moonrepo/prune#chunk-1",
       "doc_id": "ops/moonrepo/prune",
       "path": "chunks/ops-moonrepo-prune-chunk-1.md",
-      "tokens": 143,
+      "tokens": 237,
       "type": "prose"
     },
     {
@@ -3310,7 +3310,7 @@
       "chunk_id": "ops/moonrepo/scaffold#chunk-1",
       "doc_id": "ops/moonrepo/scaffold",
       "path": "chunks/ops-moonrepo-scaffold-chunk-1.md",
-      "tokens": 80,
+      "tokens": 204,
       "type": "prose"
     },
     {
@@ -3338,7 +3338,7 @@
       "chunk_id": "ops/moonrepo/setup#chunk-1",
       "doc_id": "ops/moonrepo/setup",
       "path": "chunks/ops-moonrepo-setup-chunk-1.md",
-      "tokens": 118,
+      "tokens": 196,
       "type": "prose"
     },
     {
@@ -3359,7 +3359,7 @@
       "chunk_id": "ops/moonrepo/ext#chunk-1",
       "doc_id": "ops/moonrepo/ext",
       "path": "chunks/ops-moonrepo-ext-chunk-1.md",
-      "tokens": 153,
+      "tokens": 237,
       "type": "prose"
     },
     {
@@ -3380,7 +3380,7 @@
       "chunk_id": "ops/moonrepo/generate#chunk-1",
       "doc_id": "ops/moonrepo/generate",
       "path": "chunks/ops-moonrepo-generate-chunk-1.md",
-      "tokens": 85,
+      "tokens": 191,
       "type": "prose"
     },
     {
@@ -3422,7 +3422,7 @@
       "chunk_id": "ops/moonrepo/init#chunk-1",
       "doc_id": "ops/moonrepo/init",
       "path": "chunks/ops-moonrepo-init-chunk-1.md",
-      "tokens": 62,
+      "tokens": 145,
       "type": "prose"
     },
     {
@@ -3443,7 +3443,7 @@
       "chunk_id": "ops/moonrepo/mcp#chunk-1",
       "doc_id": "ops/moonrepo/mcp",
       "path": "chunks/ops-moonrepo-mcp-chunk-1.md",
-      "tokens": 91,
+      "tokens": 193,
       "type": "prose"
     },
     {
@@ -3471,7 +3471,7 @@
       "chunk_id": "concept/moonrepo/migrate#chunk-1",
       "doc_id": "concept/moonrepo/migrate",
       "path": "chunks/concept-moonrepo-migrate-chunk-1.md",
-      "tokens": 23,
+      "tokens": 66,
       "type": "prose"
     },
     {
@@ -3499,7 +3499,7 @@
       "chunk_id": "ops/moonrepo/from-package-json#chunk-1",
       "doc_id": "ops/moonrepo/from-package-json",
       "path": "chunks/ops-moonrepo-from-package-json-chunk-1.md",
-      "tokens": 261,
+      "tokens": 364,
       "type": "prose"
     },
     {
@@ -3527,7 +3527,7 @@
       "chunk_id": "concept/moonrepo/from-turborepo#chunk-1",
       "doc_id": "concept/moonrepo/from-turborepo",
       "path": "chunks/concept-moonrepo-from-turborepo-chunk-1.md",
-      "tokens": 37,
+      "tokens": 76,
       "type": "prose"
     },
     {
@@ -3541,7 +3541,7 @@
       "chunk_id": "ops/moonrepo/overview#chunk-1",
       "doc_id": "ops/moonrepo/overview",
       "path": "chunks/ops-moonrepo-overview-chunk-1.md",
-      "tokens": 159,
+      "tokens": 286,
       "type": "prose"
     },
     {
@@ -3639,7 +3639,7 @@
       "chunk_id": "ops/moonrepo/project-graph#chunk-1",
       "doc_id": "ops/moonrepo/project-graph",
       "path": "chunks/ops-moonrepo-project-graph-chunk-1.md",
-      "tokens": 122,
+      "tokens": 235,
       "type": "prose"
     },
     {
@@ -3667,7 +3667,7 @@
       "chunk_id": "ops/moonrepo/project#chunk-1",
       "doc_id": "ops/moonrepo/project",
       "path": "chunks/ops-moonrepo-project-chunk-1.md",
-      "tokens": 110,
+      "tokens": 283,
       "type": "prose"
     },
     {
@@ -3800,7 +3800,7 @@
       "chunk_id": "ops/moonrepo/query#chunk-1",
       "doc_id": "ops/moonrepo/query",
       "path": "chunks/ops-moonrepo-query-chunk-1.md",
-      "tokens": 54,
+      "tokens": 128,
       "type": "prose"
     },
     {
@@ -3849,7 +3849,7 @@
       "chunk_id": "ops/moonrepo/hash-diff#chunk-1",
       "doc_id": "ops/moonrepo/hash-diff",
       "path": "chunks/ops-moonrepo-hash-diff-chunk-1.md",
-      "tokens": 70,
+      "tokens": 152,
       "type": "prose"
     },
     {
@@ -3877,7 +3877,7 @@
       "chunk_id": "ops/moonrepo/hash#chunk-1",
       "doc_id": "ops/moonrepo/hash",
       "path": "chunks/ops-moonrepo-hash-chunk-1.md",
-      "tokens": 87,
+      "tokens": 175,
       "type": "prose"
     },
     {
@@ -3898,7 +3898,7 @@
       "chunk_id": "ops/moonrepo/projects#chunk-1",
       "doc_id": "ops/moonrepo/projects",
       "path": "chunks/ops-moonrepo-projects-chunk-1.md",
-      "tokens": 159,
+      "tokens": 241,
       "type": "prose"
     },
     {
@@ -3919,7 +3919,7 @@
       "chunk_id": "ops/moonrepo/tasks#chunk-1",
       "doc_id": "ops/moonrepo/tasks",
       "path": "chunks/ops-moonrepo-tasks-chunk-1.md",
-      "tokens": 89,
+      "tokens": 214,
       "type": "prose"
     },
     {
@@ -3947,7 +3947,7 @@
       "chunk_id": "ops/moonrepo/touched-files#chunk-1",
       "doc_id": "ops/moonrepo/touched-files",
       "path": "chunks/ops-moonrepo-touched-files-chunk-1.md",
-      "tokens": 171,
+      "tokens": 274,
       "type": "prose"
     },
     {
@@ -3982,7 +3982,7 @@
       "chunk_id": "ops/moonrepo/run#chunk-1",
       "doc_id": "ops/moonrepo/run",
       "path": "chunks/ops-moonrepo-run-chunk-1.md",
-      "tokens": 101,
+      "tokens": 228,
       "type": "prose"
     },
     {
@@ -4038,7 +4038,7 @@
       "chunk_id": "ops/moonrepo/setup-2#chunk-1",
       "doc_id": "ops/moonrepo/setup-2",
       "path": "chunks/ops-moonrepo-setup-2-chunk-1.md",
-      "tokens": 118,
+      "tokens": 196,
       "type": "prose"
     },
     {
@@ -4059,7 +4059,7 @@
       "chunk_id": "concept/moonrepo/sync#chunk-1",
       "doc_id": "concept/moonrepo/sync",
       "path": "chunks/concept-moonrepo-sync-chunk-1.md",
-      "tokens": 28,
+      "tokens": 84,
       "type": "prose"
     },
     {
@@ -4101,7 +4101,7 @@
       "chunk_id": "ops/moonrepo/codeowners#chunk-1",
       "doc_id": "ops/moonrepo/codeowners",
       "path": "chunks/ops-moonrepo-codeowners-chunk-1.md",
-      "tokens": 136,
+      "tokens": 313,
       "type": "prose"
     },
     {
@@ -4164,7 +4164,7 @@
       "chunk_id": "ops/moonrepo/config-schemas#chunk-1",
       "doc_id": "ops/moonrepo/config-schemas",
       "path": "chunks/ops-moonrepo-config-schemas-chunk-1.md",
-      "tokens": 62,
+      "tokens": 124,
       "type": "prose"
     },
     {
@@ -4185,7 +4185,7 @@
       "chunk_id": "ops/moonrepo/hooks#chunk-1",
       "doc_id": "ops/moonrepo/hooks",
       "path": "chunks/ops-moonrepo-hooks-chunk-1.md",
-      "tokens": 83,
+      "tokens": 169,
       "type": "prose"
     },
     {
@@ -4206,7 +4206,7 @@
       "chunk_id": "ops/moonrepo/projects-2#chunk-1",
       "doc_id": "ops/moonrepo/projects-2",
       "path": "chunks/ops-moonrepo-projects-2-chunk-1.md",
-      "tokens": 159,
+      "tokens": 241,
       "type": "prose"
     },
     {
@@ -4227,7 +4227,7 @@
       "chunk_id": "ops/moonrepo/task-graph#chunk-1",
       "doc_id": "ops/moonrepo/task-graph",
       "path": "chunks/ops-moonrepo-task-graph-chunk-1.md",
-      "tokens": 85,
+      "tokens": 179,
       "type": "prose"
     },
     {
@@ -4262,7 +4262,7 @@
       "chunk_id": "ops/moonrepo/task#chunk-1",
       "doc_id": "ops/moonrepo/task",
       "path": "chunks/ops-moonrepo-task-chunk-1.md",
-      "tokens": 98,
+      "tokens": 209,
       "type": "prose"
     },
     {
@@ -4290,7 +4290,7 @@
       "chunk_id": "ops/moonrepo/teardown#chunk-1",
       "doc_id": "ops/moonrepo/teardown",
       "path": "chunks/ops-moonrepo-teardown-chunk-1.md",
-      "tokens": 89,
+      "tokens": 169,
       "type": "prose"
     },
     {
@@ -4311,7 +4311,7 @@
       "chunk_id": "ops/moonrepo/templates#chunk-1",
       "doc_id": "ops/moonrepo/templates",
       "path": "chunks/ops-moonrepo-templates-chunk-1.md",
-      "tokens": 76,
+      "tokens": 159,
       "type": "prose"
     },
     {
@@ -4332,7 +4332,7 @@
       "chunk_id": "concept/moonrepo/toolchain#chunk-1",
       "doc_id": "concept/moonrepo/toolchain",
       "path": "chunks/concept-moonrepo-toolchain-chunk-1.md",
-      "tokens": 13,
+      "tokens": 49,
       "type": "prose"
     },
     {
@@ -4360,7 +4360,7 @@
       "chunk_id": "ops/moonrepo/add#chunk-1",
       "doc_id": "ops/moonrepo/add",
       "path": "chunks/ops-moonrepo-add-chunk-1.md",
-      "tokens": 145,
+      "tokens": 240,
       "type": "code"
     },
     {
@@ -4381,7 +4381,7 @@
       "chunk_id": "ops/moonrepo/info#chunk-1",
       "doc_id": "ops/moonrepo/info",
       "path": "chunks/ops-moonrepo-info-chunk-1.md",
-      "tokens": 157,
+      "tokens": 241,
       "type": "code"
     },
     {
@@ -4409,7 +4409,7 @@
       "chunk_id": "ops/moonrepo/upgrade#chunk-1",
       "doc_id": "ops/moonrepo/upgrade",
       "path": "chunks/ops-moonrepo-upgrade-chunk-1.md",
-      "tokens": 102,
+      "tokens": 159,
       "type": "prose"
     },
     {
@@ -4423,7 +4423,7 @@
       "chunk_id": "ops/moonrepo/comparison#chunk-1",
       "doc_id": "ops/moonrepo/comparison",
       "path": "chunks/ops-moonrepo-comparison-chunk-1.md",
-      "tokens": 169,
+      "tokens": 302,
       "type": "prose"
     },
     {
@@ -4458,7 +4458,7 @@
       "chunk_id": "ops/moonrepo/concepts#chunk-1",
       "doc_id": "ops/moonrepo/concepts",
       "path": "chunks/ops-moonrepo-concepts-chunk-1.md",
-      "tokens": 27,
+      "tokens": 130,
       "type": "prose"
     },
     {
@@ -4549,7 +4549,7 @@
       "chunk_id": "ops/moonrepo/cache#chunk-1",
       "doc_id": "ops/moonrepo/cache",
       "path": "chunks/ops-moonrepo-cache-chunk-1.md",
-      "tokens": 89,
+      "tokens": 183,
       "type": "prose"
     },
     {
@@ -4584,7 +4584,7 @@
       "chunk_id": "ref/moonrepo/file-group#chunk-1",
       "doc_id": "ref/moonrepo/file-group",
       "path": "chunks/ref-moonrepo-file-group-chunk-1.md",
-      "tokens": 100,
+      "tokens": 210,
       "type": "prose"
     },
     {
@@ -4612,7 +4612,7 @@
       "chunk_id": "concept/moonrepo/file-pattern#chunk-1",
       "doc_id": "concept/moonrepo/file-pattern",
       "path": "chunks/concept-moonrepo-file-pattern-chunk-1.md",
-      "tokens": 27,
+      "tokens": 141,
       "type": "prose"
     },
     {
@@ -4675,7 +4675,7 @@
       "chunk_id": "ref/moonrepo/project#chunk-1",
       "doc_id": "ref/moonrepo/project",
       "path": "chunks/ref-moonrepo-project-chunk-1.md",
-      "tokens": 75,
+      "tokens": 185,
       "type": "prose"
     },
     {
@@ -4717,7 +4717,7 @@
       "chunk_id": "concept/moonrepo/query-lang#chunk-1",
       "doc_id": "concept/moonrepo/query-lang",
       "path": "chunks/concept-moonrepo-query-lang-chunk-1.md",
-      "tokens": 88,
+      "tokens": 262,
       "type": "prose"
     },
     {
@@ -4745,7 +4745,7 @@
       "chunk_id": "ops/moonrepo/target#chunk-1",
       "doc_id": "ops/moonrepo/target",
       "path": "chunks/ops-moonrepo-target-chunk-1.md",
-      "tokens": 100,
+      "tokens": 239,
       "type": "code"
     },
     {
@@ -4836,7 +4836,7 @@
       "chunk_id": "ops/moonrepo/task-inheritance#chunk-1",
       "doc_id": "ops/moonrepo/task-inheritance",
       "path": "chunks/ops-moonrepo-task-inheritance-chunk-1.md",
-      "tokens": 133,
+      "tokens": 262,
       "type": "prose"
     },
     {
@@ -4885,7 +4885,7 @@
       "chunk_id": "ref/moonrepo/task#chunk-1",
       "doc_id": "ref/moonrepo/task",
       "path": "chunks/ref-moonrepo-task-chunk-1.md",
-      "tokens": 76,
+      "tokens": 237,
       "type": "prose"
     },
     {
@@ -4927,7 +4927,7 @@
       "chunk_id": "concept/moonrepo/token#chunk-1",
       "doc_id": "concept/moonrepo/token",
       "path": "chunks/concept-moonrepo-token-chunk-1.md",
-      "tokens": 81,
+      "tokens": 218,
       "type": "prose"
     },
     {
@@ -4955,7 +4955,7 @@
       "chunk_id": "ops/moonrepo/toolchain#chunk-1",
       "doc_id": "ops/moonrepo/toolchain",
       "path": "chunks/ops-moonrepo-toolchain-chunk-1.md",
-      "tokens": 92,
+      "tokens": 234,
       "type": "prose"
     },
     {
@@ -5025,7 +5025,7 @@
       "chunk_id": "ref/moonrepo/workspace#chunk-1",
       "doc_id": "ref/moonrepo/workspace",
       "path": "chunks/ref-moonrepo-workspace-chunk-1.md",
-      "tokens": 81,
+      "tokens": 150,
       "type": "prose"
     },
     {
@@ -5046,7 +5046,7 @@
       "chunk_id": "concept/moonrepo/config#chunk-1",
       "doc_id": "concept/moonrepo/config",
       "path": "chunks/concept-moonrepo-config-chunk-1.md",
-      "tokens": 24,
+      "tokens": 92,
       "type": "prose"
     },
     {
@@ -5095,7 +5095,7 @@
       "chunk_id": "ops/moonrepo/project-2#chunk-1",
       "doc_id": "ops/moonrepo/project-2",
       "path": "chunks/ops-moonrepo-project-2-chunk-1.md",
-      "tokens": 110,
+      "tokens": 283,
       "type": "prose"
     },
     {
@@ -5228,7 +5228,7 @@
       "chunk_id": "concept/moonrepo/tasks#chunk-1",
       "doc_id": "concept/moonrepo/tasks",
       "path": "chunks/concept-moonrepo-tasks-chunk-1.md",
-      "tokens": 113,
+      "tokens": 243,
       "type": "prose"
     },
     {
@@ -5284,7 +5284,7 @@
       "chunk_id": "concept/moonrepo/template#chunk-1",
       "doc_id": "concept/moonrepo/template",
       "path": "chunks/concept-moonrepo-template-chunk-1.md",
-      "tokens": 87,
+      "tokens": 252,
       "type": "prose"
     },
     {
@@ -5347,7 +5347,7 @@
       "chunk_id": "ops/moonrepo/toolchain-2#chunk-1",
       "doc_id": "ops/moonrepo/toolchain-2",
       "path": "chunks/ops-moonrepo-toolchain-2-chunk-1.md",
-      "tokens": 92,
+      "tokens": 234,
       "type": "prose"
     },
     {
@@ -5417,7 +5417,7 @@
       "chunk_id": "ops/moonrepo/workspace#chunk-1",
       "doc_id": "ops/moonrepo/workspace",
       "path": "chunks/ops-moonrepo-workspace-chunk-1.md",
-      "tokens": 63,
+      "tokens": 221,
       "type": "prose"
     },
     {
@@ -5515,7 +5515,7 @@
       "chunk_id": "concept/moonrepo/create-project#chunk-1",
       "doc_id": "concept/moonrepo/create-project",
       "path": "chunks/concept-moonrepo-create-project-chunk-1.md",
-      "tokens": 91,
+      "tokens": 239,
       "type": "prose"
     },
     {
@@ -5550,7 +5550,7 @@
       "chunk_id": "ops/moonrepo/create-task#chunk-1",
       "doc_id": "ops/moonrepo/create-task",
       "path": "chunks/ops-moonrepo-create-task-chunk-1.md",
-      "tokens": 150,
+      "tokens": 297,
       "type": "prose"
     },
     {
@@ -5592,7 +5592,7 @@
       "chunk_id": "ops/moonrepo/docs#chunk-1",
       "doc_id": "ops/moonrepo/docs",
       "path": "chunks/ops-moonrepo-docs-chunk-1.md",
-      "tokens": 83,
+      "tokens": 221,
       "type": "prose"
     },
     {
@@ -5620,7 +5620,7 @@
       "chunk_id": "concept/moonrepo/editors#chunk-1",
       "doc_id": "concept/moonrepo/editors",
       "path": "chunks/concept-moonrepo-editors-chunk-1.md",
-      "tokens": 27,
+      "tokens": 78,
       "type": "prose"
     },
     {
@@ -5641,7 +5641,7 @@
       "chunk_id": "ops/moonrepo/vscode#chunk-1",
       "doc_id": "ops/moonrepo/vscode",
       "path": "chunks/ops-moonrepo-vscode-chunk-1.md",
-      "tokens": 104,
+      "tokens": 219,
       "type": "prose"
     },
     {
@@ -5676,7 +5676,7 @@
       "chunk_id": "ops/moonrepo/faq#chunk-1",
       "doc_id": "ops/moonrepo/faq",
       "path": "chunks/ops-moonrepo-faq-chunk-1.md",
-      "tokens": 37,
+      "tokens": 228,
       "type": "prose"
     },
     {
@@ -5718,7 +5718,7 @@
       "chunk_id": "ops/moonrepo/ci-2#chunk-1",
       "doc_id": "ops/moonrepo/ci-2",
       "path": "chunks/ops-moonrepo-ci-2-chunk-1.md",
-      "tokens": 105,
+      "tokens": 284,
       "type": "prose"
     },
     {
@@ -5844,7 +5844,7 @@
       "chunk_id": "ops/moonrepo/codegen#chunk-1",
       "doc_id": "ops/moonrepo/codegen",
       "path": "chunks/ops-moonrepo-codegen-chunk-1.md",
-      "tokens": 117,
+      "tokens": 289,
       "type": "prose"
     },
     {
@@ -5879,7 +5879,7 @@
       "chunk_id": "ops/moonrepo/codeowners-2#chunk-1",
       "doc_id": "ops/moonrepo/codeowners-2",
       "path": "chunks/ops-moonrepo-codeowners-2-chunk-1.md",
-      "tokens": 136,
+      "tokens": 313,
       "type": "prose"
     },
     {
@@ -5942,7 +5942,7 @@
       "chunk_id": "ops/moonrepo/debug-task#chunk-1",
       "doc_id": "ops/moonrepo/debug-task",
       "path": "chunks/ops-moonrepo-debug-task-chunk-1.md",
-      "tokens": 109,
+      "tokens": 265,
       "type": "prose"
     },
     {
@@ -5984,7 +5984,7 @@
       "chunk_id": "ops/moonrepo/docker-2#chunk-1",
       "doc_id": "ops/moonrepo/docker-2",
       "path": "chunks/ops-moonrepo-docker-2-chunk-1.md",
-      "tokens": 87,
+      "tokens": 257,
       "type": "prose"
     },
     {
@@ -6271,7 +6271,7 @@
       "chunk_id": "tutorial/moonrepo/angular#chunk-1",
       "doc_id": "tutorial/moonrepo/angular",
       "path": "chunks/tutorial-moonrepo-angular-chunk-1.md",
-      "tokens": 102,
+      "tokens": 197,
       "type": "prose"
     },
     {
@@ -6299,7 +6299,7 @@
       "chunk_id": "ops/moonrepo/astro#chunk-1",
       "doc_id": "ops/moonrepo/astro",
       "path": "chunks/ops-moonrepo-astro-chunk-1.md",
-      "tokens": 75,
+      "tokens": 174,
       "type": "prose"
     },
     {
@@ -6348,7 +6348,7 @@
       "chunk_id": "ops/moonrepo/eslint#chunk-1",
       "doc_id": "ops/moonrepo/eslint",
       "path": "chunks/ops-moonrepo-eslint-chunk-1.md",
-      "tokens": 70,
+      "tokens": 191,
       "type": "prose"
     },
     {
@@ -6383,7 +6383,7 @@
       "chunk_id": "ops/moonrepo/jest#chunk-1",
       "doc_id": "ops/moonrepo/jest",
       "path": "chunks/ops-moonrepo-jest-chunk-1.md",
-      "tokens": 65,
+      "tokens": 179,
       "type": "prose"
     },
     {
@@ -6418,7 +6418,7 @@
       "chunk_id": "tutorial/moonrepo/nest#chunk-1",
       "doc_id": "tutorial/moonrepo/nest",
       "path": "chunks/tutorial-moonrepo-nest-chunk-1.md",
-      "tokens": 97,
+      "tokens": 180,
       "type": "prose"
     },
     {
@@ -6446,7 +6446,7 @@
       "chunk_id": "tutorial/moonrepo/next#chunk-1",
       "doc_id": "tutorial/moonrepo/next",
       "path": "chunks/tutorial-moonrepo-next-chunk-1.md",
-      "tokens": 96,
+      "tokens": 193,
       "type": "prose"
     },
     {
@@ -6488,7 +6488,7 @@
       "chunk_id": "tutorial/moonrepo/nuxt#chunk-1",
       "doc_id": "tutorial/moonrepo/nuxt",
       "path": "chunks/tutorial-moonrepo-nuxt-chunk-1.md",
-      "tokens": 106,
+      "tokens": 217,
       "type": "prose"
     },
     {
@@ -6523,7 +6523,7 @@
       "chunk_id": "ops/moonrepo/packemon#chunk-1",
       "doc_id": "ops/moonrepo/packemon",
       "path": "chunks/ops-moonrepo-packemon-chunk-1.md",
-      "tokens": 154,
+      "tokens": 252,
       "type": "prose"
     },
     {
@@ -6565,7 +6565,7 @@
       "chunk_id": "ops/moonrepo/prettier#chunk-1",
       "doc_id": "ops/moonrepo/prettier",
       "path": "chunks/ops-moonrepo-prettier-chunk-1.md",
-      "tokens": 65,
+      "tokens": 152,
       "type": "prose"
     },
     {
@@ -6600,7 +6600,7 @@
       "chunk_id": "concept/moonrepo/react#chunk-1",
       "doc_id": "concept/moonrepo/react",
       "path": "chunks/concept-moonrepo-react-chunk-1.md",
-      "tokens": 167,
+      "tokens": 252,
       "type": "prose"
     },
     {
@@ -6614,7 +6614,7 @@
       "chunk_id": "tutorial/moonrepo/remix#chunk-1",
       "doc_id": "tutorial/moonrepo/remix",
       "path": "chunks/tutorial-moonrepo-remix-chunk-1.md",
-      "tokens": 143,
+      "tokens": 240,
       "type": "prose"
     },
     {
@@ -6656,7 +6656,7 @@
       "chunk_id": "ops/moonrepo/solid#chunk-1",
       "doc_id": "ops/moonrepo/solid",
       "path": "chunks/ops-moonrepo-solid-chunk-1.md",
-      "tokens": 127,
+      "tokens": 228,
       "type": "prose"
     },
     {
@@ -6677,7 +6677,7 @@
       "chunk_id": "ops/moonrepo/storybook#chunk-1",
       "doc_id": "ops/moonrepo/storybook",
       "path": "chunks/ops-moonrepo-storybook-chunk-1.md",
-      "tokens": 171,
+      "tokens": 288,
       "type": "prose"
     },
     {
@@ -6705,7 +6705,7 @@
       "chunk_id": "ops/moonrepo/sveltekit#chunk-1",
       "doc_id": "ops/moonrepo/sveltekit",
       "path": "chunks/ops-moonrepo-sveltekit-chunk-1.md",
-      "tokens": 170,
+      "tokens": 293,
       "type": "prose"
     },
     {
@@ -6747,7 +6747,7 @@
       "chunk_id": "ops/moonrepo/typescript#chunk-1",
       "doc_id": "ops/moonrepo/typescript",
       "path": "chunks/ops-moonrepo-typescript-chunk-1.md",
-      "tokens": 104,
+      "tokens": 221,
       "type": "prose"
     },
     {
@@ -6782,7 +6782,7 @@
       "chunk_id": "ops/moonrepo/vite#chunk-1",
       "doc_id": "ops/moonrepo/vite",
       "path": "chunks/ops-moonrepo-vite-chunk-1.md",
-      "tokens": 126,
+      "tokens": 205,
       "type": "code"
     },
     {
@@ -6824,7 +6824,7 @@
       "chunk_id": "ops/moonrepo/vue#chunk-1",
       "doc_id": "ops/moonrepo/vue",
       "path": "chunks/ops-moonrepo-vue-chunk-1.md",
-      "tokens": 162,
+      "tokens": 270,
       "type": "prose"
     },
     {
@@ -6845,7 +6845,7 @@
       "chunk_id": "ops/moonrepo/extensions#chunk-1",
       "doc_id": "ops/moonrepo/extensions",
       "path": "chunks/ops-moonrepo-extensions-chunk-1.md",
-      "tokens": 118,
+      "tokens": 286,
       "type": "prose"
     },
     {
@@ -6880,7 +6880,7 @@
       "chunk_id": "ops/moonrepo/bun-handbook#chunk-1",
       "doc_id": "ops/moonrepo/bun-handbook",
       "path": "chunks/ops-moonrepo-bun-handbook-chunk-1.md",
-      "tokens": 113,
+      "tokens": 260,
       "type": "prose"
     },
     {
@@ -6929,7 +6929,7 @@
       "chunk_id": "concept/moonrepo/deno-handbook#chunk-1",
       "doc_id": "concept/moonrepo/deno-handbook",
       "path": "chunks/concept-moonrepo-deno-handbook-chunk-1.md",
-      "tokens": 83,
+      "tokens": 187,
       "type": "prose"
     },
     {
@@ -6971,7 +6971,7 @@
       "chunk_id": "ops/moonrepo/node-handbook#chunk-1",
       "doc_id": "ops/moonrepo/node-handbook",
       "path": "chunks/ops-moonrepo-node-handbook-chunk-1.md",
-      "tokens": 110,
+      "tokens": 287,
       "type": "prose"
     },
     {
@@ -7034,7 +7034,7 @@
       "chunk_id": "ops/moonrepo/typescript-eslint#chunk-1",
       "doc_id": "ops/moonrepo/typescript-eslint",
       "path": "chunks/ops-moonrepo-typescript-eslint-chunk-1.md",
-      "tokens": 35,
+      "tokens": 146,
       "type": "prose"
     },
     {
@@ -7055,7 +7055,7 @@
       "chunk_id": "ref/moonrepo/typescript-project-refs#chunk-1",
       "doc_id": "ref/moonrepo/typescript-project-refs",
       "path": "chunks/ref-moonrepo-typescript-project-refs-chunk-1.md",
-      "tokens": 392,
+      "tokens": 562,
       "type": "prose"
     },
     {
@@ -7139,7 +7139,7 @@
       "chunk_id": "ops/moonrepo/mcp-2#chunk-1",
       "doc_id": "ops/moonrepo/mcp-2",
       "path": "chunks/ops-moonrepo-mcp-2-chunk-1.md",
-      "tokens": 91,
+      "tokens": 193,
       "type": "prose"
     },
     {
@@ -7167,7 +7167,7 @@
       "chunk_id": "concept/moonrepo/examples#chunk-1",
       "doc_id": "concept/moonrepo/examples",
       "path": "chunks/concept-moonrepo-examples-chunk-1.md",
-      "tokens": 387,
+      "tokens": 473,
       "type": "prose"
     },
     {
@@ -7181,7 +7181,7 @@
       "chunk_id": "concept/moonrepo/notifications#chunk-1",
       "doc_id": "concept/moonrepo/notifications",
       "path": "chunks/concept-moonrepo-notifications-chunk-1.md",
-      "tokens": 107,
+      "tokens": 208,
       "type": "prose"
     },
     {
@@ -7202,7 +7202,7 @@
       "chunk_id": "ops/moonrepo/offline-mode#chunk-1",
       "doc_id": "ops/moonrepo/offline-mode",
       "path": "chunks/ops-moonrepo-offline-mode-chunk-1.md",
-      "tokens": 120,
+      "tokens": 204,
       "type": "prose"
     },
     {
@@ -7237,7 +7237,7 @@
       "chunk_id": "ops/moonrepo/open-source#chunk-1",
       "doc_id": "ops/moonrepo/open-source",
       "path": "chunks/ops-moonrepo-open-source-chunk-1.md",
-      "tokens": 252,
+      "tokens": 338,
       "type": "prose"
     },
     {
@@ -7265,7 +7265,7 @@
       "chunk_id": "ops/moonrepo/pkl-config#chunk-1",
       "doc_id": "ops/moonrepo/pkl-config",
       "path": "chunks/ops-moonrepo-pkl-config-chunk-1.md",
-      "tokens": 210,
+      "tokens": 375,
       "type": "prose"
     },
     {
@@ -7307,7 +7307,7 @@
       "chunk_id": "ops/moonrepo/profile#chunk-1",
       "doc_id": "ops/moonrepo/profile",
       "path": "chunks/ops-moonrepo-profile-chunk-1.md",
-      "tokens": 78,
+      "tokens": 221,
       "type": "prose"
     },
     {
@@ -7342,7 +7342,7 @@
       "chunk_id": "concept/moonrepo/remote-cache#chunk-1",
       "doc_id": "concept/moonrepo/remote-cache",
       "path": "chunks/concept-moonrepo-remote-cache-chunk-1.md",
-      "tokens": 182,
+      "tokens": 378,
       "type": "prose"
     },
     {
@@ -7391,7 +7391,7 @@
       "chunk_id": "concept/moonrepo/root-project#chunk-1",
       "doc_id": "concept/moonrepo/root-project",
       "path": "chunks/concept-moonrepo-root-project-chunk-1.md",
-      "tokens": 117,
+      "tokens": 226,
       "type": "prose"
     },
     {
@@ -7426,7 +7426,7 @@
       "chunk_id": "ops/moonrepo/handbook#chunk-1",
       "doc_id": "ops/moonrepo/handbook",
       "path": "chunks/ops-moonrepo-handbook-chunk-1.md",
-      "tokens": 104,
+      "tokens": 278,
       "type": "prose"
     },
     {
@@ -7489,7 +7489,7 @@
       "chunk_id": "concept/moonrepo/sharing-config#chunk-1",
       "doc_id": "concept/moonrepo/sharing-config",
       "path": "chunks/concept-moonrepo-sharing-config-chunk-1.md",
-      "tokens": 175,
+      "tokens": 284,
       "type": "prose"
     },
     {
@@ -7510,7 +7510,7 @@
       "chunk_id": "ops/moonrepo/vcs-hooks#chunk-1",
       "doc_id": "ops/moonrepo/vcs-hooks",
       "path": "chunks/ops-moonrepo-vcs-hooks-chunk-1.md",
-      "tokens": 89,
+      "tokens": 247,
       "type": "prose"
     },
     {
@@ -7559,7 +7559,7 @@
       "chunk_id": "ops/moonrepo/wasm-plugins#chunk-1",
       "doc_id": "ops/moonrepo/wasm-plugins",
       "path": "chunks/ops-moonrepo-wasm-plugins-chunk-1.md",
-      "tokens": 143,
+      "tokens": 301,
       "type": "prose"
     },
     {
@@ -7678,7 +7678,7 @@
       "chunk_id": "concept/moonrepo/how-it-works#chunk-1",
       "doc_id": "concept/moonrepo/how-it-works",
       "path": "chunks/concept-moonrepo-how-it-works-chunk-1.md",
-      "tokens": 37,
+      "tokens": 118,
       "type": "prose"
     },
     {
@@ -7720,7 +7720,7 @@
       "chunk_id": "ops/moonrepo/action-graph-2#chunk-1",
       "doc_id": "ops/moonrepo/action-graph-2",
       "path": "chunks/ops-moonrepo-action-graph-2-chunk-1.md",
-      "tokens": 113,
+      "tokens": 243,
       "type": "prose"
     },
     {
@@ -7748,7 +7748,7 @@
       "chunk_id": "ops/moonrepo/languages#chunk-1",
       "doc_id": "ops/moonrepo/languages",
       "path": "chunks/ops-moonrepo-languages-chunk-1.md",
-      "tokens": 113,
+      "tokens": 254,
       "type": "prose"
     },
     {
@@ -7804,7 +7804,7 @@
       "chunk_id": "ops/moonrepo/project-graph-2#chunk-1",
       "doc_id": "ops/moonrepo/project-graph-2",
       "path": "chunks/ops-moonrepo-project-graph-2-chunk-1.md",
-      "tokens": 122,
+      "tokens": 235,
       "type": "prose"
     },
     {
@@ -7832,7 +7832,7 @@
       "chunk_id": "concept/moonrepo/task-graph#chunk-1",
       "doc_id": "concept/moonrepo/task-graph",
       "path": "chunks/concept-moonrepo-task-graph-chunk-1.md",
-      "tokens": 118,
+      "tokens": 213,
       "type": "prose"
     },
     {
@@ -7860,7 +7860,7 @@
       "chunk_id": "ops/moonrepo/install#chunk-1",
       "doc_id": "ops/moonrepo/install",
       "path": "chunks/ops-moonrepo-install-chunk-1.md",
-      "tokens": 74,
+      "tokens": 206,
       "type": "prose"
     },
     {
@@ -7923,7 +7923,7 @@
       "chunk_id": "ops/moonrepo/migrate-to-moon#chunk-1",
       "doc_id": "ops/moonrepo/migrate-to-moon",
       "path": "chunks/ops-moonrepo-migrate-to-moon-chunk-1.md",
-      "tokens": 80,
+      "tokens": 178,
       "type": "prose"
     },
     {
@@ -7958,7 +7958,7 @@
       "chunk_id": "ops/moonrepo/run-task#chunk-1",
       "doc_id": "ops/moonrepo/run-task",
       "path": "chunks/ops-moonrepo-run-task-chunk-1.md",
-      "tokens": 124,
+      "tokens": 276,
       "type": "prose"
     },
     {
@@ -8014,7 +8014,7 @@
       "chunk_id": "ops/moonrepo/setup-toolchain#chunk-1",
       "doc_id": "ops/moonrepo/setup-toolchain",
       "path": "chunks/ops-moonrepo-setup-toolchain-chunk-1.md",
-      "tokens": 98,
+      "tokens": 211,
       "type": "prose"
     },
     {
@@ -8056,7 +8056,7 @@
       "chunk_id": "ops/moonrepo/setup-workspace#chunk-1",
       "doc_id": "ops/moonrepo/setup-workspace",
       "path": "chunks/ops-moonrepo-setup-workspace-chunk-1.md",
-      "tokens": 122,
+      "tokens": 243,
       "type": "prose"
     },
     {
@@ -8098,7 +8098,7 @@
       "chunk_id": "ops/moonrepo/terminology#chunk-1",
       "doc_id": "ops/moonrepo/terminology",
       "path": "chunks/ops-moonrepo-terminology-chunk-1.md",
-      "tokens": 686,
+      "tokens": 747,
       "type": "prose"
     },
     {
@@ -8112,7 +8112,7 @@
       "chunk_id": "tutorial/moonrepo/urls#chunk-1",
       "doc_id": "tutorial/moonrepo/urls",
       "path": "chunks/tutorial-moonrepo-urls-chunk-1.md",
-      "tokens": 10,
+      "tokens": 109,
       "type": "prose"
     },
     {
@@ -8231,7 +8231,7 @@
       "chunk_id": "ops/tandoor/contribute#chunk-1",
       "doc_id": "ops/tandoor/contribute",
       "path": "chunks/ops-tandoor-contribute-chunk-1.md",
-      "tokens": 104,
+      "tokens": 196,
       "type": "prose"
     },
     {
@@ -8273,7 +8273,7 @@
       "chunk_id": "ops/tandoor/documentation#chunk-1",
       "doc_id": "ops/tandoor/documentation",
       "path": "chunks/ops-tandoor-documentation-chunk-1.md",
-      "tokens": 68,
+      "tokens": 149,
       "type": "prose"
     },
     {
@@ -8308,7 +8308,7 @@
       "chunk_id": "ops/tandoor/guidelines#chunk-1",
       "doc_id": "ops/tandoor/guidelines",
       "path": "chunks/ops-tandoor-guidelines-chunk-1.md",
-      "tokens": 144,
+      "tokens": 248,
       "type": "prose"
     },
     {
@@ -8357,7 +8357,7 @@
       "chunk_id": "ops/tandoor/installation#chunk-1",
       "doc_id": "ops/tandoor/installation",
       "path": "chunks/ops-tandoor-installation-chunk-1.md",
-      "tokens": 582,
+      "tokens": 657,
       "type": "prose"
     },
     {
@@ -8371,7 +8371,7 @@
       "chunk_id": "ops/tandoor/pycharm#chunk-1",
       "doc_id": "ops/tandoor/pycharm",
       "path": "chunks/ops-tandoor-pycharm-chunk-1.md",
-      "tokens": 54,
+      "tokens": 153,
       "type": "prose"
     },
     {
@@ -8420,7 +8420,7 @@
       "chunk_id": "concept/tandoor/related#chunk-1",
       "doc_id": "concept/tandoor/related",
       "path": "chunks/concept-tandoor-related-chunk-1.md",
-      "tokens": 26,
+      "tokens": 111,
       "type": "prose"
     },
     {
@@ -8462,7 +8462,7 @@
       "chunk_id": "concept/tandoor/translations#chunk-1",
       "doc_id": "concept/tandoor/translations",
       "path": "chunks/concept-tandoor-translations-chunk-1.md",
-      "tokens": 317,
+      "tokens": 348,
       "type": "prose"
     },
     {
@@ -8476,7 +8476,7 @@
       "chunk_id": "ops/tandoor/vscode#chunk-1",
       "doc_id": "ops/tandoor/vscode",
       "path": "chunks/ops-tandoor-vscode-chunk-1.md",
-      "tokens": 46,
+      "tokens": 102,
       "type": "prose"
     },
     {
@@ -8504,7 +8504,7 @@
       "chunk_id": "ops/tandoor/faq#chunk-1",
       "doc_id": "ops/tandoor/faq",
       "path": "chunks/ops-tandoor-faq-chunk-1.md",
-      "tokens": 115,
+      "tokens": 289,
       "type": "prose"
     },
     {
@@ -8609,7 +8609,7 @@
       "chunk_id": "concept/tandoor/ai#chunk-1",
       "doc_id": "concept/tandoor/ai",
       "path": "chunks/concept-tandoor-ai-chunk-1.md",
-      "tokens": 93,
+      "tokens": 179,
       "type": "prose"
     },
     {
@@ -8644,7 +8644,7 @@
       "chunk_id": "ops/tandoor/authentication#chunk-1",
       "doc_id": "ops/tandoor/authentication",
       "path": "chunks/ops-tandoor-authentication-chunk-1.md",
-      "tokens": 54,
+      "tokens": 176,
       "type": "prose"
     },
     {
@@ -8679,7 +8679,7 @@
       "chunk_id": "concept/tandoor/automation#chunk-1",
       "doc_id": "concept/tandoor/automation",
       "path": "chunks/concept-tandoor-automation-chunk-1.md",
-      "tokens": 96,
+      "tokens": 206,
       "type": "prose"
     },
     {
@@ -8728,7 +8728,7 @@
       "chunk_id": "tutorial/tandoor/connectors#chunk-1",
       "doc_id": "tutorial/tandoor/connectors",
       "path": "chunks/tutorial-tandoor-connectors-chunk-1.md",
-      "tokens": 36,
+      "tokens": 100,
       "type": "prose"
     },
     {
@@ -8756,7 +8756,7 @@
       "chunk_id": "ops/tandoor/external-recipes#chunk-1",
       "doc_id": "ops/tandoor/external-recipes",
       "path": "chunks/ops-tandoor-external-recipes-chunk-1.md",
-      "tokens": 205,
+      "tokens": 327,
       "type": "prose"
     },
     {
@@ -8798,7 +8798,7 @@
       "chunk_id": "ops/tandoor/import-export#chunk-1",
       "doc_id": "ops/tandoor/import-export",
       "path": "chunks/ops-tandoor-import-export-chunk-1.md",
-      "tokens": 585,
+      "tokens": 718,
       "type": "prose"
     },
     {
@@ -8973,7 +8973,7 @@
       "chunk_id": "concept/tandoor/shopping#chunk-1",
       "doc_id": "concept/tandoor/shopping",
       "path": "chunks/concept-tandoor-shopping-chunk-1.md",
-      "tokens": 157,
+      "tokens": 257,
       "type": "prose"
     },
     {
@@ -9015,7 +9015,7 @@
       "chunk_id": "ops/tandoor/telegram-bot#chunk-1",
       "doc_id": "ops/tandoor/telegram-bot",
       "path": "chunks/ops-tandoor-telegram-bot-chunk-1.md",
-      "tokens": 176,
+      "tokens": 252,
       "type": "prose"
     },
     {
@@ -9036,7 +9036,7 @@
       "chunk_id": "concept/tandoor/templating#chunk-1",
       "doc_id": "concept/tandoor/templating",
       "path": "chunks/concept-tandoor-templating-chunk-1.md",
-      "tokens": 157,
+      "tokens": 231,
       "type": "prose"
     },
     {
@@ -9064,7 +9064,7 @@
       "chunk_id": "meta/tandoor/index#chunk-1",
       "doc_id": "meta/tandoor/index",
       "path": "chunks/meta-tandoor-index-chunk-1.md",
-      "tokens": 167,
+      "tokens": 278,
       "type": "prose"
     },
     {
@@ -9127,7 +9127,7 @@
       "chunk_id": "ops/tandoor/archlinux#chunk-1",
       "doc_id": "ops/tandoor/archlinux",
       "path": "chunks/ops-tandoor-archlinux-chunk-1.md",
-      "tokens": 127,
+      "tokens": 214,
       "type": "prose"
     },
     {
@@ -9169,7 +9169,7 @@
       "chunk_id": "ops/tandoor/docker#chunk-1",
       "doc_id": "ops/tandoor/docker",
       "path": "chunks/ops-tandoor-docker-chunk-1.md",
-      "tokens": 104,
+      "tokens": 260,
       "type": "prose"
     },
     {
@@ -9218,7 +9218,7 @@
       "chunk_id": "ops/tandoor/homeassistant#chunk-1",
       "doc_id": "ops/tandoor/homeassistant",
       "path": "chunks/ops-tandoor-homeassistant-chunk-1.md",
-      "tokens": 861,
+      "tokens": 960,
       "type": "prose"
     },
     {
@@ -9232,7 +9232,7 @@
       "chunk_id": "ops/tandoor/kubernetes#chunk-1",
       "doc_id": "ops/tandoor/kubernetes",
       "path": "chunks/ops-tandoor-kubernetes-chunk-1.md",
-      "tokens": 102,
+      "tokens": 226,
       "type": "prose"
     },
     {
@@ -9281,7 +9281,7 @@
       "chunk_id": "ops/tandoor/kubesail#chunk-1",
       "doc_id": "ops/tandoor/kubesail",
       "path": "chunks/ops-tandoor-kubesail-chunk-1.md",
-      "tokens": 170,
+      "tokens": 245,
       "type": "prose"
     },
     {
@@ -9309,7 +9309,7 @@
       "chunk_id": "ops/tandoor/manual#chunk-1",
       "doc_id": "ops/tandoor/manual",
       "path": "chunks/ops-tandoor-manual-chunk-1.md",
-      "tokens": 141,
+      "tokens": 287,
       "type": "prose"
     },
     {
@@ -9456,7 +9456,7 @@
       "chunk_id": "ops/tandoor/other#chunk-1",
       "doc_id": "ops/tandoor/other",
       "path": "chunks/ops-tandoor-other-chunk-1.md",
-      "tokens": 150,
+      "tokens": 260,
       "type": "prose"
     },
     {
@@ -9491,7 +9491,7 @@
       "chunk_id": "ops/tandoor/swag#chunk-1",
       "doc_id": "ops/tandoor/swag",
       "path": "chunks/ops-tandoor-swag-chunk-1.md",
-      "tokens": 131,
+      "tokens": 256,
       "type": "prose"
     },
     {
@@ -9519,7 +9519,7 @@
       "chunk_id": "tutorial/tandoor/synology#chunk-1",
       "doc_id": "tutorial/tandoor/synology",
       "path": "chunks/tutorial-tandoor-synology-chunk-1.md",
-      "tokens": 78,
+      "tokens": 227,
       "type": "prose"
     },
     {
@@ -9540,7 +9540,7 @@
       "chunk_id": "ops/tandoor/truenas-portainer#chunk-1",
       "doc_id": "ops/tandoor/truenas-portainer",
       "path": "chunks/ops-tandoor-truenas-portainer-chunk-1.md",
-      "tokens": 169,
+      "tokens": 291,
       "type": "prose"
     },
     {
@@ -9561,7 +9561,7 @@
       "chunk_id": "ops/tandoor/unraid#chunk-1",
       "doc_id": "ops/tandoor/unraid",
       "path": "chunks/ops-tandoor-unraid-chunk-1.md",
-      "tokens": 163,
+      "tokens": 254,
       "type": "prose"
     },
     {
@@ -9582,7 +9582,7 @@
       "chunk_id": "ops/tandoor/wsl#chunk-1",
       "doc_id": "ops/tandoor/wsl",
       "path": "chunks/ops-tandoor-wsl-chunk-1.md",
-      "tokens": 738,
+      "tokens": 815,
       "type": "prose"
     },
     {
@@ -9596,7 +9596,7 @@
       "chunk_id": "ops/tandoor/backup#chunk-1",
       "doc_id": "ops/tandoor/backup",
       "path": "chunks/ops-tandoor-backup-chunk-1.md",
-      "tokens": 130,
+      "tokens": 252,
       "type": "prose"
     },
     {
@@ -9645,7 +9645,7 @@
       "chunk_id": "ops/tandoor/configuration#chunk-1",
       "doc_id": "ops/tandoor/configuration",
       "path": "chunks/ops-tandoor-configuration-chunk-1.md",
-      "tokens": 39,
+      "tokens": 195,
       "type": "prose"
     },
     {
@@ -9680,7 +9680,7 @@
       "chunk_id": "ops/tandoor/migration-sqlite-postgres#chunk-1",
       "doc_id": "ops/tandoor/migration-sqlite-postgres",
       "path": "chunks/ops-tandoor-migration-sqlite-postgres-chunk-1.md",
-      "tokens": 322,
+      "tokens": 404,
       "type": "code"
     },
     {
@@ -9694,7 +9694,7 @@
       "chunk_id": "concept/tandoor/permissions#chunk-1",
       "doc_id": "concept/tandoor/permissions",
       "path": "chunks/concept-tandoor-permissions-chunk-1.md",
-      "tokens": 123,
+      "tokens": 211,
       "type": "prose"
     },
     {
@@ -9729,7 +9729,7 @@
       "chunk_id": "ops/tandoor/updating#chunk-1",
       "doc_id": "ops/tandoor/updating",
       "path": "chunks/ops-tandoor-updating-chunk-1.md",
-      "tokens": 63,
+      "tokens": 143,
       "type": "prose"
     },
     {
@@ -9764,7 +9764,7 @@
       "chunk_id": "ops/windmill/dag-visualization#chunk-1",
       "doc_id": "ops/windmill/dag-visualization",
       "path": "chunks/ops-windmill-dag-visualization-chunk-1.md",
-      "tokens": 19,
+      "tokens": 133,
       "type": "prose"
     },
     {
@@ -9827,7 +9827,7 @@
       "chunk_id": "ops/windmill/deployment-guide#chunk-1",
       "doc_id": "ops/windmill/deployment-guide",
       "path": "chunks/ops-windmill-deployment-guide-chunk-1.md",
-      "tokens": 163,
+      "tokens": 334,
       "type": "prose"
     },
     {
@@ -10352,7 +10352,7 @@
       "chunk_id": "ops/windmill/development-guide#chunk-1",
       "doc_id": "ops/windmill/development-guide",
       "path": "chunks/ops-windmill-development-guide-chunk-1.md",
-      "tokens": 41,
+      "tokens": 185,
       "type": "prose"
     },
     {
@@ -10534,7 +10534,7 @@
       "chunk_id": "tutorial/windmill/flows-guide#chunk-1",
       "doc_id": "tutorial/windmill/flows-guide",
       "path": "chunks/tutorial-windmill-flows-guide-chunk-1.md",
-      "tokens": 36,
+      "tokens": 196,
       "type": "prose"
     },
     {
@@ -10653,7 +10653,7 @@
       "chunk_id": "ops/windmill/implementation-summary#chunk-1",
       "doc_id": "ops/windmill/implementation-summary",
       "path": "chunks/ops-windmill-implementation-summary-chunk-1.md",
-      "tokens": 20,
+      "tokens": 158,
       "type": "prose"
     },
     {
@@ -10807,7 +10807,7 @@
       "chunk_id": "meta/windmill/indexing-system#chunk-1",
       "doc_id": "meta/windmill/indexing-system",
       "path": "chunks/meta-windmill-indexing-system-chunk-1.md",
-      "tokens": 33,
+      "tokens": 197,
       "type": "prose"
     },
     {
@@ -11017,7 +11017,7 @@
       "chunk_id": "meta/windmill/index#chunk-1",
       "doc_id": "meta/windmill/index",
       "path": "chunks/meta-windmill-index-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -11052,7 +11052,7 @@
       "chunk_id": "ops/windmill/cli-sync#chunk-1",
       "doc_id": "ops/windmill/cli-sync",
       "path": "chunks/ops-windmill-cli-sync-chunk-1.md",
-      "tokens": 152,
+      "tokens": 188,
       "type": "prose"
     },
     {
@@ -11066,7 +11066,7 @@
       "chunk_id": "meta/windmill/index-2#chunk-1",
       "doc_id": "meta/windmill/index-2",
       "path": "chunks/meta-windmill-index-2-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -11101,7 +11101,7 @@
       "chunk_id": "meta/windmill/index-3#chunk-1",
       "doc_id": "meta/windmill/index-3",
       "path": "chunks/meta-windmill-index-3-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -11136,7 +11136,7 @@
       "chunk_id": "meta/windmill/index-4#chunk-1",
       "doc_id": "meta/windmill/index-4",
       "path": "chunks/meta-windmill-index-4-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -11171,7 +11171,7 @@
       "chunk_id": "meta/windmill/index-5#chunk-1",
       "doc_id": "meta/windmill/index-5",
       "path": "chunks/meta-windmill-index-5-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -11206,7 +11206,7 @@
       "chunk_id": "meta/windmill/index-6#chunk-1",
       "doc_id": "meta/windmill/index-6",
       "path": "chunks/meta-windmill-index-6-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -11241,7 +11241,7 @@
       "chunk_id": "meta/windmill/index-7#chunk-1",
       "doc_id": "meta/windmill/index-7",
       "path": "chunks/meta-windmill-index-7-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -11276,7 +11276,7 @@
       "chunk_id": "meta/windmill/index-8#chunk-1",
       "doc_id": "meta/windmill/index-8",
       "path": "chunks/meta-windmill-index-8-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -11311,7 +11311,7 @@
       "chunk_id": "meta/windmill/index-9#chunk-1",
       "doc_id": "meta/windmill/index-9",
       "path": "chunks/meta-windmill-index-9-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -11346,7 +11346,7 @@
       "chunk_id": "meta/windmill/index-10#chunk-1",
       "doc_id": "meta/windmill/index-10",
       "path": "chunks/meta-windmill-index-10-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -11381,7 +11381,7 @@
       "chunk_id": "ops/windmill/aws-eks-ecs#chunk-1",
       "doc_id": "ops/windmill/aws-eks-ecs",
       "path": "chunks/ops-windmill-aws-eks-ecs-chunk-1.md",
-      "tokens": 39,
+      "tokens": 211,
       "type": "prose"
     },
     {
@@ -11409,7 +11409,7 @@
       "chunk_id": "meta/windmill/index-11#chunk-1",
       "doc_id": "meta/windmill/index-11",
       "path": "chunks/meta-windmill-index-11-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -11444,7 +11444,7 @@
       "chunk_id": "meta/windmill/index-12#chunk-1",
       "doc_id": "meta/windmill/index-12",
       "path": "chunks/meta-windmill-index-12-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -11479,7 +11479,7 @@
       "chunk_id": "meta/windmill/index-13#chunk-1",
       "doc_id": "meta/windmill/index-13",
       "path": "chunks/meta-windmill-index-13-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -11514,7 +11514,7 @@
       "chunk_id": "ops/windmill/python-client#chunk-1",
       "doc_id": "ops/windmill/python-client",
       "path": "chunks/ops-windmill-python-client-chunk-1.md",
-      "tokens": 96,
+      "tokens": 224,
       "type": "prose"
     },
     {
@@ -11584,7 +11584,7 @@
       "chunk_id": "ops/windmill/rust-client#chunk-1",
       "doc_id": "ops/windmill/rust-client",
       "path": "chunks/ops-windmill-rust-client-chunk-1.md",
-      "tokens": 114,
+      "tokens": 262,
       "type": "prose"
     },
     {
@@ -11619,7 +11619,7 @@
       "chunk_id": "ops/windmill/ts-client#chunk-1",
       "doc_id": "ops/windmill/ts-client",
       "path": "chunks/ops-windmill-ts-client-chunk-1.md",
-      "tokens": 118,
+      "tokens": 185,
       "type": "prose"
     },
     {
@@ -11647,7 +11647,7 @@
       "chunk_id": "concept/windmill/app#chunk-1",
       "doc_id": "concept/windmill/app",
       "path": "chunks/concept-windmill-app-chunk-1.md",
-      "tokens": 89,
+      "tokens": 178,
       "type": "prose"
     },
     {
@@ -11682,7 +11682,7 @@
       "chunk_id": "ops/windmill/branch-specific-items#chunk-1",
       "doc_id": "ops/windmill/branch-specific-items",
       "path": "chunks/ops-windmill-branch-specific-items-chunk-1.md",
-      "tokens": 87,
+      "tokens": 257,
       "type": "prose"
     },
     {
@@ -11829,7 +11829,7 @@
       "chunk_id": "concept/windmill/flow#chunk-1",
       "doc_id": "concept/windmill/flow",
       "path": "chunks/concept-windmill-flow-chunk-1.md",
-      "tokens": 126,
+      "tokens": 267,
       "type": "prose"
     },
     {
@@ -11892,7 +11892,7 @@
       "chunk_id": "concept/windmill/folder#chunk-1",
       "doc_id": "concept/windmill/folder",
       "path": "chunks/concept-windmill-folder-chunk-1.md",
-      "tokens": 83,
+      "tokens": 156,
       "type": "prose"
     },
     {
@@ -11920,7 +11920,7 @@
       "chunk_id": "ops/windmill/gitsync-settings#chunk-1",
       "doc_id": "ops/windmill/gitsync-settings",
       "path": "chunks/ops-windmill-gitsync-settings-chunk-1.md",
-      "tokens": 202,
+      "tokens": 358,
       "type": "prose"
     },
     {
@@ -12053,7 +12053,7 @@
       "chunk_id": "meta/windmill/index-14#chunk-1",
       "doc_id": "meta/windmill/index-14",
       "path": "chunks/meta-windmill-index-14-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -12088,7 +12088,7 @@
       "chunk_id": "ops/windmill/installation#chunk-1",
       "doc_id": "ops/windmill/installation",
       "path": "chunks/ops-windmill-installation-chunk-1.md",
-      "tokens": 236,
+      "tokens": 317,
       "type": "code"
     },
     {
@@ -12116,7 +12116,7 @@
       "chunk_id": "concept/windmill/resource#chunk-1",
       "doc_id": "concept/windmill/resource",
       "path": "chunks/concept-windmill-resource-chunk-1.md",
-      "tokens": 182,
+      "tokens": 271,
       "type": "prose"
     },
     {
@@ -12144,7 +12144,7 @@
       "chunk_id": "concept/windmill/script#chunk-1",
       "doc_id": "concept/windmill/script",
       "path": "chunks/concept-windmill-script-chunk-1.md",
-      "tokens": 145,
+      "tokens": 293,
       "type": "prose"
     },
     {
@@ -12207,7 +12207,7 @@
       "chunk_id": "ops/windmill/sync#chunk-1",
       "doc_id": "ops/windmill/sync",
       "path": "chunks/ops-windmill-sync-chunk-1.md",
-      "tokens": 513,
+      "tokens": 660,
       "type": "code"
     },
     {
@@ -12298,7 +12298,7 @@
       "chunk_id": "concept/windmill/user#chunk-1",
       "doc_id": "concept/windmill/user",
       "path": "chunks/concept-windmill-user-chunk-1.md",
-      "tokens": 114,
+      "tokens": 219,
       "type": "prose"
     },
     {
@@ -12333,7 +12333,7 @@
       "chunk_id": "concept/windmill/variable#chunk-1",
       "doc_id": "concept/windmill/variable",
       "path": "chunks/concept-windmill-variable-chunk-1.md",
-      "tokens": 105,
+      "tokens": 218,
       "type": "prose"
     },
     {
@@ -12375,7 +12375,7 @@
       "chunk_id": "ops/windmill/workspace-management#chunk-1",
       "doc_id": "ops/windmill/workspace-management",
       "path": "chunks/ops-windmill-workspace-management-chunk-1.md",
-      "tokens": 144,
+      "tokens": 292,
       "type": "prose"
     },
     {
@@ -12438,7 +12438,7 @@
       "chunk_id": "meta/windmill/index-15#chunk-1",
       "doc_id": "meta/windmill/index-15",
       "path": "chunks/meta-windmill-index-15-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -12473,7 +12473,7 @@
       "chunk_id": "ops/windmill/run-locally#chunk-1",
       "doc_id": "ops/windmill/run-locally",
       "path": "chunks/ops-windmill-run-locally-chunk-1.md",
-      "tokens": 146,
+      "tokens": 276,
       "type": "prose"
     },
     {
@@ -12501,7 +12501,7 @@
       "chunk_id": "meta/windmill/index-16#chunk-1",
       "doc_id": "meta/windmill/index-16",
       "path": "chunks/meta-windmill-index-16-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -12536,7 +12536,7 @@
       "chunk_id": "meta/windmill/index-17#chunk-1",
       "doc_id": "meta/windmill/index-17",
       "path": "chunks/meta-windmill-index-17-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -12571,7 +12571,7 @@
       "chunk_id": "meta/windmill/index-18#chunk-1",
       "doc_id": "meta/windmill/index-18",
       "path": "chunks/meta-windmill-index-18-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -12606,7 +12606,7 @@
       "chunk_id": "meta/windmill/index-19#chunk-1",
       "doc_id": "meta/windmill/index-19",
       "path": "chunks/meta-windmill-index-19-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -12641,7 +12641,7 @@
       "chunk_id": "meta/windmill/index-20#chunk-1",
       "doc_id": "meta/windmill/index-20",
       "path": "chunks/meta-windmill-index-20-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -12676,7 +12676,7 @@
       "chunk_id": "meta/windmill/index-21#chunk-1",
       "doc_id": "meta/windmill/index-21",
       "path": "chunks/meta-windmill-index-21-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -12711,7 +12711,7 @@
       "chunk_id": "meta/windmill/index-22#chunk-1",
       "doc_id": "meta/windmill/index-22",
       "path": "chunks/meta-windmill-index-22-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -12746,7 +12746,7 @@
       "chunk_id": "meta/windmill/index-23#chunk-1",
       "doc_id": "meta/windmill/index-23",
       "path": "chunks/meta-windmill-index-23-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -12781,7 +12781,7 @@
       "chunk_id": "meta/windmill/index-24#chunk-1",
       "doc_id": "meta/windmill/index-24",
       "path": "chunks/meta-windmill-index-24-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -12816,7 +12816,7 @@
       "chunk_id": "tutorial/windmill/data-tables#chunk-1",
       "doc_id": "tutorial/windmill/data-tables",
       "path": "chunks/tutorial-windmill-data-tables-chunk-1.md",
-      "tokens": 128,
+      "tokens": 293,
       "type": "prose"
     },
     {
@@ -12865,7 +12865,7 @@
       "chunk_id": "tutorial/windmill/ducklake#chunk-1",
       "doc_id": "tutorial/windmill/ducklake",
       "path": "chunks/tutorial-windmill-ducklake-chunk-1.md",
-      "tokens": 119,
+      "tokens": 258,
       "type": "prose"
     },
     {
@@ -12914,7 +12914,7 @@
       "chunk_id": "meta/windmill/index-25#chunk-1",
       "doc_id": "meta/windmill/index-25",
       "path": "chunks/meta-windmill-index-25-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -12949,7 +12949,7 @@
       "chunk_id": "ops/windmill/key-value-stores#chunk-1",
       "doc_id": "ops/windmill/key-value-stores",
       "path": "chunks/ops-windmill-key-value-stores-chunk-1.md",
-      "tokens": 143,
+      "tokens": 256,
       "type": "prose"
     },
     {
@@ -12984,7 +12984,7 @@
       "chunk_id": "concept/windmill/large-data-files#chunk-1",
       "doc_id": "concept/windmill/large-data-files",
       "path": "chunks/concept-windmill-large-data-files-chunk-1.md",
-      "tokens": 198,
+      "tokens": 336,
       "type": "prose"
     },
     {
@@ -13019,7 +13019,7 @@
       "chunk_id": "tutorial/windmill/structured-databases#chunk-1",
       "doc_id": "tutorial/windmill/structured-databases",
       "path": "chunks/tutorial-windmill-structured-databases-chunk-1.md",
-      "tokens": 100,
+      "tokens": 218,
       "type": "prose"
     },
     {
@@ -13047,7 +13047,7 @@
       "chunk_id": "concept/windmill/within-windmill#chunk-1",
       "doc_id": "concept/windmill/within-windmill",
       "path": "chunks/concept-windmill-within-windmill-chunk-1.md",
-      "tokens": 84,
+      "tokens": 228,
       "type": "prose"
     },
     {
@@ -13075,7 +13075,7 @@
       "chunk_id": "meta/windmill/index-26#chunk-1",
       "doc_id": "meta/windmill/index-26",
       "path": "chunks/meta-windmill-index-26-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -13110,7 +13110,7 @@
       "chunk_id": "meta/windmill/index-27#chunk-1",
       "doc_id": "meta/windmill/index-27",
       "path": "chunks/meta-windmill-index-27-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -13145,7 +13145,7 @@
       "chunk_id": "meta/windmill/index-28#chunk-1",
       "doc_id": "meta/windmill/index-28",
       "path": "chunks/meta-windmill-index-28-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -13180,7 +13180,7 @@
       "chunk_id": "meta/windmill/index-29#chunk-1",
       "doc_id": "meta/windmill/index-29",
       "path": "chunks/meta-windmill-index-29-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -13215,7 +13215,7 @@
       "chunk_id": "meta/windmill/index-30#chunk-1",
       "doc_id": "meta/windmill/index-30",
       "path": "chunks/meta-windmill-index-30-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -13250,7 +13250,7 @@
       "chunk_id": "meta/windmill/index-31#chunk-1",
       "doc_id": "meta/windmill/index-31",
       "path": "chunks/meta-windmill-index-31-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -13285,7 +13285,7 @@
       "chunk_id": "meta/windmill/index-32#chunk-1",
       "doc_id": "meta/windmill/index-32",
       "path": "chunks/meta-windmill-index-32-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -13320,7 +13320,7 @@
       "chunk_id": "meta/windmill/index-33#chunk-1",
       "doc_id": "meta/windmill/index-33",
       "path": "chunks/meta-windmill-index-33-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -13355,7 +13355,7 @@
       "chunk_id": "meta/windmill/index-34#chunk-1",
       "doc_id": "meta/windmill/index-34",
       "path": "chunks/meta-windmill-index-34-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -13390,7 +13390,7 @@
       "chunk_id": "meta/windmill/index-35#chunk-1",
       "doc_id": "meta/windmill/index-35",
       "path": "chunks/meta-windmill-index-35-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -13425,7 +13425,7 @@
       "chunk_id": "meta/windmill/index-36#chunk-1",
       "doc_id": "meta/windmill/index-36",
       "path": "chunks/meta-windmill-index-36-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -13460,7 +13460,7 @@
       "chunk_id": "meta/windmill/index-37#chunk-1",
       "doc_id": "meta/windmill/index-37",
       "path": "chunks/meta-windmill-index-37-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -13495,7 +13495,7 @@
       "chunk_id": "meta/windmill/index-38#chunk-1",
       "doc_id": "meta/windmill/index-38",
       "path": "chunks/meta-windmill-index-38-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -13530,7 +13530,7 @@
       "chunk_id": "meta/windmill/index-39#chunk-1",
       "doc_id": "meta/windmill/index-39",
       "path": "chunks/meta-windmill-index-39-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -13565,7 +13565,7 @@
       "chunk_id": "meta/windmill/index-40#chunk-1",
       "doc_id": "meta/windmill/index-40",
       "path": "chunks/meta-windmill-index-40-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -13600,7 +13600,7 @@
       "chunk_id": "meta/windmill/index-41#chunk-1",
       "doc_id": "meta/windmill/index-41",
       "path": "chunks/meta-windmill-index-41-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -13635,7 +13635,7 @@
       "chunk_id": "meta/windmill/index-42#chunk-1",
       "doc_id": "meta/windmill/index-42",
       "path": "chunks/meta-windmill-index-42-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -13670,7 +13670,7 @@
       "chunk_id": "meta/windmill/index-43#chunk-1",
       "doc_id": "meta/windmill/index-43",
       "path": "chunks/meta-windmill-index-43-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -13705,7 +13705,7 @@
       "chunk_id": "meta/windmill/index-44#chunk-1",
       "doc_id": "meta/windmill/index-44",
       "path": "chunks/meta-windmill-index-44-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -13740,7 +13740,7 @@
       "chunk_id": "meta/windmill/index-45#chunk-1",
       "doc_id": "meta/windmill/index-45",
       "path": "chunks/meta-windmill-index-45-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -13775,7 +13775,7 @@
       "chunk_id": "meta/windmill/index-46#chunk-1",
       "doc_id": "meta/windmill/index-46",
       "path": "chunks/meta-windmill-index-46-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -13810,7 +13810,7 @@
       "chunk_id": "meta/windmill/index-47#chunk-1",
       "doc_id": "meta/windmill/index-47",
       "path": "chunks/meta-windmill-index-47-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -13845,7 +13845,7 @@
       "chunk_id": "meta/windmill/index-48#chunk-1",
       "doc_id": "meta/windmill/index-48",
       "path": "chunks/meta-windmill-index-48-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -13880,7 +13880,7 @@
       "chunk_id": "meta/windmill/index-49#chunk-1",
       "doc_id": "meta/windmill/index-49",
       "path": "chunks/meta-windmill-index-49-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -13915,7 +13915,7 @@
       "chunk_id": "meta/windmill/index-50#chunk-1",
       "doc_id": "meta/windmill/index-50",
       "path": "chunks/meta-windmill-index-50-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -13950,7 +13950,7 @@
       "chunk_id": "meta/windmill/index-51#chunk-1",
       "doc_id": "meta/windmill/index-51",
       "path": "chunks/meta-windmill-index-51-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -13985,7 +13985,7 @@
       "chunk_id": "meta/windmill/index-52#chunk-1",
       "doc_id": "meta/windmill/index-52",
       "path": "chunks/meta-windmill-index-52-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -14020,7 +14020,7 @@
       "chunk_id": "meta/windmill/index-53#chunk-1",
       "doc_id": "meta/windmill/index-53",
       "path": "chunks/meta-windmill-index-53-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -14055,7 +14055,7 @@
       "chunk_id": "meta/windmill/index-54#chunk-1",
       "doc_id": "meta/windmill/index-54",
       "path": "chunks/meta-windmill-index-54-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -14090,7 +14090,7 @@
       "chunk_id": "meta/windmill/index-55#chunk-1",
       "doc_id": "meta/windmill/index-55",
       "path": "chunks/meta-windmill-index-55-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -14125,7 +14125,7 @@
       "chunk_id": "meta/windmill/index-56#chunk-1",
       "doc_id": "meta/windmill/index-56",
       "path": "chunks/meta-windmill-index-56-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -14160,7 +14160,7 @@
       "chunk_id": "meta/windmill/index-57#chunk-1",
       "doc_id": "meta/windmill/index-57",
       "path": "chunks/meta-windmill-index-57-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -14195,7 +14195,7 @@
       "chunk_id": "meta/windmill/index-58#chunk-1",
       "doc_id": "meta/windmill/index-58",
       "path": "chunks/meta-windmill-index-58-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -14230,7 +14230,7 @@
       "chunk_id": "meta/windmill/index-59#chunk-1",
       "doc_id": "meta/windmill/index-59",
       "path": "chunks/meta-windmill-index-59-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -14265,7 +14265,7 @@
       "chunk_id": "meta/windmill/index-60#chunk-1",
       "doc_id": "meta/windmill/index-60",
       "path": "chunks/meta-windmill-index-60-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -14300,7 +14300,7 @@
       "chunk_id": "meta/windmill/index-61#chunk-1",
       "doc_id": "meta/windmill/index-61",
       "path": "chunks/meta-windmill-index-61-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -14335,7 +14335,7 @@
       "chunk_id": "meta/windmill/index-62#chunk-1",
       "doc_id": "meta/windmill/index-62",
       "path": "chunks/meta-windmill-index-62-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -14370,7 +14370,7 @@
       "chunk_id": "meta/windmill/index-63#chunk-1",
       "doc_id": "meta/windmill/index-63",
       "path": "chunks/meta-windmill-index-63-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -14405,7 +14405,7 @@
       "chunk_id": "meta/windmill/index-64#chunk-1",
       "doc_id": "meta/windmill/index-64",
       "path": "chunks/meta-windmill-index-64-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -14440,7 +14440,7 @@
       "chunk_id": "meta/windmill/index-65#chunk-1",
       "doc_id": "meta/windmill/index-65",
       "path": "chunks/meta-windmill-index-65-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -14475,7 +14475,7 @@
       "chunk_id": "meta/windmill/index-66#chunk-1",
       "doc_id": "meta/windmill/index-66",
       "path": "chunks/meta-windmill-index-66-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -14510,7 +14510,7 @@
       "chunk_id": "meta/windmill/index-67#chunk-1",
       "doc_id": "meta/windmill/index-67",
       "path": "chunks/meta-windmill-index-67-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -14545,7 +14545,7 @@
       "chunk_id": "meta/windmill/index-68#chunk-1",
       "doc_id": "meta/windmill/index-68",
       "path": "chunks/meta-windmill-index-68-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -14580,7 +14580,7 @@
       "chunk_id": "meta/windmill/index-69#chunk-1",
       "doc_id": "meta/windmill/index-69",
       "path": "chunks/meta-windmill-index-69-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -14615,7 +14615,7 @@
       "chunk_id": "meta/windmill/index-70#chunk-1",
       "doc_id": "meta/windmill/index-70",
       "path": "chunks/meta-windmill-index-70-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -14650,7 +14650,7 @@
       "chunk_id": "meta/windmill/index-71#chunk-1",
       "doc_id": "meta/windmill/index-71",
       "path": "chunks/meta-windmill-index-71-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -14685,7 +14685,7 @@
       "chunk_id": "meta/windmill/index-72#chunk-1",
       "doc_id": "meta/windmill/index-72",
       "path": "chunks/meta-windmill-index-72-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -14720,7 +14720,7 @@
       "chunk_id": "meta/windmill/index-73#chunk-1",
       "doc_id": "meta/windmill/index-73",
       "path": "chunks/meta-windmill-index-73-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -14755,7 +14755,7 @@
       "chunk_id": "meta/windmill/index-74#chunk-1",
       "doc_id": "meta/windmill/index-74",
       "path": "chunks/meta-windmill-index-74-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -14790,7 +14790,7 @@
       "chunk_id": "meta/windmill/index-75#chunk-1",
       "doc_id": "meta/windmill/index-75",
       "path": "chunks/meta-windmill-index-75-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -14825,7 +14825,7 @@
       "chunk_id": "ops/windmill/migration#chunk-1",
       "doc_id": "ops/windmill/migration",
       "path": "chunks/ops-windmill-migration-chunk-1.md",
-      "tokens": 62,
+      "tokens": 201,
       "type": "prose"
     },
     {
@@ -14860,7 +14860,7 @@
       "chunk_id": "meta/windmill/index-76#chunk-1",
       "doc_id": "meta/windmill/index-76",
       "path": "chunks/meta-windmill-index-76-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -14895,7 +14895,7 @@
       "chunk_id": "meta/windmill/index-77#chunk-1",
       "doc_id": "meta/windmill/index-77",
       "path": "chunks/meta-windmill-index-77-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -14930,7 +14930,7 @@
       "chunk_id": "meta/windmill/index-78#chunk-1",
       "doc_id": "meta/windmill/index-78",
       "path": "chunks/meta-windmill-index-78-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -14965,7 +14965,7 @@
       "chunk_id": "meta/windmill/index-79#chunk-1",
       "doc_id": "meta/windmill/index-79",
       "path": "chunks/meta-windmill-index-79-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -15000,7 +15000,7 @@
       "chunk_id": "meta/windmill/index-80#chunk-1",
       "doc_id": "meta/windmill/index-80",
       "path": "chunks/meta-windmill-index-80-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -15035,7 +15035,7 @@
       "chunk_id": "ops/windmill/rust-sdk-winmill-patterns#chunk-1",
       "doc_id": "ops/windmill/rust-sdk-winmill-patterns",
       "path": "chunks/ops-windmill-rust-sdk-winmill-patterns-chunk-1.md",
-      "tokens": 261,
+      "tokens": 445,
       "type": "prose"
     },
     {
@@ -15133,7 +15133,7 @@
       "chunk_id": "meta/windmill/index-81#chunk-1",
       "doc_id": "meta/windmill/index-81",
       "path": "chunks/meta-windmill-index-81-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -15168,7 +15168,7 @@
       "chunk_id": "concept/windmill/10-flow-trigger#chunk-1",
       "doc_id": "concept/windmill/10-flow-trigger",
       "path": "chunks/concept-windmill-10-flow-trigger-chunk-1.md",
-      "tokens": 243,
+      "tokens": 347,
       "type": "prose"
     },
     {
@@ -15189,7 +15189,7 @@
       "chunk_id": "tutorial/windmill/11-flow-approval#chunk-1",
       "doc_id": "tutorial/windmill/11-flow-approval",
       "path": "chunks/tutorial-windmill-11-flow-approval-chunk-1.md",
-      "tokens": 410,
+      "tokens": 604,
       "type": "prose"
     },
     {
@@ -15252,7 +15252,7 @@
       "chunk_id": "tutorial/windmill/12-flow-loops#chunk-1",
       "doc_id": "tutorial/windmill/12-flow-loops",
       "path": "chunks/tutorial-windmill-12-flow-loops-chunk-1.md",
-      "tokens": 165,
+      "tokens": 314,
       "type": "prose"
     },
     {
@@ -15287,7 +15287,7 @@
       "chunk_id": "concept/windmill/13-flow-branches#chunk-1",
       "doc_id": "concept/windmill/13-flow-branches",
       "path": "chunks/concept-windmill-13-flow-branches-chunk-1.md",
-      "tokens": 180,
+      "tokens": 256,
       "type": "prose"
     },
     {
@@ -15322,7 +15322,7 @@
       "chunk_id": "ops/windmill/14-retries#chunk-1",
       "doc_id": "ops/windmill/14-retries",
       "path": "chunks/ops-windmill-14-retries-chunk-1.md",
-      "tokens": 396,
+      "tokens": 510,
       "type": "prose"
     },
     {
@@ -15357,7 +15357,7 @@
       "chunk_id": "tutorial/windmill/15-sleep#chunk-1",
       "doc_id": "tutorial/windmill/15-sleep",
       "path": "chunks/tutorial-windmill-15-sleep-chunk-1.md",
-      "tokens": 434,
+      "tokens": 540,
       "type": "prose"
     },
     {
@@ -15385,7 +15385,7 @@
       "chunk_id": "tutorial/windmill/16-architecture#chunk-1",
       "doc_id": "tutorial/windmill/16-architecture",
       "path": "chunks/tutorial-windmill-16-architecture-chunk-1.md",
-      "tokens": 279,
+      "tokens": 419,
       "type": "prose"
     },
     {
@@ -15420,7 +15420,7 @@
       "chunk_id": "concept/windmill/17-ai-flows#chunk-1",
       "doc_id": "concept/windmill/17-ai-flows",
       "path": "chunks/concept-windmill-17-ai-flows-chunk-1.md",
-      "tokens": 84,
+      "tokens": 118,
       "type": "prose"
     },
     {
@@ -15434,7 +15434,7 @@
       "chunk_id": "ops/windmill/18-test-flows#chunk-1",
       "doc_id": "ops/windmill/18-test-flows",
       "path": "chunks/ops-windmill-18-test-flows-chunk-1.md",
-      "tokens": 92,
+      "tokens": 236,
       "type": "prose"
     },
     {
@@ -15455,7 +15455,7 @@
       "chunk_id": "ops/windmill/19-early-return#chunk-1",
       "doc_id": "ops/windmill/19-early-return",
       "path": "chunks/ops-windmill-19-early-return-chunk-1.md",
-      "tokens": 143,
+      "tokens": 193,
       "type": "prose"
     },
     {
@@ -15469,7 +15469,7 @@
       "chunk_id": "tutorial/windmill/1-flow-editor#chunk-1",
       "doc_id": "tutorial/windmill/1-flow-editor",
       "path": "chunks/tutorial-windmill-1-flow-editor-chunk-1.md",
-      "tokens": 1054,
+      "tokens": 1107,
       "type": "prose"
     },
     {
@@ -15483,7 +15483,7 @@
       "chunk_id": "concept/windmill/20-priority#chunk-1",
       "doc_id": "concept/windmill/20-priority",
       "path": "chunks/concept-windmill-20-priority-chunk-1.md",
-      "tokens": 178,
+      "tokens": 224,
       "type": "prose"
     },
     {
@@ -15497,7 +15497,7 @@
       "chunk_id": "concept/windmill/21-lifetime#chunk-1",
       "doc_id": "concept/windmill/21-lifetime",
       "path": "chunks/concept-windmill-21-lifetime-chunk-1.md",
-      "tokens": 182,
+      "tokens": 236,
       "type": "prose"
     },
     {
@@ -15511,7 +15511,7 @@
       "chunk_id": "tutorial/windmill/22-while-loops#chunk-1",
       "doc_id": "tutorial/windmill/22-while-loops",
       "path": "chunks/tutorial-windmill-22-while-loops-chunk-1.md",
-      "tokens": 42,
+      "tokens": 185,
       "type": "prose"
     },
     {
@@ -15560,7 +15560,7 @@
       "chunk_id": "ref/windmill/23-job-debouncing#chunk-1",
       "doc_id": "ref/windmill/23-job-debouncing",
       "path": "chunks/ref-windmill-23-job-debouncing-chunk-1.md",
-      "tokens": 175,
+      "tokens": 230,
       "type": "prose"
     },
     {
@@ -15581,7 +15581,7 @@
       "chunk_id": "concept/windmill/24-sticky-notes#chunk-1",
       "doc_id": "concept/windmill/24-sticky-notes",
       "path": "chunks/concept-windmill-24-sticky-notes-chunk-1.md",
-      "tokens": 120,
+      "tokens": 280,
       "type": "prose"
     },
     {
@@ -15630,7 +15630,7 @@
       "chunk_id": "concept/windmill/2-early-stop#chunk-1",
       "doc_id": "concept/windmill/2-early-stop",
       "path": "chunks/concept-windmill-2-early-stop-chunk-1.md",
-      "tokens": 140,
+      "tokens": 214,
       "type": "prose"
     },
     {
@@ -15658,7 +15658,7 @@
       "chunk_id": "tutorial/windmill/3-editor-components#chunk-1",
       "doc_id": "tutorial/windmill/3-editor-components",
       "path": "chunks/tutorial-windmill-3-editor-components-chunk-1.md",
-      "tokens": 139,
+      "tokens": 299,
       "type": "prose"
     },
     {
@@ -15735,7 +15735,7 @@
       "chunk_id": "tutorial/windmill/4-cache#chunk-1",
       "doc_id": "tutorial/windmill/4-cache",
       "path": "chunks/tutorial-windmill-4-cache-chunk-1.md",
-      "tokens": 193,
+      "tokens": 254,
       "type": "prose"
     },
     {
@@ -15770,7 +15770,7 @@
       "chunk_id": "concept/windmill/5-step-mocking#chunk-1",
       "doc_id": "concept/windmill/5-step-mocking",
       "path": "chunks/concept-windmill-5-step-mocking-chunk-1.md",
-      "tokens": 178,
+      "tokens": 306,
       "type": "prose"
     },
     {
@@ -15805,7 +15805,7 @@
       "chunk_id": "ref/windmill/6-concurrency-limit#chunk-1",
       "doc_id": "ref/windmill/6-concurrency-limit",
       "path": "chunks/ref-windmill-6-concurrency-limit-chunk-1.md",
-      "tokens": 204,
+      "tokens": 288,
       "type": "prose"
     },
     {
@@ -15833,7 +15833,7 @@
       "chunk_id": "tutorial/windmill/7-flow-error-handler#chunk-1",
       "doc_id": "tutorial/windmill/7-flow-error-handler",
       "path": "chunks/tutorial-windmill-7-flow-error-handler-chunk-1.md",
-      "tokens": 327,
+      "tokens": 391,
       "type": "prose"
     },
     {
@@ -15847,7 +15847,7 @@
       "chunk_id": "concept/windmill/8-error-handling#chunk-1",
       "doc_id": "concept/windmill/8-error-handling",
       "path": "chunks/concept-windmill-8-error-handling-chunk-1.md",
-      "tokens": 40,
+      "tokens": 130,
       "type": "prose"
     },
     {
@@ -15896,7 +15896,7 @@
       "chunk_id": "concept/windmill/9-custom-timeout#chunk-1",
       "doc_id": "concept/windmill/9-custom-timeout",
       "path": "chunks/concept-windmill-9-custom-timeout-chunk-1.md",
-      "tokens": 165,
+      "tokens": 218,
       "type": "prose"
     },
     {
@@ -15910,7 +15910,7 @@
       "chunk_id": "meta/windmill/index-82#chunk-1",
       "doc_id": "meta/windmill/index-82",
       "path": "chunks/meta-windmill-index-82-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -15945,7 +15945,7 @@
       "chunk_id": "meta/windmill/index-83#chunk-1",
       "doc_id": "meta/windmill/index-83",
       "path": "chunks/meta-windmill-index-83-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -15980,7 +15980,7 @@
       "chunk_id": "meta/windmill/index-84#chunk-1",
       "doc_id": "meta/windmill/index-84",
       "path": "chunks/meta-windmill-index-84-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -16015,7 +16015,7 @@
       "chunk_id": "meta/windmill/index-85#chunk-1",
       "doc_id": "meta/windmill/index-85",
       "path": "chunks/meta-windmill-index-85-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -16050,7 +16050,7 @@
       "chunk_id": "meta/windmill/index-86#chunk-1",
       "doc_id": "meta/windmill/index-86",
       "path": "chunks/meta-windmill-index-86-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -16085,7 +16085,7 @@
       "chunk_id": "meta/windmill/index-87#chunk-1",
       "doc_id": "meta/windmill/index-87",
       "path": "chunks/meta-windmill-index-87-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -16120,7 +16120,7 @@
       "chunk_id": "meta/windmill/index-88#chunk-1",
       "doc_id": "meta/windmill/index-88",
       "path": "chunks/meta-windmill-index-88-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -16155,7 +16155,7 @@
       "chunk_id": "meta/windmill/index-89#chunk-1",
       "doc_id": "meta/windmill/index-89",
       "path": "chunks/meta-windmill-index-89-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -16190,7 +16190,7 @@
       "chunk_id": "meta/windmill/index-90#chunk-1",
       "doc_id": "meta/windmill/index-90",
       "path": "chunks/meta-windmill-index-90-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -16225,7 +16225,7 @@
       "chunk_id": "meta/windmill/index-91#chunk-1",
       "doc_id": "meta/windmill/index-91",
       "path": "chunks/meta-windmill-index-91-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -16260,7 +16260,7 @@
       "chunk_id": "meta/windmill/index-92#chunk-1",
       "doc_id": "meta/windmill/index-92",
       "path": "chunks/meta-windmill-index-92-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -16295,7 +16295,7 @@
       "chunk_id": "meta/windmill/index-93#chunk-1",
       "doc_id": "meta/windmill/index-93",
       "path": "chunks/meta-windmill-index-93-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -16330,7 +16330,7 @@
       "chunk_id": "meta/windmill/index-94#chunk-1",
       "doc_id": "meta/windmill/index-94",
       "path": "chunks/meta-windmill-index-94-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -16365,7 +16365,7 @@
       "chunk_id": "meta/windmill/index-95#chunk-1",
       "doc_id": "meta/windmill/index-95",
       "path": "chunks/meta-windmill-index-95-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -16400,7 +16400,7 @@
       "chunk_id": "meta/windmill/index-96#chunk-1",
       "doc_id": "meta/windmill/index-96",
       "path": "chunks/meta-windmill-index-96-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -16435,7 +16435,7 @@
       "chunk_id": "meta/windmill/index-97#chunk-1",
       "doc_id": "meta/windmill/index-97",
       "path": "chunks/meta-windmill-index-97-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -16470,7 +16470,7 @@
       "chunk_id": "meta/windmill/index-98#chunk-1",
       "doc_id": "meta/windmill/index-98",
       "path": "chunks/meta-windmill-index-98-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -16505,7 +16505,7 @@
       "chunk_id": "meta/windmill/index-99#chunk-1",
       "doc_id": "meta/windmill/index-99",
       "path": "chunks/meta-windmill-index-99-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -16540,7 +16540,7 @@
       "chunk_id": "tutorial/windmill/intro#chunk-1",
       "doc_id": "tutorial/windmill/intro",
       "path": "chunks/tutorial-windmill-intro-chunk-1.md",
-      "tokens": 254,
+      "tokens": 384,
       "type": "prose"
     },
     {
@@ -16575,7 +16575,7 @@
       "chunk_id": "meta/windmill/index-100#chunk-1",
       "doc_id": "meta/windmill/index-100",
       "path": "chunks/meta-windmill-index-100-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -16610,7 +16610,7 @@
       "chunk_id": "ref/windmill/concurrency-limit#chunk-1",
       "doc_id": "ref/windmill/concurrency-limit",
       "path": "chunks/ref-windmill-concurrency-limit-chunk-1.md",
-      "tokens": 166,
+      "tokens": 279,
       "type": "prose"
     },
     {
@@ -16645,7 +16645,7 @@
       "chunk_id": "concept/windmill/custom-environment-variables#chunk-1",
       "doc_id": "concept/windmill/custom-environment-variables",
       "path": "chunks/concept-windmill-custom-environment-variables-chunk-1.md",
-      "tokens": 172,
+      "tokens": 208,
       "type": "prose"
     },
     {
@@ -16659,7 +16659,7 @@
       "chunk_id": "tutorial/windmill/customize-ui#chunk-1",
       "doc_id": "tutorial/windmill/customize-ui",
       "path": "chunks/tutorial-windmill-customize-ui-chunk-1.md",
-      "tokens": 510,
+      "tokens": 570,
       "type": "prose"
     },
     {
@@ -16673,7 +16673,7 @@
       "chunk_id": "meta/windmill/index-101#chunk-1",
       "doc_id": "meta/windmill/index-101",
       "path": "chunks/meta-windmill-index-101-chunk-1.md",
-      "tokens": 478,
+      "tokens": 611,
       "type": "code"
     },
     {
@@ -16708,7 +16708,7 @@
       "chunk_id": "ref/windmill/job-debouncing#chunk-1",
       "doc_id": "ref/windmill/job-debouncing",
       "path": "chunks/ref-windmill-job-debouncing-chunk-1.md",
-      "tokens": 159,
+      "tokens": 249,
       "type": "prose"
     },
     {
@@ -16736,7 +16736,7 @@
       "chunk_id": "ops/windmill/multiplayer#chunk-1",
       "doc_id": "ops/windmill/multiplayer",
       "path": "chunks/ops-windmill-multiplayer-chunk-1.md",
-      "tokens": 101,
+      "tokens": 128,
       "type": "prose"
     },
     {
@@ -16750,7 +16750,7 @@
       "chunk_id": "ops/windmill/perpetual-scripts#chunk-1",
       "doc_id": "ops/windmill/perpetual-scripts",
       "path": "chunks/ops-windmill-perpetual-scripts-chunk-1.md",
-      "tokens": 59,
+      "tokens": 154,
       "type": "prose"
     },
     {
@@ -16785,7 +16785,7 @@
       "chunk_id": "tutorial/windmill/script-kinds#chunk-1",
       "doc_id": "tutorial/windmill/script-kinds",
       "path": "chunks/tutorial-windmill-script-kinds-chunk-1.md",
-      "tokens": 55,
+      "tokens": 126,
       "type": "prose"
     },
     {
@@ -16834,7 +16834,7 @@
       "chunk_id": "tutorial/windmill/settings#chunk-1",
       "doc_id": "tutorial/windmill/settings",
       "path": "chunks/tutorial-windmill-settings-chunk-1.md",
-      "tokens": 41,
+      "tokens": 193,
       "type": "prose"
     },
     {
@@ -16876,7 +16876,7 @@
       "chunk_id": "concept/windmill/vs-code-scripts#chunk-1",
       "doc_id": "concept/windmill/vs-code-scripts",
       "path": "chunks/concept-windmill-vs-code-scripts-chunk-1.md",
-      "tokens": 144,
+      "tokens": 180,
       "type": "prose"
     },
     {

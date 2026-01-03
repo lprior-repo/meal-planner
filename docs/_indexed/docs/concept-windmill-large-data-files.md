@@ -2,8 +2,49 @@
 id: concept/windmill/large-data-files
 title: "Large data: S3, R2, MinIO, Azure Blob, Google Cloud Storage"
 category: concept
-tags: ["windmill", "large", "concept", "advanced"]
+tags: ["windmill", "large", "advanced", "concept"]
 ---
+
+<!--
+<doc_metadata>
+  <type>guide</type>
+  <category>windmill</category>
+  <title>Large data: S3, R2, MinIO, Azure Blob, Google Cloud Storage</title>
+  <description>import DocCard from &apos;@site/src/components/DocCard&apos;; import Tabs from &apos;@theme/Tabs&apos;; import TabItem from &apos;@theme/TabItem&apos;;</description>
+  <created_at>2026-01-02T19:55:27.594723</created_at>
+  <updated_at>2026-01-02T19:55:27.594723</updated_at>
+  <language>en</language>
+  <sections count="3">
+    <section name="Workspace object storage" level="2"/>
+    <section name="Windmill integration with Polars and DuckDB for data pipelines" level="2"/>
+    <section name="Use Amazon S3, R2, MinIO, Azure Blob, and Google Cloud Storage directly" level="2"/>
+  </sections>
+  <features>
+    <feature>python_main</feature>
+    <feature>workspace_object_storage</feature>
+  </features>
+  <dependencies>
+    <dependency type="crate">wmill</dependency>
+    <dependency type="feature">meta/windmill/index-25</dependency>
+    <dependency type="feature">meta/windmill/index-55</dependency>
+    <dependency type="feature">meta/windmill/index-43</dependency>
+  </dependencies>
+  <related_entities>
+    <entity relationship="uses">./index.mdx</entity>
+    <entity relationship="uses">../38_object_storage_in_windmill/index.mdx</entity>
+    <entity relationship="uses">/pricing</entity>
+    <entity relationship="uses">../11_persistent_storage/s3_infographics.png &apos;Workspace object storage infographic&apos;</entity>
+    <entity relationship="uses">../38_object_storage_in_windmill/index.mdx</entity>
+    <entity relationship="uses">../27_data_pipelines/index.mdx</entity>
+  </related_entities>
+  <examples count="3">
+    <example type="code">Code examples included</example>
+  </examples>
+  <difficulty_level>intermediate</difficulty_level>
+  <estimated_reading_time>4</estimated_reading_time>
+  <tags>windmill,large,advanced,concept</tags>
+</doc_metadata>
+-->
 
 import DocCard from '@site/src/components/DocCard';
 import Tabs from '@theme/Tabs';

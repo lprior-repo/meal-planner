@@ -7,6 +7,35 @@ tags: ["windmill", "concept", "early"]
 
 <!--
 <doc_metadata>
+  <type>guide</type>
+  <category>windmill</category>
+  <title>Early stop / Break</title>
+  <description>&lt;!-- &lt;doc_metadata&gt; &lt;type&gt;reference&lt;/type&gt; &lt;category&gt;flows&lt;/category&gt; &lt;title&gt;Early Stop&lt;/title&gt; &lt;description&gt;Stop flow execution early based on conditions&lt;/description&gt; &lt;created_at&gt;2025-12-28T00:00:00</description>
+  <created_at>2026-01-02T19:55:27.976310</created_at>
+  <updated_at>2026-01-02T19:55:27.976310</updated_at>
+  <language>en</language>
+  <sections count="2">
+    <section name="Early stop for step" level="2"/>
+    <section name="Early stop for flow" level="2"/>
+  </sections>
+  <features>
+    <feature>early_stop_for_flow</feature>
+    <feature>early_stop_for_step</feature>
+  </features>
+  <dependencies>
+    <dependency type="feature">meta/windmill/index-76</dependency>
+  </dependencies>
+  <related_entities>
+    <entity relationship="uses">../core_concepts/5_monitor_past_and_future_runs/index.mdx</entity>
+  </related_entities>
+  <difficulty_level>beginner</difficulty_level>
+  <estimated_reading_time>1</estimated_reading_time>
+  <tags>windmill,concept,early</tags>
+</doc_metadata>
+-->
+
+<!--
+<doc_metadata>
   <type>reference</type>
   <category>flows</category>
   <title>Early Stop</title>

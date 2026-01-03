@@ -2,8 +2,52 @@
 id: concept/windmill/5-step-mocking
 title: "Step mocking / Pin result"
 category: concept
-tags: ["windmill", "concept", "step"]
+tags: ["windmill", "step", "concept"]
 ---
+
+<!--
+<doc_metadata>
+  <type>guide</type>
+  <category>windmill</category>
+  <title>Step mocking / Pin result</title>
+  <description>&lt;!-- &lt;doc_metadata&gt; &lt;type&gt;reference&lt;/type&gt; &lt;category&gt;flows&lt;/category&gt; &lt;title&gt;Step Mocking&lt;/title&gt; &lt;description&gt;Mock flow steps for faster development iteration&lt;/description&gt; &lt;created_at&gt;2025-12-28T00:</description>
+  <created_at>2026-01-02T19:55:27.991030</created_at>
+  <updated_at>2026-01-02T19:55:27.991030</updated_at>
+  <language>en</language>
+  <sections count="6">
+    <section name="Mocking vs Pinning" level="2"/>
+    <section name="Accessing step results" level="2"/>
+    <section name="Features" level="2"/>
+    <section name="History exploration" level="3"/>
+    <section name="Pinning results" level="3"/>
+    <section name="Mocking" level="3"/>
+  </sections>
+  <features>
+    <feature>accessing_step_results</feature>
+    <feature>features</feature>
+    <feature>history_exploration</feature>
+    <feature>mocking</feature>
+    <feature>mocking_vs_pinning</feature>
+    <feature>pinning_results</feature>
+  </features>
+  <dependencies>
+    <dependency type="feature">ops/windmill/18-test-flows</dependency>
+    <dependency type="feature">tutorial/windmill/4-cache</dependency>
+  </dependencies>
+  <related_entities>
+    <entity relationship="uses">../assets/flows/bottom_arrow.png &quot;Bottom arrow&quot;</entity>
+    <entity relationship="uses">../assets/flows/test_this_step.png &quot;Test this step&quot;</entity>
+    <entity relationship="uses">../assets/flows/pin_result.png &quot;Pin result&quot;</entity>
+    <entity relationship="uses">../assets/flows/override_pin.png &quot;Override pin&quot;</entity>
+    <entity relationship="uses">../assets/flows/direct_editing.png &quot;Direct editing&quot;</entity>
+    <entity relationship="uses">./18_test_flows.mdx</entity>
+    <entity relationship="uses">./4_cache.mdx</entity>
+  </related_entities>
+  <difficulty_level>intermediate</difficulty_level>
+  <estimated_reading_time>2</estimated_reading_time>
+  <tags>windmill,step,concept</tags>
+</doc_metadata>
+-->
 
 <!--
 <doc_metadata>

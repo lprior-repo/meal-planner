@@ -2,8 +2,64 @@
 id: concept/windmill/script
 title: "Scripts"
 category: concept
-tags: ["windmill", "concept", "advanced", "scripts"]
+tags: ["windmill", "advanced", "concept", "scripts"]
 ---
+
+<!--
+<doc_metadata>
+  <type>guide</type>
+  <category>windmill</category>
+  <title>Scripts</title>
+  <description>&lt;!-- &lt;doc_metadata&gt; &lt;type&gt;reference&lt;/type&gt; &lt;category&gt;cli&lt;/category&gt; &lt;title&gt;Windmill CLI Script Commands&lt;/title&gt; &lt;description&gt;Manage scripts via CLI&lt;/description&gt; &lt;created_at&gt;2025-12-28T00:00:00Z&lt;/crea</description>
+  <created_at>2026-01-02T19:55:27.495662</created_at>
+  <updated_at>2026-01-02T19:55:27.495662</updated_at>
+  <language>en</language>
+  <sections count="18">
+    <section name="Listing scripts" level="2"/>
+    <section name="Pushing a script" level="2"/>
+    <section name="Arguments" level="3"/>
+    <section name="Examples" level="3"/>
+    <section name="Creating a new script" level="2"/>
+    <section name="Arguments" level="3"/>
+    <section name="Examples" level="3"/>
+    <section name="(Re-)Generating a script metadata file" level="2"/>
+    <section name="package.json &amp; requirements.txt" level="3"/>
+    <section name="Arguments" level="3"/>
+  </sections>
+  <features>
+    <feature>arguments</feature>
+    <feature>creating_a_new_script</feature>
+    <feature>examples</feature>
+    <feature>listing_scripts</feature>
+    <feature>options</feature>
+    <feature>packagejson_requirementstxt</feature>
+    <feature>pushing_a_script</feature>
+    <feature>re-generating_a_script_metadata_file</feature>
+    <feature>remote_path_format</feature>
+    <feature>running_a_script</feature>
+    <feature>showing_a_script</feature>
+    <feature>wmill_script</feature>
+  </features>
+  <dependencies>
+    <dependency type="crate">wmill</dependency>
+    <dependency type="service">postgresql</dependency>
+    <dependency type="service">mysql</dependency>
+    <dependency type="feature">concept/windmill/flow</dependency>
+    <dependency type="feature">meta/windmill/index-5</dependency>
+  </dependencies>
+  <related_entities>
+    <entity relationship="uses">./flow.md</entity>
+    <entity relationship="uses">../14_dependencies_in_typescript/index.mdx</entity>
+    <entity relationship="uses">../../assets/cli/cli_arguments.png &apos;CLI arguments&apos;</entity>
+  </related_entities>
+  <examples count="14">
+    <example type="code">Code examples included</example>
+  </examples>
+  <difficulty_level>intermediate</difficulty_level>
+  <estimated_reading_time>4</estimated_reading_time>
+  <tags>windmill,advanced,concept,scripts</tags>
+</doc_metadata>
+-->
 
 <!--
 <doc_metadata>

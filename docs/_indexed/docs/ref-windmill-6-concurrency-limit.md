@@ -5,6 +5,39 @@ category: ref
 tags: ["windmill", "reference", "concurrency"]
 ---
 
+<!--
+<doc_metadata>
+  <type>reference</type>
+  <category>windmill</category>
+  <title>Concurrency limits</title>
+  <description>import DocCard from &apos;@site/src/components/DocCard&apos;;</description>
+  <created_at>2026-01-02T19:55:27.993333</created_at>
+  <updated_at>2026-01-02T19:55:27.993333</updated_at>
+  <language>en</language>
+  <sections count="2">
+    <section name="Concurrency limit of flow" level="2"/>
+    <section name="Concurrency limit of scripts within flow" level="2"/>
+  </sections>
+  <features>
+    <feature>concurrency_limit_of_flow</feature>
+  </features>
+  <dependencies>
+    <dependency type="feature">meta/windmill/index-36</dependency>
+  </dependencies>
+  <related_entities>
+    <entity relationship="uses">/pricing</entity>
+    <entity relationship="uses">../core_concepts/21_concurrency_limits/index.md</entity>
+    <entity relationship="uses">../core_concepts/21_concurrency_limits/index.md</entity>
+    <entity relationship="uses">../core_concepts/21_concurrency_limits/index.md</entity>
+    <entity relationship="uses">../assets/flows/concurrency_flow.png &apos;Concurrency limit of flow&apos;</entity>
+    <entity relationship="uses">../assets/code_editor/concurrency_limit_flow.png &apos;Concurrency limit Scripts within Flow&apos;</entity>
+  </related_entities>
+  <difficulty_level>beginner</difficulty_level>
+  <estimated_reading_time>1</estimated_reading_time>
+  <tags>windmill,reference,concurrency</tags>
+</doc_metadata>
+-->
+
 import DocCard from '@site/src/components/DocCard';
 
 # Concurrency limits

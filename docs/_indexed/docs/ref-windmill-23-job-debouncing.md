@@ -2,8 +2,37 @@
 id: ref/windmill/23-job-debouncing
 title: "Job debouncing"
 category: ref
-tags: ["windmill", "reference", "job"]
+tags: ["windmill", "job", "reference"]
 ---
+
+<!--
+<doc_metadata>
+  <type>reference</type>
+  <category>windmill</category>
+  <title>Job debouncing</title>
+  <description>import DocCard from &apos;@site/src/components/DocCard&apos;;</description>
+  <created_at>2026-01-02T19:55:27.972711</created_at>
+  <updated_at>2026-01-02T19:55:27.972711</updated_at>
+  <language>en</language>
+  <sections count="1">
+    <section name="Job debouncing of flow" level="2"/>
+  </sections>
+  <features>
+    <feature>job_debouncing_of_flow</feature>
+  </features>
+  <dependencies>
+    <dependency type="feature">meta/windmill/index-38</dependency>
+  </dependencies>
+  <related_entities>
+    <entity relationship="uses">/pricing</entity>
+    <entity relationship="uses">../core_concepts/22_job_debouncing/index.md</entity>
+    <entity relationship="uses">../core_concepts/22_job_debouncing/index.md</entity>
+  </related_entities>
+  <difficulty_level>beginner</difficulty_level>
+  <estimated_reading_time>1</estimated_reading_time>
+  <tags>windmill,job,reference</tags>
+</doc_metadata>
+-->
 
 import DocCard from '@site/src/components/DocCard';
 

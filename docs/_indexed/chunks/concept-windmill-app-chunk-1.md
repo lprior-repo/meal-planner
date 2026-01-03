@@ -3,9 +3,45 @@ doc_id: concept/windmill/app
 chunk_id: concept/windmill/app#chunk-1
 heading_path: ["Apps"]
 chunk_type: prose
-tokens: 89
+tokens: 178
 summary: "<!--"
 ---
+
+<!--
+<doc_metadata>
+  <type>guide</type>
+  <category>windmill</category>
+  <title>Apps</title>
+  <description>&lt;!-- &lt;doc_metadata&gt; &lt;type&gt;reference&lt;/type&gt; &lt;category&gt;cli&lt;/category&gt; &lt;title&gt;Windmill CLI App Commands&lt;/title&gt; &lt;description&gt;Manage apps via CLI&lt;/description&gt; &lt;created_at&gt;2025-12-28T00:00:00Z&lt;/created_at</description>
+  <created_at>2026-01-02T19:55:27.473468</created_at>
+  <updated_at>2026-01-02T19:55:27.473468</updated_at>
+  <language>en</language>
+  <sections count="5">
+    <section name="Listing apps" level="2"/>
+    <section name="Pushing an app" level="2"/>
+    <section name="Arguments" level="3"/>
+    <section name="Examples" level="3"/>
+    <section name="Remote path format" level="2"/>
+  </sections>
+  <features>
+    <feature>arguments</feature>
+    <feature>examples</feature>
+    <feature>listing_apps</feature>
+    <feature>pushing_an_app</feature>
+    <feature>remote_path_format</feature>
+    <feature>wmill_app</feature>
+  </features>
+  <dependencies>
+    <dependency type="crate">wmill</dependency>
+  </dependencies>
+  <examples count="4">
+    <example type="code">Code examples included</example>
+  </examples>
+  <difficulty_level>beginner</difficulty_level>
+  <estimated_reading_time>1</estimated_reading_time>
+  <tags>windmill,apps,concept</tags>
+</doc_metadata>
+-->
 
 <!--
 <doc_metadata>

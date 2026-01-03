@@ -5,6 +5,31 @@ category: ops
 tags: ["installation", "tandoor", "operations"]
 ---
 
+<!--
+<doc_metadata>
+  <type>guide</type>
+  <category>recipes</category>
+  <title>Installation</title>
+  <description>!!! info &quot;Development Setup&quot; The dev setup is a little messy as this application combines the best (at least in my opinion) of both Django and Vue.js.</description>
+  <created_at>2026-01-02T19:55:27.244510</created_at>
+  <updated_at>2026-01-02T19:55:27.244510</updated_at>
+  <language>en</language>
+  <sections count="3">
+    <section name="Devcontainer Setup" level="3"/>
+    <section name="Django" level="3"/>
+    <section name="Vue.js" level="3"/>
+  </sections>
+  <features>
+    <feature>devcontainer_setup</feature>
+    <feature>django</feature>
+    <feature>vuejs</feature>
+  </features>
+  <difficulty_level>beginner</difficulty_level>
+  <estimated_reading_time>2</estimated_reading_time>
+  <tags>installation,tandoor,operations</tags>
+</doc_metadata>
+-->
+
 # Installation
 
 > **Context**: !!! info "Development Setup" The dev setup is a little messy as this application combines the best (at least in my opinion) of both Django and Vue.js.

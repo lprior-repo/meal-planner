@@ -2,8 +2,37 @@
 id: ops/moonrepo/open-source
 title: "Open source usage"
 category: ops
-tags: ["open", "moonrepo", "operations"]
+tags: ["open", "operations", "moonrepo"]
 ---
+
+<!--
+<doc_metadata>
+  <type>guide</type>
+  <category>build-tools</category>
+  <title>Open source usage</title>
+  <description>Although moon was designed for large monorepos, it can also be used for open source projects, especially when coupled with our [built-in continuous integration support](/docs/guides/ci).</description>
+  <created_at>2026-01-02T19:55:27.181726</created_at>
+  <updated_at>2026-01-02T19:55:27.181726</updated_at>
+  <language>en</language>
+  <sections count="1">
+    <section name="Reporting run results" level="2"/>
+  </sections>
+  <features>
+    <feature>reporting_run_results</feature>
+  </features>
+  <related_entities>
+    <entity relationship="uses">/docs/guides/ci</entity>
+    <entity relationship="uses">/docs/concepts/toolchain</entity>
+    <entity relationship="uses">/docs/commands/ci</entity>
+  </related_entities>
+  <examples count="2">
+    <example type="code">Code examples included</example>
+  </examples>
+  <difficulty_level>beginner</difficulty_level>
+  <estimated_reading_time>1</estimated_reading_time>
+  <tags>open,operations,moonrepo</tags>
+</doc_metadata>
+-->
 
 # Open source usage
 

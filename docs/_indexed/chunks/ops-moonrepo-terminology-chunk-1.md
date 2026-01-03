@@ -3,9 +3,24 @@ doc_id: ops/moonrepo/terminology
 chunk_id: ops/moonrepo/terminology#chunk-1
 heading_path: ["Terminology"]
 chunk_type: prose
-tokens: 686
-summary: "Terminology"
+tokens: 747
+summary: "<!--"
 ---
+
+<!--
+<doc_metadata>
+  <type>guide</type>
+  <category>build-tools</category>
+  <title>Terminology</title>
+  <description>| Term | Description | |------|-------------| | Action | A node within the dependency graph that gets executed by the action pipeline. | | Action pipeline | Executes actions from our dependency graph </description>
+  <created_at>2026-01-02T19:55:27.236433</created_at>
+  <updated_at>2026-01-02T19:55:27.236433</updated_at>
+  <language>en</language>
+  <difficulty_level>intermediate</difficulty_level>
+  <estimated_reading_time>2</estimated_reading_time>
+  <tags>terminology,operations,moonrepo</tags>
+</doc_metadata>
+-->
 
 # Terminology
 

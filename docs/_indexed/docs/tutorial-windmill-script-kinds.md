@@ -2,8 +2,43 @@
 id: tutorial/windmill/script-kinds
 title: "Script kind"
 category: tutorial
-tags: ["windmill", "tutorial", "script", "beginner"]
+tags: ["windmill", "tutorial", "beginner", "script"]
 ---
+
+<!--
+<doc_metadata>
+  <type>tutorial</type>
+  <category>windmill</category>
+  <title>Script kind</title>
+  <description>import DocCard from &apos;@site/src/components/DocCard&apos;;</description>
+  <created_at>2026-01-02T19:55:28.172888</created_at>
+  <updated_at>2026-01-02T19:55:28.172888</updated_at>
+  <language>en</language>
+  <sections count="5">
+    <section name="Actions" level="2"/>
+    <section name="Trigger scripts" level="2"/>
+    <section name="Approval scripts" level="2"/>
+    <section name="Error handlers" level="2"/>
+    <section name="Preprocessors" level="2"/>
+  </sections>
+  <features>
+    <feature>actions</feature>
+    <feature>approval_scripts</feature>
+    <feature>error_handlers</feature>
+    <feature>preprocessors</feature>
+    <feature>trigger_scripts</feature>
+  </features>
+  <dependencies>
+    <dependency type="feature">tutorial/windmill/settings</dependency>
+  </dependencies>
+  <related_entities>
+    <entity relationship="uses">./settings.mdx</entity>
+  </related_entities>
+  <difficulty_level>beginner</difficulty_level>
+  <estimated_reading_time>2</estimated_reading_time>
+  <tags>windmill,tutorial,beginner,script</tags>
+</doc_metadata>
+-->
 
 import DocCard from '@site/src/components/DocCard';
 

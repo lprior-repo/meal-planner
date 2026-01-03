@@ -3,9 +3,40 @@ doc_id: ops/moonrepo/add
 chunk_id: ops/moonrepo/add#chunk-1
 heading_path: ["toolchain add"]
 chunk_type: code
-tokens: 145
-summary: "toolchain add"
+tokens: 240
+summary: "<!--"
 ---
+
+<!--
+<doc_metadata>
+  <type>guide</type>
+  <category>build-tools</category>
+  <title>toolchain add</title>
+  <description>The `moon toolchain add &lt;id&gt; [plugin]` command will add a toolchain to the workspace by injecting a configuration block into `.moon/toolchain.yml`. To do this, the command will download the WASM plugi</description>
+  <created_at>2026-01-02T19:55:26.946126</created_at>
+  <updated_at>2026-01-02T19:55:26.946126</updated_at>
+  <language>en</language>
+  <sections count="2">
+    <section name="Arguments" level="3"/>
+    <section name="Options" level="3"/>
+  </sections>
+  <features>
+    <feature>arguments</feature>
+    <feature>options</feature>
+  </features>
+  <related_entities>
+    <entity relationship="uses">/docs/guides/wasm-plugins</entity>
+    <entity relationship="uses">/docs/guides/wasm-plugins</entity>
+    <entity relationship="uses">/docs/guides/wasm-plugins</entity>
+  </related_entities>
+  <examples count="2">
+    <example type="code">Code examples included</example>
+  </examples>
+  <difficulty_level>beginner</difficulty_level>
+  <estimated_reading_time>1</estimated_reading_time>
+  <tags>toolchain,operations,moonrepo</tags>
+</doc_metadata>
+-->
 
 # toolchain add
 

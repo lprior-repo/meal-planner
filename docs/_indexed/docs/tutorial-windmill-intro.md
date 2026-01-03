@@ -2,8 +2,57 @@
 id: tutorial/windmill/intro
 title: "What is Windmill?"
 category: tutorial
-tags: ["windmill", "tutorial", "what", "beginner"]
+tags: ["windmill", "tutorial", "beginner", "what"]
 ---
+
+<!--
+<doc_metadata>
+  <type>tutorial</type>
+  <category>windmill</category>
+  <title>What is Windmill?</title>
+  <description>import DocCard from &apos;@site/src/components/DocCard&apos;; import VideoTour from &apos;@site/src/components/VideoTour&apos;; import { Book, Pen, Home, Cloud, Terminal, Play, Code, List, LayoutDashboard, Monitor } from</description>
+  <created_at>2026-01-02T19:55:28.152017</created_at>
+  <updated_at>2026-01-02T19:55:28.152017</updated_at>
+  <language>en</language>
+  <sections count="3">
+    <section name="Develop faster" level="2"/>
+    <section name="Core features" level="2"/>
+    <section name="Compare" level="2"/>
+  </sections>
+  <features>
+    <feature>compare</feature>
+    <feature>core_features</feature>
+    <feature>develop_faster</feature>
+  </features>
+  <dependencies>
+    <dependency type="library">react</dependency>
+    <dependency type="service">docker</dependency>
+    <dependency type="feature">meta/windmill/index-101</dependency>
+    <dependency type="feature">tutorial/windmill/1-flow-editor</dependency>
+    <dependency type="feature">meta/windmill/index-14</dependency>
+    <dependency type="feature">meta/windmill/index-2</dependency>
+    <dependency type="feature">meta/windmill/index-24</dependency>
+    <dependency type="feature">meta/windmill/index-17</dependency>
+    <dependency type="feature">meta/windmill/index-96</dependency>
+    <dependency type="feature">meta/windmill/index-27</dependency>
+  </dependencies>
+  <related_entities>
+    <entity relationship="uses">./script_editor/index.mdx</entity>
+    <entity relationship="uses">./flows/1_flow_editor.mdx</entity>
+    <entity relationship="uses">./apps/0_app_editor/index.mdx</entity>
+    <entity relationship="uses">./advanced/3_cli/index.mdx</entity>
+    <entity relationship="uses">./advanced/11_git_sync/index.mdx</entity>
+    <entity relationship="uses">./core_concepts/10_error_handling/index.mdx</entity>
+    <entity relationship="uses">./advanced/6_imports/index.mdx</entity>
+    <entity relationship="uses">./getting_started/0_scripts_quickstart/index.mdx</entity>
+    <entity relationship="uses">./advanced/6_imports/index.mdx</entity>
+    <entity relationship="uses">./core_concepts/13_json_schema_and_parsing/index.mdx</entity>
+  </related_entities>
+  <difficulty_level>beginner</difficulty_level>
+  <estimated_reading_time>3</estimated_reading_time>
+  <tags>windmill,tutorial,beginner,what</tags>
+</doc_metadata>
+-->
 
 import DocCard from '@site/src/components/DocCard';
 import VideoTour from '@site/src/components/VideoTour';

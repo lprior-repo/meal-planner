@@ -3,9 +3,28 @@ doc_id: concept/windmill/20-priority
 chunk_id: concept/windmill/20-priority#chunk-1
 heading_path: ["Priority for steps"]
 chunk_type: prose
-tokens: 178
+tokens: 224
 summary: "<!--"
 ---
+
+<!--
+<doc_metadata>
+  <type>guide</type>
+  <category>windmill</category>
+  <title>Priority for steps</title>
+  <description>&lt;!-- &lt;doc_metadata&gt; &lt;type&gt;reference&lt;/type&gt; &lt;category&gt;flows&lt;/category&gt; &lt;title&gt;Priority&lt;/title&gt; &lt;description&gt;Prioritize flow steps in execution queue&lt;/description&gt; &lt;created_at&gt;2025-12-28T00:00:00Z&lt;/crea</description>
+  <created_at>2026-01-02T19:55:27.968058</created_at>
+  <updated_at>2026-01-02T19:55:27.968058</updated_at>
+  <language>en</language>
+  <related_entities>
+    <entity relationship="uses">../assets/flows/flow_priority.png &quot;Set flow priority&quot;</entity>
+    <entity relationship="uses">/pricing</entity>
+  </related_entities>
+  <difficulty_level>beginner</difficulty_level>
+  <estimated_reading_time>1</estimated_reading_time>
+  <tags>windmill,priority,concept</tags>
+</doc_metadata>
+-->
 
 <!--
 <doc_metadata>

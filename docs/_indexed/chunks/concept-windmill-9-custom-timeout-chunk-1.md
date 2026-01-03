@@ -3,9 +3,32 @@ doc_id: concept/windmill/9-custom-timeout
 chunk_id: concept/windmill/9-custom-timeout#chunk-1
 heading_path: ["Custom timeout for step"]
 chunk_type: prose
-tokens: 165
+tokens: 218
 summary: "<!--"
 ---
+
+<!--
+<doc_metadata>
+  <type>guide</type>
+  <category>windmill</category>
+  <title>Custom timeout for step</title>
+  <description>&lt;!-- &lt;doc_metadata&gt; &lt;type&gt;reference&lt;/type&gt; &lt;category&gt;flows&lt;/category&gt; &lt;title&gt;Custom Timeout&lt;/title&gt; &lt;description&gt;Define timeout for individual flow steps&lt;/description&gt; &lt;created_at&gt;2025-12-28T00:00:00Z</description>
+  <created_at>2026-01-02T19:55:27.998821</created_at>
+  <updated_at>2026-01-02T19:55:27.998821</updated_at>
+  <language>en</language>
+  <dependencies>
+    <dependency type="feature">meta/windmill/index-65</dependency>
+    <dependency type="feature">meta/windmill/index-9</dependency>
+  </dependencies>
+  <related_entities>
+    <entity relationship="uses">../core_concepts/47_environment_variables/index.mdx</entity>
+    <entity relationship="uses">../advanced/18_instance_settings/index.mdx</entity>
+  </related_entities>
+  <difficulty_level>beginner</difficulty_level>
+  <estimated_reading_time>1</estimated_reading_time>
+  <tags>windmill,concept,custom</tags>
+</doc_metadata>
+-->
 
 <!--
 <doc_metadata>

@@ -2,8 +2,31 @@
 id: ops/tandoor/migration-sqlite-postgres
 title: "How to migrate from sqlite3 database to postgresql"
 category: ops
-tags: ["how", "sql", "docker", "operations", "tandoor"]
+tags: ["operations", "tandoor", "docker", "sql", "how"]
 ---
+
+<!--
+<doc_metadata>
+  <type>guide</type>
+  <category>recipes</category>
+  <title>How to migrate from sqlite3 database to postgresql</title>
+  <description>This migration was written while using the unraid template (docker) for TandoorRecipes, version 1.3.0. While some commands are unraid specific, it should in general work for any setup.</description>
+  <created_at>2026-01-02T19:55:27.333883</created_at>
+  <updated_at>2026-01-02T19:55:27.333883</updated_at>
+  <language>en</language>
+  <dependencies>
+    <dependency type="service">postgres</dependency>
+    <dependency type="service">postgresql</dependency>
+    <dependency type="service">docker</dependency>
+  </dependencies>
+  <examples count="4">
+    <example type="code">Code examples included</example>
+  </examples>
+  <difficulty_level>beginner</difficulty_level>
+  <estimated_reading_time>1</estimated_reading_time>
+  <tags>operations,tandoor,docker,sql,how</tags>
+</doc_metadata>
+-->
 
 # How to migrate from sqlite3 database to postgresql 
 

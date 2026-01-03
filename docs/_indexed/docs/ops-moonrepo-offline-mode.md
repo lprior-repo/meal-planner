@@ -2,8 +2,33 @@
 id: ops/moonrepo/offline-mode
 title: "Offline mode"
 category: ops
-tags: ["offline", "moonrepo", "operations"]
+tags: ["offline", "operations", "moonrepo"]
 ---
+
+<!--
+<doc_metadata>
+  <type>guide</type>
+  <category>build-tools</category>
+  <title>Offline mode</title>
+  <description>moon assumes that an internet connection is always available, as we download and install tools into the toolchain, resolve versions against upstream manifests, and automatically install dependencies. </description>
+  <created_at>2026-01-02T19:55:27.180727</created_at>
+  <updated_at>2026-01-02T19:55:27.180727</updated_at>
+  <language>en</language>
+  <sections count="3">
+    <section name="What&apos;s disabled when offline" level="2"/>
+    <section name="Toggling modes" level="2"/>
+    <section name="Environment variables" level="2"/>
+  </sections>
+  <features>
+    <feature>environment_variables</feature>
+    <feature>toggling_modes</feature>
+    <feature>whats_disabled_when_offline</feature>
+  </features>
+  <difficulty_level>beginner</difficulty_level>
+  <estimated_reading_time>1</estimated_reading_time>
+  <tags>offline,operations,moonrepo</tags>
+</doc_metadata>
+-->
 
 # Offline mode
 

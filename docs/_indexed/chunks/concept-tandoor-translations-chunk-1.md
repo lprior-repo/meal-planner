@@ -3,9 +3,24 @@ doc_id: concept/tandoor/translations
 chunk_id: concept/tandoor/translations#chunk-1
 heading_path: ["Translations"]
 chunk_type: prose
-tokens: 317
-summary: "Translations"
+tokens: 348
+summary: "<!--"
 ---
+
+<!--
+<doc_metadata>
+  <type>guide</type>
+  <category>recipes</category>
+  <title>Translations</title>
+  <description>Translations are managed on [translate.tandoor.dev](https://translate.tandoor.dev/), a self hosted instance of [Weblate](https://weblate.org/de/).</description>
+  <created_at>2026-01-02T19:55:27.248187</created_at>
+  <updated_at>2026-01-02T19:55:27.248187</updated_at>
+  <language>en</language>
+  <difficulty_level>beginner</difficulty_level>
+  <estimated_reading_time>1</estimated_reading_time>
+  <tags>tandoor,translations,concept</tags>
+</doc_metadata>
+-->
 
 # Translations
 

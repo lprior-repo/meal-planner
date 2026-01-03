@@ -3,9 +3,34 @@ doc_id: concept/moonrepo/react
 chunk_id: concept/moonrepo/react#chunk-1
 heading_path: ["React example"]
 chunk_type: prose
-tokens: 167
-summary: "React example"
+tokens: 252
+summary: "<!--"
 ---
+
+<!--
+<doc_metadata>
+  <type>guide</type>
+  <category>build-tools</category>
+  <title>React example</title>
+  <description>React is an application or library concern, and not a build system one, since the bundling of React is abstracted away through another tool like webpack. Because of this, moon has no guidelines around</description>
+  <created_at>2026-01-02T19:55:27.104697</created_at>
+  <updated_at>2026-01-02T19:55:27.104697</updated_at>
+  <language>en</language>
+  <dependencies>
+    <dependency type="library">react</dependency>
+  </dependencies>
+  <related_entities>
+    <entity relationship="uses">/docs/concepts/cache</entity>
+    <entity relationship="uses">/docs/guides/examples/typescript</entity>
+  </related_entities>
+  <examples count="1">
+    <example type="code">Code examples included</example>
+  </examples>
+  <difficulty_level>beginner</difficulty_level>
+  <estimated_reading_time>1</estimated_reading_time>
+  <tags>react,concept,moonrepo</tags>
+</doc_metadata>
+-->
 
 # React example
 

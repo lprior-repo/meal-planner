@@ -2,8 +2,79 @@
 id: tutorial/windmill/11-flow-approval
 title: "Suspend & Approval / Prompts"
 category: tutorial
-tags: ["windmill", "tutorial", "beginner", "suspend"]
+tags: ["windmill", "tutorial", "suspend", "beginner"]
 ---
+
+<!--
+<doc_metadata>
+  <type>tutorial</type>
+  <category>windmill</category>
+  <title>Suspend &amp; Approval / Prompts</title>
+  <description>import DocCard from &apos;@site/src/components/DocCard&apos;; import Tabs from &apos;@theme/Tabs&apos;; import TabItem from &apos;@theme/TabItem&apos;;</description>
+  <created_at>2026-01-02T19:55:27.932096</created_at>
+  <updated_at>2026-01-02T19:55:27.932096</updated_at>
+  <language>en</language>
+  <sections count="21">
+    <section name="Add approval script" level="2"/>
+    <section name="Core" level="2"/>
+    <section name="Number of approvals/events required for resuming flow" level="3"/>
+    <section name="Timeout" level="3"/>
+    <section name="Continue on disapproval/timeout" level="3"/>
+    <section name="Form" level="2"/>
+    <section name="Use arguments" level="3"/>
+    <section name="Prompts" level="3"/>
+    <section name="Default args" level="3"/>
+    <section name="Dynamics enums" level="3"/>
+  </sections>
+  <features>
+    <feature>add_approval_script</feature>
+    <feature>automated_trigger_version</feature>
+    <feature>continue_on_disapprovaltimeout</feature>
+    <feature>core</feature>
+    <feature>default_args</feature>
+    <feature>description</feature>
+    <feature>disable_self-approval</feature>
+    <feature>dynamics_enums</feature>
+    <feature>form</feature>
+    <feature>get_the_users_who_approved_the_flow</feature>
+    <feature>hide_cancel_button_on_approval_page</feature>
+    <feature>js_card_block</feature>
+    <feature>js_customers</feature>
+    <feature>js_main</feature>
+    <feature>js_resumeUrls</feature>
+  </features>
+  <dependencies>
+    <dependency type="crate">wmill</dependency>
+    <dependency type="library">requests</dependency>
+    <dependency type="feature">concept/windmill/2-early-stop</dependency>
+    <dependency type="feature">tutorial/windmill/15-sleep</dependency>
+    <dependency type="feature">ops/windmill/14-retries</dependency>
+    <dependency type="feature">meta/windmill/index-34</dependency>
+    <dependency type="feature">meta/windmill/index-88</dependency>
+    <dependency type="feature">meta/windmill/index-87</dependency>
+    <dependency type="feature">ops/windmill/ts-client</dependency>
+    <dependency type="feature">concept/windmill/13-flow-branches</dependency>
+  </dependencies>
+  <related_entities>
+    <entity relationship="uses">../assets/flows/approval_diagram.png &apos;Approval step diagram&apos;</entity>
+    <entity relationship="uses">./2_early_stop.md</entity>
+    <entity relationship="uses">./15_sleep.md</entity>
+    <entity relationship="uses">./14_retries.md</entity>
+    <entity relationship="uses">../core_concepts/1_scheduling/index.mdx</entity>
+    <entity relationship="uses">../getting_started/0_scripts_quickstart/2_python_quickstart/index.mdx</entity>
+    <entity relationship="uses">../assets/flows/approval-step.png &apos;Adding approval step&apos;</entity>
+    <entity relationship="uses">../getting_started/0_scripts_quickstart/1_typescript_quickstart/index.mdx</entity>
+    <entity relationship="uses">../getting_started/0_scripts_quickstart/2_python_quickstart/index.mdx</entity>
+    <entity relationship="uses">../advanced/2_clients/ts_client.mdx</entity>
+  </related_entities>
+  <examples count="16">
+    <example type="code">Code examples included</example>
+  </examples>
+  <difficulty_level>beginner</difficulty_level>
+  <estimated_reading_time>15</estimated_reading_time>
+  <tags>windmill,tutorial,suspend,beginner</tags>
+</doc_metadata>
+-->
 
 import DocCard from '@site/src/components/DocCard';
 import Tabs from '@theme/Tabs';

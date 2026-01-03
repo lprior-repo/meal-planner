@@ -2,8 +2,27 @@
 id: concept/windmill/21-lifetime
 title: "Lifetime / Delete after use"
 category: concept
-tags: ["windmill", "concept", "lifetime"]
+tags: ["windmill", "lifetime", "concept"]
 ---
+
+<!--
+<doc_metadata>
+  <type>guide</type>
+  <category>windmill</category>
+  <title>Lifetime / Delete after use</title>
+  <description>&lt;!-- &lt;doc_metadata&gt; &lt;type&gt;reference&lt;/type&gt; &lt;category&gt;flows&lt;/category&gt; &lt;title&gt;Lifetime&lt;/title&gt; &lt;description&gt;Delete flow step logs after completion for privacy&lt;/description&gt; &lt;created_at&gt;2025-12-28T00:00</description>
+  <created_at>2026-01-02T19:55:27.969125</created_at>
+  <updated_at>2026-01-02T19:55:27.969125</updated_at>
+  <language>en</language>
+  <related_entities>
+    <entity relationship="uses">../assets/flows/flow_lifetime.png &quot;Lifetime / Delete after use&quot;</entity>
+    <entity relationship="uses">/pricing</entity>
+  </related_entities>
+  <difficulty_level>beginner</difficulty_level>
+  <estimated_reading_time>1</estimated_reading_time>
+  <tags>windmill,lifetime,concept</tags>
+</doc_metadata>
+-->
 
 <!--
 <doc_metadata>

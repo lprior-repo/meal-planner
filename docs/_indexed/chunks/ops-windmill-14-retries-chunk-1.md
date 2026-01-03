@@ -3,9 +3,47 @@ doc_id: ops/windmill/14-retries
 chunk_id: ops/windmill/14-retries#chunk-1
 heading_path: ["Retries"]
 chunk_type: prose
-tokens: 396
+tokens: 510
 summary: "<!--"
 ---
+
+<!--
+<doc_metadata>
+  <type>guide</type>
+  <category>windmill</category>
+  <title>Retries</title>
+  <description>&lt;!-- &lt;doc_metadata&gt; &lt;type&gt;reference&lt;/type&gt; &lt;category&gt;flows&lt;/category&gt; &lt;title&gt;Retries&lt;/title&gt; &lt;description&gt;Configure retry logic for flow steps with constant delays or exponential backoff&lt;/description&gt;</description>
+  <created_at>2026-01-02T19:55:27.949725</created_at>
+  <updated_at>2026-01-02T19:55:27.949725</updated_at>
+  <language>en</language>
+  <sections count="3">
+    <section name="Constant retries" level="2"/>
+    <section name="Exponential backoff enabled" level="2"/>
+    <section name="Continue on error with error as step&apos;s return" level="2"/>
+  </sections>
+  <features>
+    <feature>constant_retries</feature>
+    <feature>exponential_backoff_enabled</feature>
+  </features>
+  <dependencies>
+    <dependency type="library">requests</dependency>
+    <dependency type="feature">meta/windmill/index-33</dependency>
+    <dependency type="feature">concept/windmill/13-flow-branches</dependency>
+  </dependencies>
+  <related_entities>
+    <entity relationship="uses">../core_concepts/19_rich_display_rendering/index.mdx</entity>
+    <entity relationship="uses">/blog/stantt-case-study</entity>
+    <entity relationship="uses">../assets/flows/constant_retries.png.webp</entity>
+    <entity relationship="uses">../assets/flows/exponential_delay.png.webp</entity>
+    <entity relationship="uses">./13_flow_branches.md</entity>
+    <entity relationship="uses">../assets/flows/continue_on_error1.png &quot;Continue on error step&quot;</entity>
+    <entity relationship="uses">../assets/flows/continue_on_error2.png &quot;Continue on error flow&quot;</entity>
+  </related_entities>
+  <difficulty_level>intermediate</difficulty_level>
+  <estimated_reading_time>3</estimated_reading_time>
+  <tags>windmill,operations,retries</tags>
+</doc_metadata>
+-->
 
 <!--
 <doc_metadata>

@@ -1,7 +1,7 @@
 {
   "source_dir": "/home/lewis/src/meal-planner/docs",
   "output_dir": "/home/lewis/src/meal-planner/docs/_indexed",
-  "discovered_at": "2026-01-02T19:47:36.655768",
+  "discovered_at": "2026-01-02T19:55:26.619117",
   "files": [
     {
       "source_path": "AI_DOCUMENTATION_SYSTEM.md",
@@ -12,8 +12,8 @@
       "subcategory": "general",
       "word_count": 404,
       "tags": [
-        "concept",
-        "documentation"
+        "documentation",
+        "concept"
       ]
     },
     {
@@ -26,9 +26,9 @@
       "word_count": 331,
       "tags": [
         "windmill",
-        "operations",
         "rust",
-        "architecture"
+        "architecture",
+        "operations"
       ]
     },
     {
@@ -40,10 +40,10 @@
       "subcategory": "general",
       "word_count": 229,
       "tags": [
-        "oauth",
         "tutorial",
         "beginner",
-        "fatsecret"
+        "fatsecret",
+        "oauth"
       ]
     },
     {
@@ -55,8 +55,8 @@
       "subcategory": "general",
       "word_count": 247,
       "tags": [
-        "operations",
-        "build"
+        "build",
+        "operations"
       ]
     },
     {
@@ -96,8 +96,8 @@
       "word_count": 186,
       "tags": [
         "fatsecret",
-        "reference",
-        "food"
+        "food",
+        "reference"
       ]
     },
     {
@@ -110,8 +110,8 @@
       "word_count": 237,
       "tags": [
         "fatsecret",
-        "reference",
-        "food"
+        "food",
+        "reference"
       ]
     },
     {
@@ -124,8 +124,8 @@
       "word_count": 199,
       "tags": [
         "fatsecret",
-        "reference",
-        "food"
+        "food",
+        "reference"
       ]
     },
     {
@@ -138,8 +138,8 @@
       "word_count": 183,
       "tags": [
         "fatsecret",
-        "reference",
-        "food"
+        "food",
+        "reference"
       ]
     },
     {
@@ -152,8 +152,8 @@
       "word_count": 421,
       "tags": [
         "fatsecret",
-        "reference",
-        "food"
+        "food",
+        "reference"
       ]
     },
     {
@@ -166,8 +166,8 @@
       "word_count": 386,
       "tags": [
         "fatsecret",
-        "reference",
-        "food"
+        "food",
+        "reference"
       ]
     },
     {
@@ -180,8 +180,8 @@
       "word_count": 150,
       "tags": [
         "fatsecret",
-        "reference",
-        "food"
+        "food",
+        "reference"
       ]
     },
     {
@@ -194,8 +194,8 @@
       "word_count": 420,
       "tags": [
         "fatsecret",
-        "reference",
-        "food"
+        "food",
+        "reference"
       ]
     },
     {
@@ -208,8 +208,8 @@
       "word_count": 228,
       "tags": [
         "fatsecret",
-        "reference",
-        "food"
+        "food",
+        "reference"
       ]
     },
     {
@@ -263,10 +263,10 @@
       "subcategory": "fatsecret",
       "word_count": 620,
       "tags": [
-        "advanced",
-        "api",
-        "reference",
         "image",
+        "advanced",
+        "reference",
+        "api",
         "fatsecret"
       ]
     },
@@ -280,9 +280,9 @@
       "word_count": 770,
       "tags": [
         "advanced",
-        "api",
-        "reference",
         "natural",
+        "reference",
+        "api",
         "fatsecret"
       ]
     },
@@ -295,9 +295,9 @@
       "subcategory": "fatsecret",
       "word_count": 217,
       "tags": [
+        "profile",
         "fatsecret",
-        "reference",
-        "profile"
+        "reference"
       ]
     },
     {
@@ -309,9 +309,9 @@
       "subcategory": "fatsecret",
       "word_count": 154,
       "tags": [
+        "profile",
         "fatsecret",
-        "reference",
-        "profile"
+        "reference"
       ]
     },
     {
@@ -323,9 +323,9 @@
       "subcategory": "fatsecret",
       "word_count": 236,
       "tags": [
+        "profile",
         "fatsecret",
-        "reference",
-        "profile"
+        "reference"
       ]
     },
     {
@@ -337,10 +337,10 @@
       "subcategory": "fatsecret",
       "word_count": 577,
       "tags": [
-        "fatsecret",
-        "reference",
         "recipe",
-        "advanced"
+        "fatsecret",
+        "advanced",
+        "reference"
       ]
     },
     {
@@ -352,9 +352,9 @@
       "subcategory": "fatsecret",
       "word_count": 168,
       "tags": [
+        "recipe",
         "fatsecret",
-        "reference",
-        "recipe"
+        "reference"
       ]
     },
     {
@@ -367,8 +367,8 @@
       "word_count": 437,
       "tags": [
         "fatsecret",
-        "reference",
-        "recipes"
+        "recipes",
+        "reference"
       ]
     },
     {
@@ -380,9 +380,9 @@
       "subcategory": "fatsecret",
       "word_count": 339,
       "tags": [
+        "api",
         "fatsecret",
-        "reference",
-        "api"
+        "reference"
       ]
     },
     {
@@ -394,10 +394,10 @@
       "subcategory": "fatsecret",
       "word_count": 745,
       "tags": [
+        "api",
         "fatsecret",
-        "operations",
         "advanced",
-        "api"
+        "operations"
       ]
     },
     {
@@ -409,9 +409,9 @@
       "subcategory": "fatsecret",
       "word_count": 390,
       "tags": [
+        "api",
         "fatsecret",
-        "operations",
-        "api"
+        "operations"
       ]
     },
     {
@@ -423,10 +423,10 @@
       "subcategory": "fatsecret",
       "word_count": 641,
       "tags": [
+        "api",
         "fatsecret",
-        "concept",
         "advanced",
-        "api"
+        "concept"
       ]
     },
     {
@@ -439,9 +439,9 @@
       "word_count": 639,
       "tags": [
         "tutorial",
-        "api",
-        "oauth",
         "beginner",
+        "oauth",
+        "api",
         "fatsecret"
       ]
     },
@@ -454,10 +454,10 @@
       "subcategory": "fatsecret",
       "word_count": 467,
       "tags": [
-        "oauth",
+        "api",
         "fatsecret",
-        "reference",
-        "api"
+        "oauth",
+        "reference"
       ]
     },
     {
@@ -469,10 +469,10 @@
       "subcategory": "fatsecret",
       "word_count": 489,
       "tags": [
-        "oauth",
+        "api",
         "fatsecret",
-        "reference",
-        "api"
+        "oauth",
+        "reference"
       ]
     },
     {
@@ -484,10 +484,10 @@
       "subcategory": "fatsecret",
       "word_count": 772,
       "tags": [
+        "api",
         "fatsecret",
-        "reference",
         "advanced",
-        "api"
+        "reference"
       ]
     },
     {
@@ -500,9 +500,9 @@
       "word_count": 224,
       "tags": [
         "tutorial",
-        "beginner",
+        "api",
         "fatsecret",
-        "api"
+        "beginner"
       ]
     },
     {
@@ -514,10 +514,10 @@
       "subcategory": "fatsecret",
       "word_count": 1305,
       "tags": [
-        "implementation",
         "advanced",
-        "api",
         "operations",
+        "implementation",
+        "api",
         "fatsecret"
       ]
     },
@@ -530,10 +530,10 @@
       "subcategory": "fatsecret",
       "word_count": 1511,
       "tags": [
-        "implementation",
         "advanced",
-        "api",
         "operations",
+        "implementation",
+        "api",
         "fatsecret"
       ]
     },
@@ -546,9 +546,9 @@
       "subcategory": "moonrepo",
       "word_count": 429,
       "tags": [
-        "moonrepo",
+        "cheat",
         "concept",
-        "cheat"
+        "moonrepo"
       ]
     },
     {
@@ -561,8 +561,8 @@
       "word_count": 407,
       "tags": [
         "commands",
-        "moonrepo",
-        "operations"
+        "operations",
+        "moonrepo"
       ]
     },
     {
@@ -574,9 +574,9 @@
       "subcategory": "moonrepo",
       "word_count": 235,
       "tags": [
-        "moonrepo",
+        "actiongraph",
         "operations",
-        "actiongraph"
+        "moonrepo"
       ]
     },
     {
@@ -589,8 +589,8 @@
       "word_count": 100,
       "tags": [
         "bin",
-        "moonrepo",
-        "operations"
+        "operations",
+        "moonrepo"
       ]
     },
     {
@@ -602,9 +602,9 @@
       "subcategory": "moonrepo",
       "word_count": 155,
       "tags": [
-        "moonrepo",
+        "check",
         "operations",
-        "check"
+        "moonrepo"
       ]
     },
     {
@@ -616,8 +616,8 @@
       "subcategory": "moonrepo",
       "word_count": 210,
       "tags": [
-        "moonrepo",
-        "operations"
+        "operations",
+        "moonrepo"
       ]
     },
     {
@@ -629,9 +629,9 @@
       "subcategory": "moonrepo",
       "word_count": 74,
       "tags": [
-        "moonrepo",
+        "clean",
         "operations",
-        "clean"
+        "moonrepo"
       ]
     },
     {
@@ -643,9 +643,9 @@
       "subcategory": "moonrepo",
       "word_count": 141,
       "tags": [
-        "moonrepo",
+        "completions",
         "operations",
-        "completions"
+        "moonrepo"
       ]
     },
     {
@@ -658,8 +658,8 @@
       "word_count": 77,
       "tags": [
         "docker",
-        "moonrepo",
-        "operations"
+        "operations",
+        "moonrepo"
       ]
     },
     {
@@ -672,8 +672,8 @@
       "word_count": 305,
       "tags": [
         "docker",
-        "moonrepo",
-        "operations"
+        "operations",
+        "moonrepo"
       ]
     },
     {
@@ -686,8 +686,8 @@
       "word_count": 92,
       "tags": [
         "docker",
-        "moonrepo",
-        "operations"
+        "operations",
+        "moonrepo"
       ]
     },
     {
@@ -700,8 +700,8 @@
       "word_count": 453,
       "tags": [
         "docker",
-        "moonrepo",
-        "operations"
+        "operations",
+        "moonrepo"
       ]
     },
     {
@@ -714,8 +714,8 @@
       "word_count": 92,
       "tags": [
         "docker",
-        "moonrepo",
-        "operations"
+        "operations",
+        "moonrepo"
       ]
     },
     {
@@ -727,9 +727,9 @@
       "subcategory": "moonrepo",
       "word_count": 124,
       "tags": [
-        "moonrepo",
+        "ext",
         "operations",
-        "ext"
+        "moonrepo"
       ]
     },
     {
@@ -741,9 +741,9 @@
       "subcategory": "moonrepo",
       "word_count": 208,
       "tags": [
-        "moonrepo",
+        "generate",
         "operations",
-        "generate"
+        "moonrepo"
       ]
     },
     {
@@ -755,9 +755,9 @@
       "subcategory": "moonrepo",
       "word_count": 159,
       "tags": [
-        "moonrepo",
+        "init",
         "operations",
-        "init"
+        "moonrepo"
       ]
     },
     {
@@ -769,9 +769,9 @@
       "subcategory": "moonrepo",
       "word_count": 56,
       "tags": [
-        "moonrepo",
+        "mcp",
         "operations",
-        "mcp"
+        "moonrepo"
       ]
     },
     {
@@ -783,9 +783,9 @@
       "subcategory": "moonrepo",
       "word_count": 40,
       "tags": [
-        "moonrepo",
+        "migrate",
         "concept",
-        "migrate"
+        "moonrepo"
       ]
     },
     {
@@ -797,10 +797,10 @@
       "subcategory": "moonrepo",
       "word_count": 577,
       "tags": [
-        "moonrepo",
-        "operations",
+        "migrate",
         "advanced",
-        "migrate"
+        "operations",
+        "moonrepo"
       ]
     },
     {
@@ -812,9 +812,9 @@
       "subcategory": "moonrepo",
       "word_count": 15,
       "tags": [
-        "moonrepo",
+        "migrate",
         "concept",
-        "migrate"
+        "moonrepo"
       ]
     },
     {
@@ -826,10 +826,10 @@
       "subcategory": "moonrepo",
       "word_count": 997,
       "tags": [
-        "moonrepo",
-        "operations",
+        "overview",
         "advanced",
-        "overview"
+        "operations",
+        "moonrepo"
       ]
     },
     {
@@ -842,8 +842,8 @@
       "word_count": 211,
       "tags": [
         "projectgraph",
-        "moonrepo",
-        "operations"
+        "operations",
+        "moonrepo"
       ]
     },
     {
@@ -855,9 +855,9 @@
       "subcategory": "moonrepo",
       "word_count": 209,
       "tags": [
-        "moonrepo",
+        "project",
         "operations",
-        "project"
+        "moonrepo"
       ]
     },
     {
@@ -870,8 +870,8 @@
       "word_count": 134,
       "tags": [
         "query",
-        "moonrepo",
-        "operations"
+        "operations",
+        "moonrepo"
       ]
     },
     {
@@ -884,8 +884,8 @@
       "word_count": 180,
       "tags": [
         "query",
-        "moonrepo",
-        "operations"
+        "operations",
+        "moonrepo"
       ]
     },
     {
@@ -898,8 +898,8 @@
       "word_count": 113,
       "tags": [
         "query",
-        "moonrepo",
-        "operations"
+        "operations",
+        "moonrepo"
       ]
     },
     {
@@ -912,8 +912,8 @@
       "word_count": 411,
       "tags": [
         "query",
-        "moonrepo",
-        "operations"
+        "operations",
+        "moonrepo"
       ]
     },
     {
@@ -926,8 +926,8 @@
       "word_count": 337,
       "tags": [
         "query",
-        "moonrepo",
-        "operations"
+        "operations",
+        "moonrepo"
       ]
     },
     {
@@ -940,8 +940,8 @@
       "word_count": 296,
       "tags": [
         "query",
-        "moonrepo",
-        "operations"
+        "operations",
+        "moonrepo"
       ]
     },
     {
@@ -953,10 +953,10 @@
       "subcategory": "moonrepo",
       "word_count": 532,
       "tags": [
-        "moonrepo",
-        "operations",
+        "run",
         "advanced",
-        "run"
+        "operations",
+        "moonrepo"
       ]
     },
     {
@@ -968,9 +968,9 @@
       "subcategory": "moonrepo",
       "word_count": 71,
       "tags": [
-        "moonrepo",
+        "setup",
         "operations",
-        "setup"
+        "moonrepo"
       ]
     },
     {
@@ -982,9 +982,9 @@
       "subcategory": "moonrepo",
       "word_count": 90,
       "tags": [
-        "moonrepo",
+        "sync",
         "concept",
-        "sync"
+        "moonrepo"
       ]
     },
     {
@@ -996,9 +996,9 @@
       "subcategory": "moonrepo",
       "word_count": 72,
       "tags": [
-        "moonrepo",
+        "sync",
         "operations",
-        "sync"
+        "moonrepo"
       ]
     },
     {
@@ -1010,9 +1010,9 @@
       "subcategory": "moonrepo",
       "word_count": 39,
       "tags": [
-        "moonrepo",
+        "sync",
         "operations",
-        "sync"
+        "moonrepo"
       ]
     },
     {
@@ -1024,9 +1024,9 @@
       "subcategory": "moonrepo",
       "word_count": 69,
       "tags": [
-        "moonrepo",
+        "sync",
         "operations",
-        "sync"
+        "moonrepo"
       ]
     },
     {
@@ -1038,9 +1038,9 @@
       "subcategory": "moonrepo",
       "word_count": 107,
       "tags": [
-        "moonrepo",
+        "sync",
         "operations",
-        "sync"
+        "moonrepo"
       ]
     },
     {
@@ -1052,9 +1052,9 @@
       "subcategory": "moonrepo",
       "word_count": 210,
       "tags": [
-        "moonrepo",
+        "taskgraph",
         "operations",
-        "taskgraph"
+        "moonrepo"
       ]
     },
     {
@@ -1066,9 +1066,9 @@
       "subcategory": "moonrepo",
       "word_count": 163,
       "tags": [
-        "moonrepo",
+        "task",
         "operations",
-        "task"
+        "moonrepo"
       ]
     },
     {
@@ -1080,9 +1080,9 @@
       "subcategory": "moonrepo",
       "word_count": 54,
       "tags": [
-        "moonrepo",
+        "teardown",
         "operations",
-        "teardown"
+        "moonrepo"
       ]
     },
     {
@@ -1094,9 +1094,9 @@
       "subcategory": "moonrepo",
       "word_count": 54,
       "tags": [
-        "moonrepo",
+        "templates",
         "operations",
-        "templates"
+        "moonrepo"
       ]
     },
     {
@@ -1108,9 +1108,9 @@
       "subcategory": "moonrepo",
       "word_count": 58,
       "tags": [
-        "moonrepo",
+        "toolchain",
         "concept",
-        "toolchain"
+        "moonrepo"
       ]
     },
     {
@@ -1122,9 +1122,9 @@
       "subcategory": "moonrepo",
       "word_count": 132,
       "tags": [
-        "moonrepo",
+        "toolchain",
         "operations",
-        "toolchain"
+        "moonrepo"
       ]
     },
     {
@@ -1136,10 +1136,10 @@
       "subcategory": "moonrepo",
       "word_count": 366,
       "tags": [
-        "moonrepo",
-        "operations",
+        "api",
         "toolchain",
-        "api"
+        "operations",
+        "moonrepo"
       ]
     },
     {
@@ -1152,8 +1152,8 @@
       "word_count": 57,
       "tags": [
         "upgrade",
-        "moonrepo",
-        "operations"
+        "operations",
+        "moonrepo"
       ]
     },
     {
@@ -1165,9 +1165,9 @@
       "subcategory": "moonrepo",
       "word_count": 2362,
       "tags": [
-        "moonrepo",
+        "feature",
         "operations",
-        "feature"
+        "moonrepo"
       ]
     },
     {
@@ -1179,9 +1179,9 @@
       "subcategory": "moonrepo",
       "word_count": 195,
       "tags": [
-        "moonrepo",
+        "concepts",
         "operations",
-        "concepts"
+        "moonrepo"
       ]
     },
     {
@@ -1194,9 +1194,9 @@
       "word_count": 559,
       "tags": [
         "cache",
-        "moonrepo",
+        "advanced",
         "operations",
-        "advanced"
+        "moonrepo"
       ]
     },
     {
@@ -1208,8 +1208,8 @@
       "subcategory": "moonrepo",
       "word_count": 228,
       "tags": [
-        "reference",
         "file",
+        "reference",
         "moonrepo"
       ]
     },
@@ -1222,11 +1222,11 @@
       "subcategory": "moonrepo",
       "word_count": 297,
       "tags": [
-        "rust",
-        "moonrepo",
+        "file",
         "concept",
         "javascript",
-        "file"
+        "rust",
+        "moonrepo"
       ]
     },
     {
@@ -1238,8 +1238,8 @@
       "subcategory": "moonrepo",
       "word_count": 369,
       "tags": [
-        "reference",
         "projects",
+        "reference",
         "moonrepo"
       ]
     },
@@ -1254,8 +1254,8 @@
       "tags": [
         "sql",
         "query",
-        "moonrepo",
-        "concept"
+        "concept",
+        "moonrepo"
       ]
     },
     {
@@ -1267,9 +1267,9 @@
       "subcategory": "moonrepo",
       "word_count": 491,
       "tags": [
-        "moonrepo",
+        "targets",
         "operations",
-        "targets"
+        "moonrepo"
       ]
     },
     {
@@ -1281,10 +1281,10 @@
       "subcategory": "moonrepo",
       "word_count": 690,
       "tags": [
-        "moonrepo",
-        "operations",
+        "task",
         "advanced",
-        "task"
+        "operations",
+        "moonrepo"
       ]
     },
     {
@@ -1296,9 +1296,9 @@
       "subcategory": "moonrepo",
       "word_count": 808,
       "tags": [
-        "reference",
         "tasks",
         "advanced",
+        "reference",
         "moonrepo"
       ]
     },
@@ -1312,8 +1312,8 @@
       "word_count": 1010,
       "tags": [
         "tokens",
-        "moonrepo",
-        "concept"
+        "concept",
+        "moonrepo"
       ]
     },
     {
@@ -1325,10 +1325,10 @@
       "subcategory": "moonrepo",
       "word_count": 525,
       "tags": [
-        "moonrepo",
-        "operations",
         "advanced",
-        "toolchain"
+        "toolchain",
+        "operations",
+        "moonrepo"
       ]
     },
     {
@@ -1340,9 +1340,9 @@
       "subcategory": "moonrepo",
       "word_count": 61,
       "tags": [
+        "workspace",
         "reference",
-        "moonrepo",
-        "workspace"
+        "moonrepo"
       ]
     },
     {
@@ -1355,8 +1355,8 @@
       "word_count": 87,
       "tags": [
         "config",
-        "moonrepo",
-        "concept"
+        "concept",
+        "moonrepo"
       ]
     },
     {
@@ -1368,10 +1368,10 @@
       "subcategory": "moonrepo",
       "word_count": 2625,
       "tags": [
-        "moonrepo",
-        "operations",
+        "moonpklyml",
         "advanced",
-        "moonpklyml"
+        "operations",
+        "moonrepo"
       ]
     },
     {
@@ -1384,9 +1384,9 @@
       "word_count": 616,
       "tags": [
         "moontaskspklyml",
-        "moonrepo",
+        "advanced",
         "concept",
-        "advanced"
+        "moonrepo"
       ]
     },
     {
@@ -1398,10 +1398,10 @@
       "subcategory": "moonrepo",
       "word_count": 884,
       "tags": [
+        "advanced",
         "templatepklyml",
-        "moonrepo",
         "concept",
-        "advanced"
+        "moonrepo"
       ]
     },
     {
@@ -1413,10 +1413,10 @@
       "subcategory": "moonrepo",
       "word_count": 918,
       "tags": [
-        "moonrepo",
-        "operations",
         "moontoolchainpklyml",
-        "advanced"
+        "advanced",
+        "operations",
+        "moonrepo"
       ]
     },
     {
@@ -1429,9 +1429,9 @@
       "word_count": 1402,
       "tags": [
         "moonworkspacepklyml",
-        "moonrepo",
+        "advanced",
         "operations",
-        "advanced"
+        "moonrepo"
       ]
     },
     {
@@ -1444,8 +1444,8 @@
       "word_count": 493,
       "tags": [
         "create",
-        "moonrepo",
-        "concept"
+        "concept",
+        "moonrepo"
       ]
     },
     {
@@ -1458,9 +1458,9 @@
       "word_count": 863,
       "tags": [
         "create",
-        "moonrepo",
+        "advanced",
         "operations",
-        "advanced"
+        "moonrepo"
       ]
     },
     {
@@ -1472,9 +1472,9 @@
       "subcategory": "moonrepo",
       "word_count": 1120,
       "tags": [
-        "moonrepo",
+        "introduction",
         "operations",
-        "introduction"
+        "moonrepo"
       ]
     },
     {
@@ -1486,8 +1486,8 @@
       "subcategory": "moonrepo",
       "word_count": 23,
       "tags": [
-        "moonrepo",
         "concept",
+        "moonrepo",
         "editors"
       ]
     },
@@ -1500,8 +1500,8 @@
       "subcategory": "moonrepo",
       "word_count": 298,
       "tags": [
-        "moonrepo",
-        "operations"
+        "operations",
+        "moonrepo"
       ]
     },
     {
@@ -1513,10 +1513,10 @@
       "subcategory": "moonrepo",
       "word_count": 1379,
       "tags": [
-        "moonrepo",
-        "operations",
         "advanced",
-        "faq"
+        "faq",
+        "operations",
+        "moonrepo"
       ]
     },
     {
@@ -1529,9 +1529,9 @@
       "word_count": 1059,
       "tags": [
         "continuous",
-        "moonrepo",
+        "advanced",
         "operations",
-        "advanced"
+        "moonrepo"
       ]
     },
     {
@@ -1543,10 +1543,10 @@
       "subcategory": "moonrepo",
       "word_count": 1742,
       "tags": [
-        "moonrepo",
-        "operations",
+        "code",
         "advanced",
-        "code"
+        "operations",
+        "moonrepo"
       ]
     },
     {
@@ -1558,10 +1558,10 @@
       "subcategory": "moonrepo",
       "word_count": 688,
       "tags": [
-        "moonrepo",
-        "operations",
+        "code",
         "advanced",
-        "code"
+        "operations",
+        "moonrepo"
       ]
     },
     {
@@ -1573,10 +1573,10 @@
       "subcategory": "moonrepo",
       "word_count": 1102,
       "tags": [
+        "advanced",
         "debugging",
-        "moonrepo",
         "operations",
-        "advanced"
+        "moonrepo"
       ]
     },
     {
@@ -1589,9 +1589,9 @@
       "word_count": 1393,
       "tags": [
         "docker",
-        "moonrepo",
+        "advanced",
         "operations",
-        "advanced"
+        "moonrepo"
       ]
     },
     {
@@ -1604,9 +1604,9 @@
       "word_count": 586,
       "tags": [
         "tutorial",
-        "moonrepo",
         "beginner",
-        "angular"
+        "angular",
+        "moonrepo"
       ]
     },
     {
@@ -1619,8 +1619,8 @@
       "word_count": 476,
       "tags": [
         "astro",
-        "moonrepo",
-        "operations"
+        "operations",
+        "moonrepo"
       ]
     },
     {
@@ -1632,10 +1632,10 @@
       "subcategory": "moonrepo",
       "word_count": 771,
       "tags": [
-        "moonrepo",
-        "operations",
+        "eslint",
         "advanced",
-        "eslint"
+        "operations",
+        "moonrepo"
       ]
     },
     {
@@ -1648,8 +1648,8 @@
       "word_count": 368,
       "tags": [
         "jest",
-        "moonrepo",
-        "operations"
+        "operations",
+        "moonrepo"
       ]
     },
     {
@@ -1661,10 +1661,10 @@
       "subcategory": "moonrepo",
       "word_count": 239,
       "tags": [
-        "nest",
         "tutorial",
-        "moonrepo",
-        "beginner"
+        "beginner",
+        "nest",
+        "moonrepo"
       ]
     },
     {
@@ -1677,9 +1677,9 @@
       "word_count": 550,
       "tags": [
         "tutorial",
-        "moonrepo",
         "beginner",
-        "next"
+        "next",
+        "moonrepo"
       ]
     },
     {
@@ -1692,9 +1692,9 @@
       "word_count": 302,
       "tags": [
         "tutorial",
-        "moonrepo",
+        "nuxt",
         "beginner",
-        "nuxt"
+        "moonrepo"
       ]
     },
     {
@@ -1706,9 +1706,9 @@
       "subcategory": "moonrepo",
       "word_count": 262,
       "tags": [
-        "moonrepo",
+        "packemon",
         "operations",
-        "packemon"
+        "moonrepo"
       ]
     },
     {
@@ -1720,9 +1720,9 @@
       "subcategory": "moonrepo",
       "word_count": 322,
       "tags": [
-        "moonrepo",
+        "prettier",
         "operations",
-        "prettier"
+        "moonrepo"
       ]
     },
     {
@@ -1735,8 +1735,8 @@
       "word_count": 101,
       "tags": [
         "react",
-        "moonrepo",
-        "concept"
+        "concept",
+        "moonrepo"
       ]
     },
     {
@@ -1749,9 +1749,9 @@
       "word_count": 413,
       "tags": [
         "tutorial",
-        "moonrepo",
         "beginner",
-        "remix"
+        "remix",
+        "moonrepo"
       ]
     },
     {
@@ -1763,10 +1763,10 @@
       "subcategory": "moonrepo",
       "word_count": 219,
       "tags": [
-        "moonrepo",
-        "operations",
+        "javascript",
         "solid",
-        "javascript"
+        "operations",
+        "moonrepo"
       ]
     },
     {
@@ -1778,10 +1778,10 @@
       "subcategory": "moonrepo",
       "word_count": 509,
       "tags": [
-        "moonrepo",
-        "operations",
         "advanced",
-        "storybook"
+        "storybook",
+        "operations",
+        "moonrepo"
       ]
     },
     {
@@ -1793,11 +1793,11 @@
       "subcategory": "moonrepo",
       "word_count": 520,
       "tags": [
-        "advanced",
         "sveltekit",
-        "moonrepo",
+        "advanced",
         "operations",
-        "javascript"
+        "javascript",
+        "moonrepo"
       ]
     },
     {
@@ -1810,10 +1810,10 @@
       "word_count": 556,
       "tags": [
         "advanced",
-        "moonrepo",
         "operations",
         "javascript",
-        "typescript"
+        "typescript",
+        "moonrepo"
       ]
     },
     {
@@ -1825,9 +1825,9 @@
       "subcategory": "moonrepo",
       "word_count": 228,
       "tags": [
-        "moonrepo",
+        "vite",
         "operations",
-        "vite"
+        "moonrepo"
       ]
     },
     {
@@ -1839,9 +1839,9 @@
       "subcategory": "moonrepo",
       "word_count": 322,
       "tags": [
-        "moonrepo",
+        "vue",
         "operations",
-        "vue"
+        "moonrepo"
       ]
     },
     {
@@ -1853,10 +1853,10 @@
       "subcategory": "moonrepo",
       "word_count": 1148,
       "tags": [
-        "moonrepo",
-        "operations",
+        "extensions",
         "advanced",
-        "extensions"
+        "operations",
+        "moonrepo"
       ]
     },
     {
@@ -1868,11 +1868,11 @@
       "subcategory": "moonrepo",
       "word_count": 583,
       "tags": [
+        "bun",
         "advanced",
-        "moonrepo",
         "operations",
         "javascript",
-        "bun"
+        "typescript"
       ]
     },
     {
@@ -1884,10 +1884,10 @@
       "subcategory": "moonrepo",
       "word_count": 246,
       "tags": [
-        "moonrepo",
-        "concept",
+        "deno",
         "typescript",
-        "deno"
+        "concept",
+        "moonrepo"
       ]
     },
     {
@@ -1899,11 +1899,11 @@
       "subcategory": "moonrepo",
       "word_count": 2256,
       "tags": [
-        "nodejs",
         "advanced",
-        "moonrepo",
         "operations",
-        "javascript"
+        "javascript",
+        "typescript",
+        "nodejs"
       ]
     },
     {
@@ -1915,10 +1915,10 @@
       "subcategory": "moonrepo",
       "word_count": 262,
       "tags": [
-        "moonrepo",
-        "operations",
         "typescript",
-        "typescripteslint"
+        "typescripteslint",
+        "operations",
+        "moonrepo"
       ]
     },
     {
@@ -1930,9 +1930,9 @@
       "subcategory": "moonrepo",
       "word_count": 3984,
       "tags": [
-        "reference",
-        "advanced",
         "typescript",
+        "advanced",
+        "reference",
         "moonrepo"
       ]
     },
@@ -1945,9 +1945,9 @@
       "subcategory": "moonrepo",
       "word_count": 482,
       "tags": [
-        "moonrepo",
+        "mcp",
         "operations",
-        "mcp"
+        "moonrepo"
       ]
     },
     {
@@ -1959,9 +1959,9 @@
       "subcategory": "moonrepo",
       "word_count": 279,
       "tags": [
-        "moonrepo",
+        "nodejs",
         "concept",
-        "nodejs"
+        "moonrepo"
       ]
     },
     {
@@ -1973,9 +1973,9 @@
       "subcategory": "moonrepo",
       "word_count": 223,
       "tags": [
-        "moonrepo",
+        "terminal",
         "concept",
-        "terminal"
+        "moonrepo"
       ]
     },
     {
@@ -1988,8 +1988,8 @@
       "word_count": 237,
       "tags": [
         "offline",
-        "moonrepo",
-        "operations"
+        "operations",
+        "moonrepo"
       ]
     },
     {
@@ -2002,8 +2002,8 @@
       "word_count": 232,
       "tags": [
         "open",
-        "moonrepo",
-        "operations"
+        "operations",
+        "moonrepo"
       ]
     },
     {
@@ -2016,9 +2016,9 @@
       "word_count": 594,
       "tags": [
         "pkl",
-        "moonrepo",
+        "advanced",
         "operations",
-        "advanced"
+        "moonrepo"
       ]
     },
     {
@@ -2030,10 +2030,10 @@
       "subcategory": "moonrepo",
       "word_count": 588,
       "tags": [
-        "moonrepo",
-        "operations",
+        "task",
         "advanced",
-        "task"
+        "operations",
+        "moonrepo"
       ]
     },
     {
@@ -2045,10 +2045,10 @@
       "subcategory": "moonrepo",
       "word_count": 688,
       "tags": [
-        "moonrepo",
-        "concept",
         "remote",
-        "advanced"
+        "advanced",
+        "concept",
+        "moonrepo"
       ]
     },
     {
@@ -2060,9 +2060,9 @@
       "subcategory": "moonrepo",
       "word_count": 303,
       "tags": [
-        "moonrepo",
+        "rootlevel",
         "concept",
-        "rootlevel"
+        "moonrepo"
       ]
     },
     {
@@ -2074,10 +2074,10 @@
       "subcategory": "moonrepo",
       "word_count": 1207,
       "tags": [
-        "moonrepo",
-        "operations",
         "rust",
-        "advanced"
+        "advanced",
+        "operations",
+        "moonrepo"
       ]
     },
     {
@@ -2089,9 +2089,9 @@
       "subcategory": "moonrepo",
       "word_count": 250,
       "tags": [
-        "moonrepo",
+        "sharing",
         "concept",
-        "sharing"
+        "moonrepo"
       ]
     },
     {
@@ -2104,9 +2104,9 @@
       "word_count": 894,
       "tags": [
         "vcs",
-        "moonrepo",
+        "advanced",
         "operations",
-        "advanced"
+        "moonrepo"
       ]
     },
     {
@@ -2118,11 +2118,11 @@
       "subcategory": "moonrepo",
       "word_count": 2142,
       "tags": [
-        "rust",
         "advanced",
+        "operations",
         "wasm",
-        "moonrepo",
-        "operations"
+        "typescript",
+        "rust"
       ]
     },
     {
@@ -2135,9 +2135,9 @@
       "word_count": 103,
       "tags": [
         "how",
-        "moonrepo",
+        "javascript",
         "concept",
-        "javascript"
+        "moonrepo"
       ]
     },
     {
@@ -2150,8 +2150,8 @@
       "word_count": 679,
       "tags": [
         "action",
-        "moonrepo",
-        "operations"
+        "operations",
+        "moonrepo"
       ]
     },
     {
@@ -2164,8 +2164,8 @@
       "word_count": 717,
       "tags": [
         "advanced",
-        "moonrepo",
         "operations",
+        "moonrepo",
         "javascript",
         "languages"
       ]
@@ -2179,9 +2179,9 @@
       "subcategory": "moonrepo",
       "word_count": 390,
       "tags": [
-        "moonrepo",
+        "project",
         "operations",
-        "project"
+        "moonrepo"
       ]
     },
     {
@@ -2193,8 +2193,8 @@
       "subcategory": "moonrepo",
       "word_count": 201,
       "tags": [
-        "moonrepo",
         "concept",
+        "moonrepo",
         "task"
       ]
     },
@@ -2207,10 +2207,10 @@
       "subcategory": "moonrepo",
       "word_count": 641,
       "tags": [
+        "advanced",
         "install",
-        "moonrepo",
         "operations",
-        "advanced"
+        "moonrepo"
       ]
     },
     {
@@ -2222,10 +2222,10 @@
       "subcategory": "moonrepo",
       "word_count": 561,
       "tags": [
-        "moonrepo",
-        "operations",
+        "migrate",
         "advanced",
-        "migrate"
+        "operations",
+        "moonrepo"
       ]
     },
     {
@@ -2237,10 +2237,10 @@
       "subcategory": "moonrepo",
       "word_count": 609,
       "tags": [
-        "moonrepo",
-        "operations",
+        "run",
         "advanced",
-        "run"
+        "operations",
+        "moonrepo"
       ]
     },
     {
@@ -2252,9 +2252,9 @@
       "subcategory": "moonrepo",
       "word_count": 410,
       "tags": [
-        "moonrepo",
+        "setup",
         "operations",
-        "setup"
+        "moonrepo"
       ]
     },
     {
@@ -2266,9 +2266,9 @@
       "subcategory": "moonrepo",
       "word_count": 290,
       "tags": [
-        "moonrepo",
+        "setup",
         "operations",
-        "setup"
+        "moonrepo"
       ]
     },
     {
@@ -2280,9 +2280,9 @@
       "subcategory": "moonrepo",
       "word_count": 500,
       "tags": [
-        "moonrepo",
+        "terminology",
         "operations",
-        "terminology"
+        "moonrepo"
       ]
     },
     {
@@ -2294,10 +2294,10 @@
       "subcategory": "moonrepo",
       "word_count": 174,
       "tags": [
-        "moon",
         "tutorial",
-        "moonrepo",
-        "beginner"
+        "beginner",
+        "moon",
+        "moonrepo"
       ]
     },
     {
@@ -2324,8 +2324,8 @@
       "word_count": 154,
       "tags": [
         "tandoor",
-        "operations",
-        "documentation"
+        "documentation",
+        "operations"
       ]
     },
     {
@@ -2337,9 +2337,9 @@
       "subcategory": "tandoor",
       "word_count": 347,
       "tags": [
+        "guidelines",
         "tandoor",
-        "operations",
-        "guidelines"
+        "operations"
       ]
     },
     {
@@ -2379,9 +2379,9 @@
       "subcategory": "tandoor",
       "word_count": 112,
       "tags": [
+        "related",
         "tandoor",
-        "concept",
-        "related"
+        "concept"
       ]
     },
     {
@@ -2394,8 +2394,8 @@
       "word_count": 229,
       "tags": [
         "tandoor",
-        "concept",
-        "translations"
+        "translations",
+        "concept"
       ]
     },
     {
@@ -2407,9 +2407,9 @@
       "subcategory": "tandoor",
       "word_count": 387,
       "tags": [
+        "vscode",
         "tandoor",
-        "operations",
-        "vscode"
+        "operations"
       ]
     },
     {
@@ -2422,8 +2422,8 @@
       "word_count": 1251,
       "tags": [
         "tandoor",
-        "operations",
-        "faq"
+        "faq",
+        "operations"
       ]
     },
     {
@@ -2450,8 +2450,8 @@
       "tags": [
         "tandoor",
         "advanced",
-        "operations",
-        "authentication"
+        "authentication",
+        "operations"
       ]
     },
     {
@@ -2463,9 +2463,9 @@
       "subcategory": "tandoor",
       "word_count": 784,
       "tags": [
-        "automation",
         "tandoor",
-        "concept"
+        "concept",
+        "automation"
       ]
     },
     {
@@ -2478,8 +2478,8 @@
       "word_count": 162,
       "tags": [
         "tutorial",
-        "tandoor",
         "beginner",
+        "tandoor",
         "connectors"
       ]
     },
@@ -2493,9 +2493,9 @@
       "word_count": 704,
       "tags": [
         "tandoor",
-        "operations",
         "advanced",
-        "external"
+        "external",
+        "operations"
       ]
     },
     {
@@ -2507,10 +2507,10 @@
       "subcategory": "tandoor",
       "word_count": 1928,
       "tags": [
+        "import",
         "tandoor",
-        "operations",
         "advanced",
-        "import"
+        "operations"
       ]
     },
     {
@@ -2536,9 +2536,9 @@
       "subcategory": "tandoor",
       "word_count": 331,
       "tags": [
+        "telegram",
         "tandoor",
-        "operations",
-        "telegram"
+        "operations"
       ]
     },
     {
@@ -2550,9 +2550,9 @@
       "subcategory": "tandoor",
       "word_count": 368,
       "tags": [
+        "templating",
         "tandoor",
-        "concept",
-        "templating"
+        "concept"
       ]
     },
     {
@@ -2564,8 +2564,8 @@
       "subcategory": "tandoor",
       "word_count": 699,
       "tags": [
-        "tandoor",
         "meta",
+        "tandoor",
         "index"
       ]
     },
@@ -2578,9 +2578,9 @@
       "subcategory": "tandoor",
       "word_count": 265,
       "tags": [
+        "archlinux",
         "tandoor",
-        "operations",
-        "archlinux"
+        "operations"
       ]
     },
     {
@@ -2593,9 +2593,9 @@
       "word_count": 1193,
       "tags": [
         "tandoor",
-        "docker",
+        "advanced",
         "operations",
-        "advanced"
+        "docker"
       ]
     },
     {
@@ -2607,10 +2607,10 @@
       "subcategory": "tandoor",
       "word_count": 636,
       "tags": [
+        "homeassistant",
         "tandoor",
-        "operations",
         "advanced",
-        "homeassistant"
+        "operations"
       ]
     },
     {
@@ -2622,8 +2622,8 @@
       "subcategory": "tandoor",
       "word_count": 742,
       "tags": [
-        "kubernetes",
         "tandoor",
+        "kubernetes",
         "operations"
       ]
     },
@@ -2637,8 +2637,8 @@
       "word_count": 190,
       "tags": [
         "tandoor",
-        "operations",
-        "kubesail"
+        "kubesail",
+        "operations"
       ]
     },
     {
@@ -2650,11 +2650,11 @@
       "subcategory": "tandoor",
       "word_count": 891,
       "tags": [
-        "sql",
+        "manual",
         "advanced",
         "operations",
-        "manual",
-        "tandoor"
+        "tandoor",
+        "sql"
       ]
     },
     {
@@ -2666,10 +2666,10 @@
       "subcategory": "tandoor",
       "word_count": 692,
       "tags": [
+        "other",
         "tandoor",
         "advanced",
-        "operations",
-        "other"
+        "operations"
       ]
     },
     {
@@ -2681,10 +2681,10 @@
       "subcategory": "tandoor",
       "word_count": 412,
       "tags": [
+        "swag",
         "tandoor",
-        "docker",
         "operations",
-        "swag"
+        "docker"
       ]
     },
     {
@@ -2696,10 +2696,10 @@
       "subcategory": "tandoor",
       "word_count": 936,
       "tags": [
+        "synology",
         "tutorial",
-        "tandoor",
         "beginner",
-        "synology"
+        "tandoor"
       ]
     },
     {
@@ -2711,10 +2711,10 @@
       "subcategory": "tandoor",
       "word_count": 1076,
       "tags": [
+        "truenas",
         "tandoor",
-        "operations",
         "advanced",
-        "truenas"
+        "operations"
       ]
     },
     {
@@ -2726,9 +2726,9 @@
       "subcategory": "tandoor",
       "word_count": 224,
       "tags": [
+        "unraid",
         "tandoor",
-        "operations",
-        "unraid"
+        "operations"
       ]
     },
     {
@@ -2740,8 +2740,8 @@
       "subcategory": "tandoor",
       "word_count": 543,
       "tags": [
-        "tandoor",
         "ubuntu",
+        "tandoor",
         "operations",
         "docker"
       ]
@@ -2756,9 +2756,9 @@
       "word_count": 667,
       "tags": [
         "tandoor",
-        "operations",
         "advanced",
-        "backup"
+        "backup",
+        "operations"
       ]
     },
     {
@@ -2771,9 +2771,9 @@
       "word_count": 2917,
       "tags": [
         "tandoor",
-        "configuration",
+        "advanced",
         "operations",
-        "advanced"
+        "configuration"
       ]
     },
     {
@@ -2785,11 +2785,11 @@
       "subcategory": "tandoor",
       "word_count": 224,
       "tags": [
-        "how",
-        "sql",
-        "docker",
         "operations",
-        "tandoor"
+        "tandoor",
+        "docker",
+        "sql",
+        "how"
       ]
     },
     {
@@ -2801,10 +2801,10 @@
       "subcategory": "tandoor",
       "word_count": 265,
       "tags": [
-        "tandoor",
         "permissions",
-        "concept",
-        "rust"
+        "rust",
+        "tandoor",
+        "concept"
       ]
     },
     {
@@ -2816,10 +2816,10 @@
       "subcategory": "tandoor",
       "word_count": 380,
       "tags": [
+        "updating",
         "tandoor",
-        "docker",
         "operations",
-        "updating"
+        "docker"
       ]
     },
     {
@@ -2845,9 +2845,9 @@
       "word_count": 2446,
       "tags": [
         "windmill",
-        "operations",
         "advanced",
-        "oauth"
+        "oauth",
+        "operations"
       ]
     },
     {
@@ -2860,8 +2860,8 @@
       "word_count": 677,
       "tags": [
         "windmill",
-        "operations",
-        "advanced"
+        "advanced",
+        "operations"
       ]
     },
     {
@@ -2888,9 +2888,9 @@
       "word_count": 888,
       "tags": [
         "windmill",
-        "operations",
+        "documentation",
         "advanced",
-        "documentation"
+        "operations"
       ]
     },
     {
@@ -2903,8 +2903,8 @@
       "word_count": 982,
       "tags": [
         "windmill",
-        "advanced",
-        "meta"
+        "meta",
+        "advanced"
       ]
     },
     {
@@ -2917,8 +2917,8 @@
       "word_count": 284,
       "tags": [
         "windmill",
-        "meta",
         "api",
+        "meta",
         "browser"
       ]
     },
@@ -2946,8 +2946,8 @@
       "word_count": 1563,
       "tags": [
         "windmill",
-        "advanced",
         "meta",
+        "advanced",
         "git"
       ]
     },
@@ -2961,8 +2961,8 @@
       "word_count": 352,
       "tags": [
         "windmill",
-        "deploy",
-        "meta"
+        "meta",
+        "deploy"
       ]
     },
     {
@@ -2988,11 +2988,11 @@
       "subcategory": "windmill",
       "word_count": 1768,
       "tags": [
-        "advanced",
-        "meta",
-        "dependencies",
         "windmill",
-        "typescript"
+        "advanced",
+        "typescript",
+        "dependencies",
+        "meta"
       ]
     },
     {
@@ -3004,11 +3004,11 @@
       "subcategory": "windmill",
       "word_count": 1971,
       "tags": [
-        "advanced",
-        "meta",
         "windmill",
+        "advanced",
         "python",
-        "dependencies"
+        "dependencies",
+        "meta"
       ]
     },
     {
@@ -3021,8 +3021,8 @@
       "word_count": 597,
       "tags": [
         "windmill",
-        "advanced",
         "meta",
+        "advanced",
         "external"
       ]
     },
@@ -3036,9 +3036,9 @@
       "word_count": 850,
       "tags": [
         "windmill",
-        "advanced",
         "meta",
-        "email"
+        "email",
+        "advanced"
       ]
     },
     {
@@ -3051,8 +3051,8 @@
       "word_count": 2699,
       "tags": [
         "windmill",
-        "advanced",
         "meta",
+        "advanced",
         "instance"
       ]
     },
@@ -3080,9 +3080,9 @@
       "word_count": 3702,
       "tags": [
         "windmill",
+        "aws",
         "advanced",
-        "operations",
-        "aws"
+        "operations"
       ]
     },
     {
@@ -3095,9 +3095,9 @@
       "word_count": 3010,
       "tags": [
         "windmill",
-        "selfhost",
         "meta",
-        "advanced"
+        "advanced",
+        "selfhost"
       ]
     },
     {
@@ -3110,8 +3110,8 @@
       "word_count": 965,
       "tags": [
         "windmill",
-        "workspace",
-        "meta"
+        "meta",
+        "workspace"
       ]
     },
     {
@@ -3124,9 +3124,9 @@
       "word_count": 1300,
       "tags": [
         "windmill",
-        "advanced",
         "meta",
-        "scaling"
+        "scaling",
+        "advanced"
       ]
     },
     {
@@ -3153,9 +3153,9 @@
       "word_count": 448,
       "tags": [
         "windmill",
-        "operations",
+        "api",
         "rust",
-        "api"
+        "operations"
       ]
     },
     {
@@ -3168,8 +3168,8 @@
       "word_count": 292,
       "tags": [
         "windmill",
-        "operations",
-        "typescript"
+        "typescript",
+        "operations"
       ]
     },
     {
@@ -3182,8 +3182,8 @@
       "word_count": 148,
       "tags": [
         "windmill",
-        "concept",
-        "apps"
+        "apps",
+        "concept"
       ]
     },
     {
@@ -3196,9 +3196,9 @@
       "word_count": 919,
       "tags": [
         "windmill",
-        "operations",
+        "branchspecific",
         "advanced",
-        "branchspecific"
+        "operations"
       ]
     },
     {
@@ -3211,8 +3211,8 @@
       "word_count": 441,
       "tags": [
         "windmill",
-        "concept",
-        "flows"
+        "flows",
+        "concept"
       ]
     },
     {
@@ -3225,8 +3225,8 @@
       "word_count": 141,
       "tags": [
         "windmill",
-        "concept",
-        "folder"
+        "folder",
+        "concept"
       ]
     },
     {
@@ -3239,8 +3239,8 @@
       "word_count": 1119,
       "tags": [
         "windmill",
-        "operations",
         "advanced",
+        "operations",
         "git"
       ]
     },
@@ -3296,8 +3296,8 @@
       "word_count": 868,
       "tags": [
         "windmill",
-        "concept",
         "advanced",
+        "concept",
         "scripts"
       ]
     },
@@ -3311,9 +3311,9 @@
       "word_count": 1988,
       "tags": [
         "windmill",
-        "operations",
         "advanced",
-        "sync"
+        "sync",
+        "operations"
       ]
     },
     {
@@ -3326,8 +3326,8 @@
       "word_count": 500,
       "tags": [
         "windmill",
-        "concept",
-        "users"
+        "users",
+        "concept"
       ]
     },
     {
@@ -3340,8 +3340,8 @@
       "word_count": 442,
       "tags": [
         "windmill",
-        "variables",
-        "concept"
+        "concept",
+        "variables"
       ]
     },
     {
@@ -3355,8 +3355,8 @@
       "tags": [
         "windmill",
         "workspace",
-        "operations",
-        "advanced"
+        "advanced",
+        "operations"
       ]
     },
     {
@@ -3369,9 +3369,9 @@
       "word_count": 2239,
       "tags": [
         "windmill",
-        "local",
         "meta",
-        "advanced"
+        "advanced",
+        "local"
       ]
     },
     {
@@ -3384,9 +3384,9 @@
       "word_count": 835,
       "tags": [
         "windmill",
-        "operations",
+        "run",
         "advanced",
-        "run"
+        "operations"
       ]
     },
     {
@@ -3399,9 +3399,9 @@
       "word_count": 803,
       "tags": [
         "windmill",
-        "advanced",
+        "sharing",
         "meta",
-        "sharing"
+        "advanced"
       ]
     },
     {
@@ -3414,9 +3414,9 @@
       "word_count": 1457,
       "tags": [
         "windmill",
-        "advanced",
         "dependency",
-        "meta"
+        "meta",
+        "advanced"
       ]
     },
     {
@@ -3428,11 +3428,11 @@
       "subcategory": "windmill",
       "word_count": 717,
       "tags": [
-        "docker",
+        "windmill",
         "advanced",
         "run",
-        "meta",
-        "windmill"
+        "docker",
+        "meta"
       ]
     },
     {
@@ -3445,9 +3445,9 @@
       "word_count": 681,
       "tags": [
         "windmill",
-        "advanced",
         "meta",
-        "preinstall"
+        "preinstall",
+        "advanced"
       ]
     },
     {
@@ -3460,9 +3460,9 @@
       "word_count": 2477,
       "tags": [
         "windmill",
-        "deploy",
+        "meta",
         "advanced",
-        "meta"
+        "deploy"
       ]
     },
     {
@@ -3475,8 +3475,8 @@
       "word_count": 1964,
       "tags": [
         "windmill",
-        "advanced",
         "meta",
+        "advanced",
         "security"
       ]
     },
@@ -3503,8 +3503,8 @@
       "word_count": 646,
       "tags": [
         "windmill",
-        "meta",
-        "draft"
+        "draft",
+        "meta"
       ]
     },
     {
@@ -3517,8 +3517,8 @@
       "word_count": 1734,
       "tags": [
         "windmill",
-        "advanced",
         "meta",
+        "advanced",
         "error"
       ]
     },
@@ -3533,8 +3533,8 @@
       "tags": [
         "windmill",
         "tutorial",
-        "data",
-        "beginner"
+        "beginner",
+        "data"
       ]
     },
     {
@@ -3548,8 +3548,8 @@
       "tags": [
         "windmill",
         "tutorial",
-        "ducklake",
-        "beginner"
+        "beginner",
+        "ducklake"
       ]
     },
     {
@@ -3576,8 +3576,8 @@
       "word_count": 355,
       "tags": [
         "windmill",
-        "nosql",
         "sql",
+        "nosql",
         "operations"
       ]
     },
@@ -3592,8 +3592,8 @@
       "tags": [
         "windmill",
         "large",
-        "concept",
-        "advanced"
+        "advanced",
+        "concept"
       ]
     },
     {
@@ -3605,11 +3605,11 @@
       "subcategory": "windmill",
       "word_count": 626,
       "tags": [
-        "sql",
+        "windmill",
         "tutorial",
         "big",
         "beginner",
-        "windmill"
+        "sql"
       ]
     },
     {
@@ -3622,8 +3622,8 @@
       "word_count": 1170,
       "tags": [
         "windmill",
-        "concept",
         "advanced",
+        "concept",
         "within"
       ]
     },
@@ -3637,8 +3637,8 @@
       "word_count": 505,
       "tags": [
         "windmill",
-        "deploy",
-        "meta"
+        "meta",
+        "deploy"
       ]
     },
     {
@@ -3651,8 +3651,8 @@
       "word_count": 2360,
       "tags": [
         "windmill",
-        "advanced",
         "meta",
+        "advanced",
         "json"
       ]
     },
@@ -3680,8 +3680,8 @@
       "word_count": 849,
       "tags": [
         "windmill",
-        "authentication",
-        "meta"
+        "meta",
+        "authentication"
       ]
     },
     {
@@ -3694,8 +3694,8 @@
       "word_count": 1431,
       "tags": [
         "windmill",
-        "roles",
-        "meta"
+        "meta",
+        "roles"
       ]
     },
     {
@@ -3708,8 +3708,8 @@
       "word_count": 635,
       "tags": [
         "windmill",
-        "collaboration",
-        "meta"
+        "meta",
+        "collaboration"
       ]
     },
     {
@@ -3722,9 +3722,9 @@
       "word_count": 737,
       "tags": [
         "windmill",
-        "advanced",
         "meta",
-        "handling"
+        "handling",
+        "advanced"
       ]
     },
     {
@@ -3737,9 +3737,9 @@
       "word_count": 1939,
       "tags": [
         "windmill",
-        "rich",
+        "meta",
         "advanced",
-        "meta"
+        "rich"
       ]
     },
     {
@@ -3752,9 +3752,9 @@
       "word_count": 2610,
       "tags": [
         "windmill",
-        "advanced",
+        "schedules",
         "meta",
-        "schedules"
+        "advanced"
       ]
     },
     {
@@ -3767,9 +3767,9 @@
       "word_count": 3067,
       "tags": [
         "windmill",
-        "advanced",
         "meta",
-        "jobs"
+        "jobs",
+        "advanced"
       ]
     },
     {
@@ -3782,9 +3782,9 @@
       "word_count": 442,
       "tags": [
         "windmill",
-        "concurrency",
+        "api",
         "meta",
-        "api"
+        "concurrency"
       ]
     },
     {
@@ -3810,8 +3810,8 @@
       "word_count": 324,
       "tags": [
         "windmill",
-        "job",
-        "meta"
+        "meta",
+        "job"
       ]
     },
     {
@@ -3824,8 +3824,8 @@
       "word_count": 817,
       "tags": [
         "windmill",
-        "meta",
-        "instant"
+        "instant",
+        "meta"
       ]
     },
     {
@@ -3838,8 +3838,8 @@
       "word_count": 781,
       "tags": [
         "windmill",
-        "caching",
-        "meta"
+        "meta",
+        "caching"
       ]
     },
     {
@@ -3880,9 +3880,9 @@
       "word_count": 3113,
       "tags": [
         "windmill",
-        "advanced",
+        "meta",
         "data",
-        "meta"
+        "advanced"
       ]
     },
     {
@@ -3895,8 +3895,8 @@
       "word_count": 844,
       "tags": [
         "windmill",
-        "advanced",
         "meta",
+        "advanced",
         "agent"
       ]
     },
@@ -3910,9 +3910,9 @@
       "word_count": 1422,
       "tags": [
         "windmill",
-        "openid",
+        "meta",
         "advanced",
-        "meta"
+        "openid"
       ]
     },
     {
@@ -3925,9 +3925,9 @@
       "word_count": 988,
       "tags": [
         "windmill",
-        "variables",
         "meta",
-        "advanced"
+        "advanced",
+        "variables"
       ]
     },
     {
@@ -3940,8 +3940,8 @@
       "word_count": 127,
       "tags": [
         "windmill",
-        "workspace",
-        "meta"
+        "meta",
+        "workspace"
       ]
     },
     {
@@ -3954,8 +3954,8 @@
       "word_count": 435,
       "tags": [
         "windmill",
-        "meta",
-        "workflows"
+        "workflows",
+        "meta"
       ]
     },
     {
@@ -3982,8 +3982,8 @@
       "word_count": 363,
       "tags": [
         "windmill",
-        "codebases",
-        "meta"
+        "meta",
+        "codebases"
       ]
     },
     {
@@ -3996,8 +3996,8 @@
       "word_count": 302,
       "tags": [
         "windmill",
-        "versioning",
-        "meta"
+        "meta",
+        "versioning"
       ]
     },
     {
@@ -4010,9 +4010,9 @@
       "word_count": 524,
       "tags": [
         "windmill",
-        "advanced",
         "meta",
-        "search"
+        "search",
+        "advanced"
       ]
     },
     {
@@ -4025,9 +4025,9 @@
       "word_count": 581,
       "tags": [
         "windmill",
+        "meta",
         "advanced",
-        "service",
-        "meta"
+        "service"
       ]
     },
     {
@@ -4040,8 +4040,8 @@
       "word_count": 307,
       "tags": [
         "windmill",
-        "critical",
-        "meta"
+        "meta",
+        "critical"
       ]
     },
     {
@@ -4054,8 +4054,8 @@
       "word_count": 2843,
       "tags": [
         "windmill",
-        "advanced",
         "meta",
+        "advanced",
         "object"
       ]
     },
@@ -4069,9 +4069,9 @@
       "word_count": 2128,
       "tags": [
         "windmill",
-        "advanced",
         "http",
-        "meta"
+        "meta",
+        "advanced"
       ]
     },
     {
@@ -4084,9 +4084,9 @@
       "word_count": 2626,
       "tags": [
         "windmill",
+        "meta",
         "resources",
-        "advanced",
-        "meta"
+        "advanced"
       ]
     },
     {
@@ -4098,11 +4098,11 @@
       "subcategory": "windmill",
       "word_count": 543,
       "tags": [
-        "advanced",
-        "api",
-        "meta",
         "windmill",
-        "websocket"
+        "advanced",
+        "websocket",
+        "api",
+        "meta"
       ]
     },
     {
@@ -4129,8 +4129,8 @@
       "word_count": 1345,
       "tags": [
         "windmill",
-        "autoscaling",
         "meta",
+        "autoscaling",
         "advanced"
       ]
     },
@@ -4144,9 +4144,9 @@
       "word_count": 1475,
       "tags": [
         "windmill",
-        "preprocessors",
+        "meta",
         "advanced",
-        "meta"
+        "preprocessors"
       ]
     },
     {
@@ -4159,8 +4159,8 @@
       "word_count": 383,
       "tags": [
         "windmill",
-        "workspace",
-        "meta"
+        "meta",
+        "workspace"
       ]
     },
     {
@@ -4173,8 +4173,8 @@
       "word_count": 450,
       "tags": [
         "windmill",
-        "nats",
-        "meta"
+        "meta",
+        "nats"
       ]
     },
     {
@@ -4186,11 +4186,11 @@
       "subcategory": "windmill",
       "word_count": 4388,
       "tags": [
-        "sql",
+        "windmill",
         "advanced",
         "postgres",
-        "meta",
-        "windmill"
+        "sql",
+        "meta"
       ]
     },
     {
@@ -4203,8 +4203,8 @@
       "word_count": 1593,
       "tags": [
         "windmill",
-        "environment",
-        "meta"
+        "meta",
+        "environment"
       ]
     },
     {
@@ -4217,9 +4217,9 @@
       "word_count": 495,
       "tags": [
         "windmill",
-        "aws",
+        "sqs",
         "meta",
-        "sqs"
+        "aws"
       ]
     },
     {
@@ -4232,8 +4232,8 @@
       "word_count": 901,
       "tags": [
         "windmill",
-        "advanced",
         "meta",
+        "advanced",
         "mqtt"
       ]
     },
@@ -4247,8 +4247,8 @@
       "word_count": 2377,
       "tags": [
         "windmill",
-        "advanced",
         "meta",
+        "advanced",
         "webhooks"
       ]
     },
@@ -4262,8 +4262,8 @@
       "word_count": 916,
       "tags": [
         "windmill",
-        "advanced",
         "meta",
+        "advanced",
         "gcp"
       ]
     },
@@ -4277,8 +4277,8 @@
       "word_count": 642,
       "tags": [
         "windmill",
-        "advanced",
-        "meta"
+        "meta",
+        "advanced"
       ]
     },
     {
@@ -4319,9 +4319,9 @@
       "word_count": 348,
       "tags": [
         "windmill",
-        "custom",
         "sql",
-        "meta"
+        "meta",
+        "custom"
       ]
     },
     {
@@ -4334,8 +4334,8 @@
       "word_count": 1551,
       "tags": [
         "windmill",
-        "advanced",
-        "meta"
+        "meta",
+        "advanced"
       ]
     },
     {
@@ -4348,8 +4348,8 @@
       "word_count": 816,
       "tags": [
         "windmill",
-        "workspace",
         "meta",
+        "workspace",
         "advanced"
       ]
     },
@@ -4377,9 +4377,9 @@
       "word_count": 745,
       "tags": [
         "windmill",
-        "advanced",
         "meta",
-        "jobs"
+        "jobs",
+        "advanced"
       ]
     },
     {
@@ -4406,8 +4406,8 @@
       "word_count": 113,
       "tags": [
         "windmill",
-        "meta",
-        "multiplayer"
+        "multiplayer",
+        "meta"
       ]
     },
     {
@@ -4420,8 +4420,8 @@
       "word_count": 697,
       "tags": [
         "windmill",
-        "groups",
-        "meta"
+        "meta",
+        "groups"
       ]
     },
     {
@@ -4434,8 +4434,8 @@
       "word_count": 3665,
       "tags": [
         "windmill",
-        "advanced",
         "meta",
+        "advanced",
         "workers"
       ]
     },
@@ -4449,9 +4449,9 @@
       "word_count": 2385,
       "tags": [
         "windmill",
+        "rust",
         "advanced",
-        "operations",
-        "rust"
+        "operations"
       ]
     },
     {
@@ -4464,8 +4464,8 @@
       "word_count": 2593,
       "tags": [
         "windmill",
-        "core",
-        "meta"
+        "meta",
+        "core"
       ]
     },
     {
@@ -4478,9 +4478,9 @@
       "word_count": 543,
       "tags": [
         "windmill",
+        "trigger",
         "advanced",
-        "concept",
-        "trigger"
+        "concept"
       ]
     },
     {
@@ -4494,8 +4494,8 @@
       "tags": [
         "windmill",
         "tutorial",
-        "beginner",
-        "suspend"
+        "suspend",
+        "beginner"
       ]
     },
     {
@@ -4537,8 +4537,8 @@
       "word_count": 563,
       "tags": [
         "windmill",
-        "retries",
-        "operations"
+        "operations",
+        "retries"
       ]
     },
     {
@@ -4581,8 +4581,8 @@
       "word_count": 59,
       "tags": [
         "windmill",
-        "aigenerated",
-        "concept"
+        "concept",
+        "aigenerated"
       ]
     },
     {
@@ -4638,8 +4638,8 @@
       "word_count": 124,
       "tags": [
         "windmill",
-        "concept",
-        "priority"
+        "priority",
+        "concept"
       ]
     },
     {
@@ -4652,8 +4652,8 @@
       "word_count": 126,
       "tags": [
         "windmill",
-        "concept",
-        "lifetime"
+        "lifetime",
+        "concept"
       ]
     },
     {
@@ -4667,8 +4667,8 @@
       "tags": [
         "windmill",
         "tutorial",
-        "while",
-        "beginner"
+        "beginner",
+        "while"
       ]
     },
     {
@@ -4681,8 +4681,8 @@
       "word_count": 152,
       "tags": [
         "windmill",
-        "reference",
-        "job"
+        "job",
+        "reference"
       ]
     },
     {
@@ -4695,8 +4695,8 @@
       "word_count": 589,
       "tags": [
         "windmill",
-        "concept",
-        "sticky"
+        "sticky",
+        "concept"
       ]
     },
     {
@@ -4753,8 +4753,8 @@
       "word_count": 340,
       "tags": [
         "windmill",
-        "concept",
-        "step"
+        "step",
+        "concept"
       ]
     },
     {
@@ -4810,8 +4810,8 @@
       "word_count": 113,
       "tags": [
         "windmill",
-        "custom",
-        "concept"
+        "concept",
+        "custom"
       ]
     },
     {
@@ -4824,8 +4824,8 @@
       "word_count": 301,
       "tags": [
         "windmill",
-        "getting",
-        "meta"
+        "meta",
+        "getting"
       ]
     },
     {
@@ -4838,9 +4838,9 @@
       "word_count": 3200,
       "tags": [
         "windmill",
-        "ansible",
+        "meta",
         "advanced",
-        "meta"
+        "ansible"
       ]
     },
     {
@@ -4853,8 +4853,8 @@
       "word_count": 1455,
       "tags": [
         "windmill",
-        "advanced",
-        "meta"
+        "meta",
+        "advanced"
       ]
     },
     {
@@ -4867,9 +4867,9 @@
       "word_count": 1395,
       "tags": [
         "windmill",
-        "advanced",
         "meta",
-        "java"
+        "java",
+        "advanced"
       ]
     },
     {
@@ -4882,9 +4882,9 @@
       "word_count": 1933,
       "tags": [
         "windmill",
-        "ruby",
+        "meta",
         "advanced",
-        "meta"
+        "ruby"
       ]
     },
     {
@@ -4897,9 +4897,9 @@
       "word_count": 2509,
       "tags": [
         "windmill",
-        "advanced",
+        "typescript",
         "meta",
-        "typescript"
+        "advanced"
       ]
     },
     {
@@ -4912,9 +4912,9 @@
       "word_count": 2144,
       "tags": [
         "windmill",
+        "meta",
         "python",
-        "advanced",
-        "meta"
+        "advanced"
       ]
     },
     {
@@ -4927,8 +4927,8 @@
       "word_count": 1594,
       "tags": [
         "windmill",
-        "advanced",
-        "meta"
+        "meta",
+        "advanced"
       ]
     },
     {
@@ -4941,9 +4941,9 @@
       "word_count": 2072,
       "tags": [
         "windmill",
-        "advanced",
+        "typescript",
         "meta",
-        "typescript"
+        "advanced"
       ]
     },
     {
@@ -4955,11 +4955,11 @@
       "subcategory": "windmill",
       "word_count": 5323,
       "tags": [
-        "sql",
-        "advanced",
-        "meta",
         "windmill",
-        "quickstart"
+        "quickstart",
+        "advanced",
+        "sql",
+        "meta"
       ]
     },
     {
@@ -4972,9 +4972,9 @@
       "word_count": 1795,
       "tags": [
         "windmill",
-        "advanced",
         "meta",
-        "rest"
+        "rest",
+        "advanced"
       ]
     },
     {
@@ -4987,9 +4987,9 @@
       "word_count": 1508,
       "tags": [
         "windmill",
-        "docker",
         "meta",
-        "advanced"
+        "advanced",
+        "docker"
       ]
     },
     {
@@ -5002,8 +5002,8 @@
       "word_count": 1541,
       "tags": [
         "windmill",
-        "advanced",
         "meta",
+        "advanced",
         "php"
       ]
     },
@@ -5017,9 +5017,9 @@
       "word_count": 1540,
       "tags": [
         "windmill",
-        "advanced",
+        "meta",
         "rust",
-        "meta"
+        "advanced"
       ]
     },
     {
@@ -5031,11 +5031,11 @@
       "subcategory": "windmill",
       "word_count": 256,
       "tags": [
+        "windmill",
         "scripts",
+        "python",
         "sql",
-        "docker",
-        "rust",
-        "meta"
+        "docker"
       ]
     },
     {
@@ -5062,8 +5062,8 @@
       "word_count": 1060,
       "tags": [
         "windmill",
-        "meta",
-        "apps"
+        "apps",
+        "meta"
       ]
     },
     {
@@ -5076,8 +5076,8 @@
       "word_count": 1885,
       "tags": [
         "windmill",
-        "triggers",
-        "meta"
+        "meta",
+        "triggers"
       ]
     },
     {
@@ -5091,8 +5091,8 @@
       "tags": [
         "windmill",
         "tutorial",
-        "what",
-        "beginner"
+        "beginner",
+        "what"
       ]
     },
     {
@@ -5105,9 +5105,9 @@
       "word_count": 1357,
       "tags": [
         "windmill",
-        "openflow",
+        "meta",
         "advanced",
-        "meta"
+        "openflow"
       ]
     },
     {
@@ -5120,9 +5120,9 @@
       "word_count": 208,
       "tags": [
         "windmill",
+        "api",
         "reference",
-        "concurrency",
-        "api"
+        "concurrency"
       ]
     },
     {
@@ -5135,8 +5135,8 @@
       "word_count": 127,
       "tags": [
         "windmill",
-        "custom",
-        "concept"
+        "concept",
+        "custom"
       ]
     },
     {
@@ -5164,9 +5164,9 @@
       "word_count": 663,
       "tags": [
         "windmill",
-        "script",
         "meta",
-        "advanced"
+        "advanced",
+        "script"
       ]
     },
     {
@@ -5179,9 +5179,9 @@
       "word_count": 151,
       "tags": [
         "windmill",
-        "reference",
+        "api",
         "job",
-        "api"
+        "reference"
       ]
     },
     {
@@ -5194,8 +5194,8 @@
       "word_count": 72,
       "tags": [
         "windmill",
-        "operations",
-        "multiplayer"
+        "multiplayer",
+        "operations"
       ]
     },
     {
@@ -5223,8 +5223,8 @@
       "tags": [
         "windmill",
         "tutorial",
-        "script",
-        "beginner"
+        "beginner",
+        "script"
       ]
     },
     {
@@ -5238,8 +5238,8 @@
       "tags": [
         "windmill",
         "tutorial",
-        "settings",
-        "beginner"
+        "beginner",
+        "settings"
       ]
     },
     {
@@ -5252,8 +5252,8 @@
       "word_count": 105,
       "tags": [
         "windmill",
-        "concept",
-        "run"
+        "run",
+        "concept"
       ]
     }
   ],

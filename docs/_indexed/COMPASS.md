@@ -1,7 +1,7 @@
 ---
 id: meta/navigation/compass
 title: Documentation Compass
-generated: 2026-01-02T19:47:37.586181
+generated: 2026-01-02T19:55:29.126169
 ---
 
 # Documentation Compass
@@ -22,22 +22,22 @@ New here? Read these first:
 
 | Document | Tags |
 |----------|------|
-| [FatSecret OAuth Setup (One-Time)](docs/tutorial-general-fatsecret-oauth-setup.md) | `oauth` `tutorial` `beginner` |
-| [FatSecret Platform API - 3-Legged OAuth](docs/tutorial-fatsecret-guides-oauth1-three-legged.md) | `tutorial` `api` `oauth` |
-| [FatSecret Platform API - Welcome](docs/tutorial-fatsecret-guides-welcome.md) | `tutorial` `beginner` `fatsecret` |
-| [Angular example](docs/tutorial-moonrepo-angular.md) | `tutorial` `moonrepo` `beginner` |
-| [Nest example](docs/tutorial-moonrepo-nest.md) | `nest` `tutorial` `moonrepo` |
-| [Next example](docs/tutorial-moonrepo-next.md) | `tutorial` `moonrepo` `beginner` |
-| [Nuxt example](docs/tutorial-moonrepo-nuxt.md) | `tutorial` `moonrepo` `beginner` |
-| [Remix example](docs/tutorial-moonrepo-remix.md) | `tutorial` `moonrepo` `beginner` |
-| [Moon Monorepo Documentation URLs](docs/tutorial-moonrepo-urls.md) | `moon` `tutorial` `moonrepo` |
-| [Connectors](docs/tutorial-tandoor-connectors.md) | `tutorial` `tandoor` `beginner` |
-| [Synology](docs/tutorial-tandoor-synology.md) | `tutorial` `tandoor` `beginner` |
+| [FatSecret OAuth Setup (One-Time)](docs/tutorial-general-fatsecret-oauth-setup.md) | `tutorial` `beginner` `fatsecret` |
+| [FatSecret Platform API - 3-Legged OAuth](docs/tutorial-fatsecret-guides-oauth1-three-legged.md) | `tutorial` `beginner` `oauth` |
+| [FatSecret Platform API - Welcome](docs/tutorial-fatsecret-guides-welcome.md) | `tutorial` `api` `fatsecret` |
+| [Angular example](docs/tutorial-moonrepo-angular.md) | `tutorial` `beginner` `angular` |
+| [Nest example](docs/tutorial-moonrepo-nest.md) | `tutorial` `beginner` `nest` |
+| [Next example](docs/tutorial-moonrepo-next.md) | `tutorial` `beginner` `next` |
+| [Nuxt example](docs/tutorial-moonrepo-nuxt.md) | `tutorial` `nuxt` `beginner` |
+| [Remix example](docs/tutorial-moonrepo-remix.md) | `tutorial` `beginner` `remix` |
+| [Moon Monorepo Documentation URLs](docs/tutorial-moonrepo-urls.md) | `tutorial` `beginner` `moon` |
+| [Connectors](docs/tutorial-tandoor-connectors.md) | `tutorial` `beginner` `tandoor` |
+| [Synology](docs/tutorial-tandoor-synology.md) | `synology` `tutorial` `beginner` |
 | [Windmill Flows Guide](docs/tutorial-windmill-flows-guide.md) | `windmill` `tutorial` `beginner` |
-| [Data tables](docs/tutorial-windmill-data-tables.md) | `windmill` `tutorial` `data` |
-| [Ducklake](docs/tutorial-windmill-ducklake.md) | `windmill` `tutorial` `ducklake` |
-| [Big structured SQL data: Postgres (Supabase, Neon.tech)](docs/tutorial-windmill-structured-databases.md) | `sql` `tutorial` `big` |
-| [Suspend & Approval / Prompts](docs/tutorial-windmill-11-flow-approval.md) | `windmill` `tutorial` `beginner` |
+| [Data tables](docs/tutorial-windmill-data-tables.md) | `windmill` `tutorial` `beginner` |
+| [Ducklake](docs/tutorial-windmill-ducklake.md) | `windmill` `tutorial` `beginner` |
+| [Big structured SQL data: Postgres (Supabase, Neon.tech)](docs/tutorial-windmill-structured-databases.md) | `windmill` `tutorial` `big` |
+| [Suspend & Approval / Prompts](docs/tutorial-windmill-11-flow-approval.md) | `windmill` `tutorial` `suspend` |
 | [For loops](docs/tutorial-windmill-12-flow-loops.md) | `windmill` `tutorial` `for` |
 | [Sleeps / Delays in flows](docs/tutorial-windmill-15-sleep.md) | `windmill` `tutorial` `beginner` |
 | [Architecture and data exchange](docs/tutorial-windmill-16-architecture.md) | `windmill` `tutorial` `beginner` |
@@ -48,78 +48,78 @@ New here? Read these first:
 
 | Document | Tags |
 |----------|------|
-| [Documentation System (AI + Human)](docs/concept-general-ai-documentation-system.md) | `concept` `documentation` |
+| [Documentation System (AI + Human)](docs/concept-general-ai-documentation-system.md) | `documentation` `concept` |
 | [Recipe Import Pipeline](docs/concept-general-recipe-import-pipeline.md) | `tandoor` `concept` `recipe` |
-| [FatSecret Platform API - Localization](docs/concept-fatsecret-guides-localization.md) | `fatsecret` `concept` `advanced` |
-| [Cheat sheet](docs/concept-moonrepo-cheat-sheet.md) | `moonrepo` `concept` `cheat` |
-| [migrate](docs/concept-moonrepo-migrate.md) | `moonrepo` `concept` `migrate` |
-| [migrate from-turborepo](docs/concept-moonrepo-from-turborepo.md) | `moonrepo` `concept` `migrate` |
-| [sync](docs/concept-moonrepo-sync.md) | `moonrepo` `concept` `sync` |
-| [toolchain](docs/concept-moonrepo-toolchain.md) | `moonrepo` `concept` `toolchain` |
-| [File patterns](docs/concept-moonrepo-file-pattern.md) | `rust` `moonrepo` `concept` |
-| [Query language](docs/concept-moonrepo-query-lang.md) | `sql` `query` `moonrepo` |
-| [Tokens](docs/concept-moonrepo-token.md) | `tokens` `moonrepo` `concept` |
-| [Config files](docs/concept-moonrepo-config.md) | `config` `moonrepo` `concept` |
-| [.moon/tasks\[/\*\*/\*\].{pkl,yml}](docs/concept-moonrepo-tasks.md) | `moontaskspklyml` `moonrepo` `concept` |
-| [template.{pkl,yml}](docs/concept-moonrepo-template.md) | `templatepklyml` `moonrepo` `concept` |
-| [Create a project](docs/concept-moonrepo-create-project.md) | `create` `moonrepo` `concept` |
-| [Editors](docs/concept-moonrepo-editors.md) | `moonrepo` `concept` `editors` |
-| [React example](docs/concept-moonrepo-react.md) | `react` `moonrepo` `concept` |
-| [Deno handbook](docs/concept-moonrepo-deno-handbook.md) | `moonrepo` `concept` `typescript` |
-| [Node.js examples](docs/concept-moonrepo-examples.md) | `moonrepo` `concept` `nodejs` |
-| [Terminal notifications](docs/concept-moonrepo-notifications.md) | `moonrepo` `concept` `terminal` |
+| [FatSecret Platform API - Localization](docs/concept-fatsecret-guides-localization.md) | `api` `fatsecret` `advanced` |
+| [Cheat sheet](docs/concept-moonrepo-cheat-sheet.md) | `cheat` `concept` `moonrepo` |
+| [migrate](docs/concept-moonrepo-migrate.md) | `migrate` `concept` `moonrepo` |
+| [migrate from-turborepo](docs/concept-moonrepo-from-turborepo.md) | `migrate` `concept` `moonrepo` |
+| [sync](docs/concept-moonrepo-sync.md) | `sync` `concept` `moonrepo` |
+| [toolchain](docs/concept-moonrepo-toolchain.md) | `toolchain` `concept` `moonrepo` |
+| [File patterns](docs/concept-moonrepo-file-pattern.md) | `file` `concept` `javascript` |
+| [Query language](docs/concept-moonrepo-query-lang.md) | `sql` `query` `concept` |
+| [Tokens](docs/concept-moonrepo-token.md) | `tokens` `concept` `moonrepo` |
+| [Config files](docs/concept-moonrepo-config.md) | `config` `concept` `moonrepo` |
+| [.moon/tasks\[/\*\*/\*\].{pkl,yml}](docs/concept-moonrepo-tasks.md) | `moontaskspklyml` `advanced` `concept` |
+| [template.{pkl,yml}](docs/concept-moonrepo-template.md) | `advanced` `templatepklyml` `concept` |
+| [Create a project](docs/concept-moonrepo-create-project.md) | `create` `concept` `moonrepo` |
+| [Editors](docs/concept-moonrepo-editors.md) | `concept` `moonrepo` `editors` |
+| [React example](docs/concept-moonrepo-react.md) | `react` `concept` `moonrepo` |
+| [Deno handbook](docs/concept-moonrepo-deno-handbook.md) | `deno` `typescript` `concept` |
+| [Node.js examples](docs/concept-moonrepo-examples.md) | `nodejs` `concept` `moonrepo` |
+| [Terminal notifications](docs/concept-moonrepo-notifications.md) | `terminal` `concept` `moonrepo` |
 
 
 ### Reference (33)
 
 | Document | Tags |
 |----------|------|
-| [Food Add Favorite](docs/ref-fatsecret-api-food-add-favorite.md) | `fatsecret` `reference` `food` |
-| [Food Brands Get All v2](docs/ref-fatsecret-api-food-brands-get.md) | `fatsecret` `reference` `food` |
-| [Food Categories Get All v2](docs/ref-fatsecret-api-food-categories-get.md) | `fatsecret` `reference` `food` |
-| [Food Delete Favorite](docs/ref-fatsecret-api-food-delete-favorite.md) | `fatsecret` `reference` `food` |
-| [Food Entries Get (v1)](docs/ref-fatsecret-api-food-entries-get.md) | `fatsecret` `reference` `food` |
-| [Food Entry Create](docs/ref-fatsecret-api-food-entry-create.md) | `fatsecret` `reference` `food` |
-| [Food Entry Delete](docs/ref-fatsecret-api-food-entry-delete.md) | `fatsecret` `reference` `food` |
-| [Food Get v1](docs/ref-fatsecret-api-food-get-v1.md) | `fatsecret` `reference` `food` |
-| [Food Sub Categories Get All v1](docs/ref-fatsecret-api-food-sub-categories-get.md) | `fatsecret` `reference` `food` |
+| [Food Add Favorite](docs/ref-fatsecret-api-food-add-favorite.md) | `fatsecret` `food` `reference` |
+| [Food Brands Get All v2](docs/ref-fatsecret-api-food-brands-get.md) | `fatsecret` `food` `reference` |
+| [Food Categories Get All v2](docs/ref-fatsecret-api-food-categories-get.md) | `fatsecret` `food` `reference` |
+| [Food Delete Favorite](docs/ref-fatsecret-api-food-delete-favorite.md) | `fatsecret` `food` `reference` |
+| [Food Entries Get (v1)](docs/ref-fatsecret-api-food-entries-get.md) | `fatsecret` `food` `reference` |
+| [Food Entry Create](docs/ref-fatsecret-api-food-entry-create.md) | `fatsecret` `food` `reference` |
+| [Food Entry Delete](docs/ref-fatsecret-api-food-entry-delete.md) | `fatsecret` `food` `reference` |
+| [Food Get v1](docs/ref-fatsecret-api-food-get-v1.md) | `fatsecret` `food` `reference` |
+| [Food Sub Categories Get All v1](docs/ref-fatsecret-api-food-sub-categories-get.md) | `fatsecret` `food` `reference` |
 | [Foods Get Favorites (v1)](docs/ref-fatsecret-api-foods-get-favorites.md) | `fatsecret` `reference` `foods` |
 | [Foods Search v1](docs/ref-fatsecret-api-foods-search-v1.md) | `fatsecret` `reference` `foods` |
 | [Foods Search v3](docs/ref-fatsecret-api-foods-search-v3.md) | `fatsecret` `reference` `foods` |
-| [Image Recognition API v1](docs/ref-fatsecret-api-image-recognition.md) | `advanced` `api` `reference` |
-| [Natural Language Processing API v1](docs/ref-fatsecret-api-natural-language-processing.md) | `advanced` `api` `reference` |
-| [Profile Create](docs/ref-fatsecret-api-profile-create.md) | `fatsecret` `reference` `profile` |
-| [Profile Get Auth](docs/ref-fatsecret-api-profile-get-auth.md) | `fatsecret` `reference` `profile` |
-| [Profile Get Status](docs/ref-fatsecret-api-profile-get.md) | `fatsecret` `reference` `profile` |
-| [Recipe Get by ID v1](docs/ref-fatsecret-api-recipe-get-v1.md) | `fatsecret` `reference` `recipe` |
-| [Recipe Types Get All v1](docs/ref-fatsecret-api-recipe-types-get.md) | `fatsecret` `reference` `recipe` |
-| [Recipes Search v2](docs/ref-fatsecret-api-recipes-search-v2.md) | `fatsecret` `reference` `recipes` |
+| [Image Recognition API v1](docs/ref-fatsecret-api-image-recognition.md) | `image` `advanced` `reference` |
+| [Natural Language Processing API v1](docs/ref-fatsecret-api-natural-language-processing.md) | `advanced` `natural` `reference` |
+| [Profile Create](docs/ref-fatsecret-api-profile-create.md) | `profile` `fatsecret` `reference` |
+| [Profile Get Auth](docs/ref-fatsecret-api-profile-get-auth.md) | `profile` `fatsecret` `reference` |
+| [Profile Get Status](docs/ref-fatsecret-api-profile-get.md) | `profile` `fatsecret` `reference` |
+| [Recipe Get by ID v1](docs/ref-fatsecret-api-recipe-get-v1.md) | `recipe` `fatsecret` `advanced` |
+| [Recipe Types Get All v1](docs/ref-fatsecret-api-recipe-types-get.md) | `recipe` `fatsecret` `reference` |
+| [Recipes Search v2](docs/ref-fatsecret-api-recipes-search-v2.md) | `fatsecret` `recipes` `reference` |
 
 
 ### Operations (144)
 
 | Document | Tags |
 |----------|------|
-| [Architecture](docs/ops-general-architecture.md) | `windmill` `operations` `rust` |
-| [Build & Test (Moon)](docs/ops-general-moon-ci-pipeline.md) | `operations` `build` |
-| [FatSecret Platform API - Error Codes](docs/ops-fatsecret-guides-error-codes.md) | `fatsecret` `operations` `advanced` |
-| [FatSecret Platform API - Third-Party Libraries](docs/ops-fatsecret-guides-libraries.md) | `fatsecret` `operations` `api` |
-| [Implementation Scope: food.brands.get.v2](docs/ops-fatsecret-impl-scope-food-brands-get.md) | `implementation` `advanced` `api` |
-| [Implementation Scope: FatSecret food.categories.get.v2](docs/ops-fatsecret-impl-scope-food-categories-get.md) | `implementation` `advanced` `api` |
-| [Commands](docs/ops-moonrepo-commands.md) | `commands` `moonrepo` `operations` |
-| [action-graph](docs/ops-moonrepo-action-graph.md) | `moonrepo` `operations` `actiongraph` |
-| [bin](docs/ops-moonrepo-bin.md) | `bin` `moonrepo` `operations` |
-| [check](docs/ops-moonrepo-check.md) | `moonrepo` `operations` `check` |
-| [ci](docs/ops-moonrepo-ci.md) | `moonrepo` `operations` |
-| [clean](docs/ops-moonrepo-clean.md) | `moonrepo` `operations` `clean` |
-| [completions](docs/ops-moonrepo-completions.md) | `moonrepo` `operations` `completions` |
-| [docker](docs/ops-moonrepo-docker.md) | `docker` `moonrepo` `operations` |
-| [docker file](docs/ops-moonrepo-file.md) | `docker` `moonrepo` `operations` |
-| [docker prune](docs/ops-moonrepo-prune.md) | `docker` `moonrepo` `operations` |
-| [docker scaffold](docs/ops-moonrepo-scaffold.md) | `docker` `moonrepo` `operations` |
-| [docker setup](docs/ops-moonrepo-setup.md) | `docker` `moonrepo` `operations` |
-| [ext](docs/ops-moonrepo-ext.md) | `moonrepo` `operations` `ext` |
-| [generate](docs/ops-moonrepo-generate.md) | `moonrepo` `operations` `generate` |
+| [Architecture](docs/ops-general-architecture.md) | `windmill` `rust` `architecture` |
+| [Build & Test (Moon)](docs/ops-general-moon-ci-pipeline.md) | `build` `operations` |
+| [FatSecret Platform API - Error Codes](docs/ops-fatsecret-guides-error-codes.md) | `api` `fatsecret` `advanced` |
+| [FatSecret Platform API - Third-Party Libraries](docs/ops-fatsecret-guides-libraries.md) | `api` `fatsecret` `operations` |
+| [Implementation Scope: food.brands.get.v2](docs/ops-fatsecret-impl-scope-food-brands-get.md) | `advanced` `operations` `implementation` |
+| [Implementation Scope: FatSecret food.categories.get.v2](docs/ops-fatsecret-impl-scope-food-categories-get.md) | `advanced` `operations` `implementation` |
+| [Commands](docs/ops-moonrepo-commands.md) | `commands` `operations` `moonrepo` |
+| [action-graph](docs/ops-moonrepo-action-graph.md) | `actiongraph` `operations` `moonrepo` |
+| [bin](docs/ops-moonrepo-bin.md) | `bin` `operations` `moonrepo` |
+| [check](docs/ops-moonrepo-check.md) | `check` `operations` `moonrepo` |
+| [ci](docs/ops-moonrepo-ci.md) | `operations` `moonrepo` |
+| [clean](docs/ops-moonrepo-clean.md) | `clean` `operations` `moonrepo` |
+| [completions](docs/ops-moonrepo-completions.md) | `completions` `operations` `moonrepo` |
+| [docker](docs/ops-moonrepo-docker.md) | `docker` `operations` `moonrepo` |
+| [docker file](docs/ops-moonrepo-file.md) | `docker` `operations` `moonrepo` |
+| [docker prune](docs/ops-moonrepo-prune.md) | `docker` `operations` `moonrepo` |
+| [docker scaffold](docs/ops-moonrepo-scaffold.md) | `docker` `operations` `moonrepo` |
+| [docker setup](docs/ops-moonrepo-setup.md) | `docker` `operations` `moonrepo` |
+| [ext](docs/ops-moonrepo-ext.md) | `ext` `operations` `moonrepo` |
+| [generate](docs/ops-moonrepo-generate.md) | `generate` `operations` `moonrepo` |
 
 
 ### Meta (104)
@@ -127,25 +127,25 @@ New here? Read these first:
 | Document | Tags |
 |----------|------|
 | [Documentation](docs/meta-general-readme.md) | `meta` `documentation` |
-| [Index](docs/meta-tandoor-index.md) | `tandoor` `meta` `index` |
-| [Windmill Documentation Indexing System](docs/meta-windmill-indexing-system.md) | `windmill` `advanced` `meta` |
-| [Browser automation](docs/meta-windmill-index.md) | `windmill` `meta` `api` |
-| [Git sync](docs/meta-windmill-index.md) | `windmill` `advanced` `meta` |
-| [Deploy to prod](docs/meta-windmill-index.md) | `windmill` `deploy` `meta` |
+| [Index](docs/meta-tandoor-index.md) | `meta` `tandoor` `index` |
+| [Windmill Documentation Indexing System](docs/meta-windmill-indexing-system.md) | `windmill` `meta` `advanced` |
+| [Browser automation](docs/meta-windmill-index.md) | `windmill` `api` `meta` |
+| [Git sync](docs/meta-windmill-index.md) | `windmill` `meta` `advanced` |
+| [Deploy to prod](docs/meta-windmill-index.md) | `windmill` `meta` `deploy` |
 | [Version control](docs/meta-windmill-index.md) | `windmill` `meta` `version` |
-| [Dependencies in TypeScript](docs/meta-windmill-index.md) | `advanced` `meta` `dependencies` |
-| [Dependencies in Python](docs/meta-windmill-index.md) | `advanced` `meta` `windmill` |
-| [External auth with JWT](docs/meta-windmill-index.md) | `windmill` `advanced` `meta` |
-| [Email triggers](docs/meta-windmill-index.md) | `windmill` `advanced` `meta` |
-| [Instance settings](docs/meta-windmill-index.md) | `windmill` `advanced` `meta` |
+| [Dependencies in TypeScript](docs/meta-windmill-index.md) | `windmill` `advanced` `typescript` |
+| [Dependencies in Python](docs/meta-windmill-index.md) | `windmill` `advanced` `python` |
+| [External auth with JWT](docs/meta-windmill-index.md) | `windmill` `meta` `advanced` |
+| [Email triggers](docs/meta-windmill-index.md) | `windmill` `meta` `email` |
+| [Instance settings](docs/meta-windmill-index.md) | `windmill` `meta` `advanced` |
 | [Set/Get progress from code](docs/meta-windmill-index.md) | `windmill` `meta` `setget` |
-| [Self-host](docs/meta-windmill-index.md) | `windmill` `selfhost` `meta` |
-| [Workspace forks](docs/meta-windmill-index.md) | `windmill` `workspace` `meta` |
-| [Scaling workers](docs/meta-windmill-index.md) | `windmill` `advanced` `meta` |
+| [Self-host](docs/meta-windmill-index.md) | `windmill` `meta` `advanced` |
+| [Workspace forks](docs/meta-windmill-index.md) | `windmill` `meta` `workspace` |
+| [Scaling workers](docs/meta-windmill-index.md) | `windmill` `meta` `scaling` |
 | [Command-line interface (CLI)](docs/meta-windmill-index.md) | `windmill` `commandline` `meta` |
-| [Local development](docs/meta-windmill-index.md) | `windmill` `local` `meta` |
-| [Sharing common logic](docs/meta-windmill-index.md) | `windmill` `advanced` `meta` |
-| [Dependency management & imports](docs/meta-windmill-index.md) | `windmill` `advanced` `dependency` |
+| [Local development](docs/meta-windmill-index.md) | `windmill` `meta` `advanced` |
+| [Sharing common logic](docs/meta-windmill-index.md) | `windmill` `sharing` `meta` |
+| [Dependency management & imports](docs/meta-windmill-index.md) | `windmill` `dependency` `meta` |
 
 
 ## Keyword Quick Reference
@@ -167,9 +167,9 @@ New here? Read these first:
 | example | [Angular example](docs/tutorial-moonrepo-angular.md), [Astro example](docs/ops-moonrepo-astro.md), [ESLint example](docs/ops-moonrepo-eslint.md) |
 | quickstart | [Ansible quickstart](docs/meta-windmill-index.md), [C# quickstart](docs/meta-windmill-index.md), [Java quickstart](docs/meta-windmill-index.md) |
 | docker | [docker](docs/ops-moonrepo-docker.md), [docker file](docs/ops-moonrepo-file.md), [docker prune](docs/ops-moonrepo-prune.md) |
+| typescript | [TypeScript example](docs/ops-moonrepo-typescript.md), [Bun handbook](docs/ops-moonrepo-bun-handbook.md), [Deno handbook](docs/concept-moonrepo-deno-handbook.md) |
 | get | [Food Brands Get All v2](docs/ref-fatsecret-api-food-brands-get.md), [Food Categories Get All v2](docs/ref-fatsecret-api-food-categories-get.md), [Food Entries Get (v1)](docs/ref-fatsecret-api-food-entries-get.md) |
 | sql | [Query language](docs/concept-moonrepo-query-lang.md), [Manual installation instructions](docs/ops-tandoor-manual.md), [How to migrate from sqlite3 database to postgresql](docs/ops-tandoor-migration-sqlite-postgres.md) |
-| rust | [Architecture](docs/ops-general-architecture.md), [File patterns](docs/concept-moonrepo-file-pattern.md), [Rust handbook](docs/ops-moonrepo-handbook.md) |
 | food | [Food Add Favorite](docs/ref-fatsecret-api-food-add-favorite.md), [Food Brands Get All v2](docs/ref-fatsecret-api-food-brands-get.md), [Food Categories Get All v2](docs/ref-fatsecret-api-food-categories-get.md) |
 | platform | [FatSecret Platform API - Authentication](docs/ref-fatsecret-guides-authentication.md), [FatSecret Platform API - Error Codes](docs/ops-fatsecret-guides-error-codes.md), [FatSecret Platform API - Third-Party Libraries](docs/ops-fatsecret-guides-libraries.md) |
 

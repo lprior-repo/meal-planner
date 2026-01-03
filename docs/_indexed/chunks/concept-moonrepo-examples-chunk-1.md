@@ -3,9 +3,39 @@ doc_id: concept/moonrepo/examples
 chunk_id: concept/moonrepo/examples#chunk-1
 heading_path: ["Node.js examples"]
 chunk_type: prose
-tokens: 387
-summary: "Node.js examples"
+tokens: 473
+summary: "<!--"
 ---
+
+<!--
+<doc_metadata>
+  <type>guide</type>
+  <category>build-tools</category>
+  <title>Node.js examples</title>
+  <description>- [Angular](/docs/guides/examples/angular) - In this guide, you&apos;ll learn how to integrate Angular into moon. - [Astro](/docs/guides/examples/astro) - In this guide, you&apos;ll learn how to integrate Astro</description>
+  <created_at>2026-01-02T19:55:27.177572</created_at>
+  <updated_at>2026-01-02T19:55:27.177572</updated_at>
+  <language>en</language>
+  <dependencies>
+    <dependency type="library">react</dependency>
+  </dependencies>
+  <related_entities>
+    <entity relationship="uses">/docs/guides/examples/angular</entity>
+    <entity relationship="uses">/docs/guides/examples/astro</entity>
+    <entity relationship="uses">/docs/guides/examples/eslint</entity>
+    <entity relationship="uses">/docs/guides/examples/jest</entity>
+    <entity relationship="uses">/docs/guides/examples/nest</entity>
+    <entity relationship="uses">/docs/guides/examples/next</entity>
+    <entity relationship="uses">/docs/guides/examples/nuxt</entity>
+    <entity relationship="uses">/docs/guides/examples/packemon</entity>
+    <entity relationship="uses">/docs/guides/examples/prettier</entity>
+    <entity relationship="uses">/docs/guides/examples/react</entity>
+  </related_entities>
+  <difficulty_level>beginner</difficulty_level>
+  <estimated_reading_time>1</estimated_reading_time>
+  <tags>nodejs,concept,moonrepo</tags>
+</doc_metadata>
+-->
 
 # Node.js examples
 

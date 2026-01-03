@@ -3,9 +3,44 @@ doc_id: ops/tandoor/homeassistant
 chunk_id: ops/tandoor/homeassistant#chunk-1
 heading_path: ["Homeassistant"]
 chunk_type: prose
-tokens: 861
-summary: "Homeassistant"
+tokens: 960
+summary: "<!--"
 ---
+
+<!--
+<doc_metadata>
+  <type>guide</type>
+  <category>recipes</category>
+  <title>Homeassistant</title>
+  <description>!!! info &quot;Community Contributed&quot; This guide was contributed by the community and is neither officially supported, nor updated or tested. Many thanks to [alexbelgium](https://github.com/alexbelgium) fo</description>
+  <created_at>2026-01-02T19:55:27.291365</created_at>
+  <updated_at>2026-01-02T19:55:27.291365</updated_at>
+  <language>en</language>
+  <sections count="5">
+    <section name="Introduction" level="3"/>
+    <section name="Installation" level="3"/>
+    <section name="Configuration" level="3"/>
+    <section name="Updates and backups" level="3"/>
+    <section name="Support" level="3"/>
+  </sections>
+  <features>
+    <feature>configuration</feature>
+    <feature>installation</feature>
+    <feature>introduction</feature>
+    <feature>support</feature>
+    <feature>updates_and_backups</feature>
+  </features>
+  <dependencies>
+    <dependency type="service">docker</dependency>
+  </dependencies>
+  <examples count="1">
+    <example type="code">Code examples included</example>
+  </examples>
+  <difficulty_level>intermediate</difficulty_level>
+  <estimated_reading_time>3</estimated_reading_time>
+  <tags>homeassistant,tandoor,advanced,operations</tags>
+</doc_metadata>
+-->
 
 # Homeassistant
 
