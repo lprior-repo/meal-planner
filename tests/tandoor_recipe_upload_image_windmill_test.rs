@@ -392,7 +392,9 @@ fn test_coverage() {
     println!();
     println!("   5. Or via wmill CLI:");
     println!();
-    println!(r#"      wmill script run f/tandoor/recipe_upload_image.sh -d '{{"tandoor": "$res:u/admin/tandoor_api", "recipe_id": 1, "image_path": "/tmp/test_recipe_image.jpg"}}'"#);
+    println!(
+        r#"      wmill script run f/tandoor/recipe_upload_image.sh -d '{{"tandoor": "$res:u/admin/tandoor_api", "recipe_id": 1, "image_path": "/tmp/test_recipe_image.jpg"}}'"#
+    );
     println!();
 
     println!("========================================\n");

@@ -8,7 +8,8 @@
 
 use serde_json::json;
 
-const VALID_INPUT: &str = r#"{"saved_meal_id": "12345", "access_token": "token", "access_secret": "secret"}"#;
+const VALID_INPUT: &str =
+    r#"{"saved_meal_id": "12345", "access_token": "token", "access_secret": "secret"}"#;
 const MISSING_ID_INPUT: &str = r#"{"access_token": "token", "access_secret": "secret"}"#;
 
 #[derive(Debug, PartialEq)]
@@ -53,7 +54,10 @@ fn format_error_response(error: &str) -> serde_json::Value {
 }
 
 fn count_items_in_response(response: &serde_json::Value) -> usize {
-    response.get("items").and_then(|i| i.as_array().map(|a| a.len())).unwrap_or(0)
+    response
+        .get("items")
+        .and_then(|i| i.as_array().map(|a| a.len()))
+        .unwrap_or(0)
 }
 
 #[cfg(test)]

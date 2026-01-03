@@ -78,7 +78,11 @@ pub fn random_select(recipes: &[RecipeSummary], count: usize, seed: u64) -> Vec<
     let mut rng = fastrand::Rng::with_seed(seed);
     let mut indices: Vec<usize> = (0..recipes.len()).collect();
     rng.shuffle(&mut indices);
-    indices.into_iter().take(count).map(|i| recipes[i].clone()).collect()
+    indices
+        .into_iter()
+        .take(count)
+        .map(|i| recipes[i].clone())
+        .collect()
 }
 
 #[cfg(test)]
@@ -151,83 +155,181 @@ mod tests {
     #[test]
     fn test_random_select_returns_exact_count() {
         let recipes = vec![
-            RecipeSummary { id: 1, name: "Recipe 1".to_string(), calories: 400 },
-            RecipeSummary { id: 2, name: "Recipe 2".to_string(), calories: 500 },
-            RecipeSummary { id: 3, name: "Recipe 3".to_string(), calories: 600 },
-            RecipeSummary { id: 4, name: "Recipe 4".to_string(), calories: 500 },
-            RecipeSummary { id: 5, name: "Recipe 5".to_string(), calories: 700 },
-            RecipeSummary { id: 6, name: "Recipe 6".to_string(), calories: 450 },
-            RecipeSummary { id: 7, name: "Recipe 7".to_string(), calories: 550 },
-            RecipeSummary { id: 8, name: "Recipe 8".to_string(), calories: 650 },
-            RecipeSummary { id: 9, name: "Recipe 9".to_string(), calories: 350 },
-            RecipeSummary { id: 10, name: "Recipe 10".to_string(), calories: 750 },
+            RecipeSummary {
+                id: 1,
+                name: "Recipe 1".to_string(),
+                calories: 400,
+            },
+            RecipeSummary {
+                id: 2,
+                name: "Recipe 2".to_string(),
+                calories: 500,
+            },
+            RecipeSummary {
+                id: 3,
+                name: "Recipe 3".to_string(),
+                calories: 600,
+            },
+            RecipeSummary {
+                id: 4,
+                name: "Recipe 4".to_string(),
+                calories: 500,
+            },
+            RecipeSummary {
+                id: 5,
+                name: "Recipe 5".to_string(),
+                calories: 700,
+            },
+            RecipeSummary {
+                id: 6,
+                name: "Recipe 6".to_string(),
+                calories: 450,
+            },
+            RecipeSummary {
+                id: 7,
+                name: "Recipe 7".to_string(),
+                calories: 550,
+            },
+            RecipeSummary {
+                id: 8,
+                name: "Recipe 8".to_string(),
+                calories: 650,
+            },
+            RecipeSummary {
+                id: 9,
+                name: "Recipe 9".to_string(),
+                calories: 350,
+            },
+            RecipeSummary {
+                id: 10,
+                name: "Recipe 10".to_string(),
+                calories: 750,
+            },
         ];
-        
+
         let result = random_select(&recipes, 4, 42);
-        
+
         assert_eq!(result.len(), 4, "Expected exactly 4 recipes");
     }
 
     #[test]
     fn test_random_select_deterministic_with_same_seed() {
         let recipes = vec![
-            RecipeSummary { id: 1, name: "Recipe 1".to_string(), calories: 400 },
-            RecipeSummary { id: 2, name: "Recipe 2".to_string(), calories: 500 },
-            RecipeSummary { id: 3, name: "Recipe 3".to_string(), calories: 600 },
-            RecipeSummary { id: 4, name: "Recipe 4".to_string(), calories: 500 },
+            RecipeSummary {
+                id: 1,
+                name: "Recipe 1".to_string(),
+                calories: 400,
+            },
+            RecipeSummary {
+                id: 2,
+                name: "Recipe 2".to_string(),
+                calories: 500,
+            },
+            RecipeSummary {
+                id: 3,
+                name: "Recipe 3".to_string(),
+                calories: 600,
+            },
+            RecipeSummary {
+                id: 4,
+                name: "Recipe 4".to_string(),
+                calories: 500,
+            },
         ];
-        
+
         let result1 = random_select(&recipes, 2, 12345);
         let result2 = random_select(&recipes, 2, 12345);
-        
+
         assert_eq!(result1, result2, "Same seed should produce same selection");
     }
 
     #[test]
     fn test_random_select_different_with_different_seeds() {
         let recipes = vec![
-            RecipeSummary { id: 1, name: "Recipe 1".to_string(), calories: 400 },
-            RecipeSummary { id: 2, name: "Recipe 2".to_string(), calories: 500 },
-            RecipeSummary { id: 3, name: "Recipe 3".to_string(), calories: 600 },
-            RecipeSummary { id: 4, name: "Recipe 4".to_string(), calories: 500 },
+            RecipeSummary {
+                id: 1,
+                name: "Recipe 1".to_string(),
+                calories: 400,
+            },
+            RecipeSummary {
+                id: 2,
+                name: "Recipe 2".to_string(),
+                calories: 500,
+            },
+            RecipeSummary {
+                id: 3,
+                name: "Recipe 3".to_string(),
+                calories: 600,
+            },
+            RecipeSummary {
+                id: 4,
+                name: "Recipe 4".to_string(),
+                calories: 500,
+            },
         ];
-        
+
         let result1 = random_select(&recipes, 2, 11111);
         let result2 = random_select(&recipes, 2, 99999);
-        
-        assert_ne!(result1, result2, "Different seeds should produce different selections");
+
+        assert_ne!(
+            result1, result2,
+            "Different seeds should produce different selections"
+        );
     }
 
     #[test]
     fn test_random_select_returns_all_when_count_exceeds_length() {
         let recipes = vec![
-            RecipeSummary { id: 1, name: "Recipe 1".to_string(), calories: 400 },
-            RecipeSummary { id: 2, name: "Recipe 2".to_string(), calories: 500 },
+            RecipeSummary {
+                id: 1,
+                name: "Recipe 1".to_string(),
+                calories: 400,
+            },
+            RecipeSummary {
+                id: 2,
+                name: "Recipe 2".to_string(),
+                calories: 500,
+            },
         ];
-        
+
         let result = random_select(&recipes, 10, 42);
-        
-        assert_eq!(result.len(), 2, "Should return all recipes when count exceeds length");
+
+        assert_eq!(
+            result.len(),
+            2,
+            "Should return all recipes when count exceeds length"
+        );
     }
 
     #[test]
     fn test_random_select_returns_empty_when_count_is_zero() {
         let recipes = vec![
-            RecipeSummary { id: 1, name: "Recipe 1".to_string(), calories: 400 },
-            RecipeSummary { id: 2, name: "Recipe 2".to_string(), calories: 500 },
+            RecipeSummary {
+                id: 1,
+                name: "Recipe 1".to_string(),
+                calories: 400,
+            },
+            RecipeSummary {
+                id: 2,
+                name: "Recipe 2".to_string(),
+                calories: 500,
+            },
         ];
-        
+
         let result = random_select(&recipes, 0, 42);
-        
+
         assert!(result.is_empty(), "Should return empty vec when count is 0");
     }
 
     #[test]
     fn test_random_select_returns_empty_when_input_is_empty() {
         let recipes: Vec<RecipeSummary> = vec![];
-        
+
         let result = random_select(&recipes, 3, 42);
-        
-        assert!(result.is_empty(), "Should return empty vec when input is empty");
+
+        assert!(
+            result.is_empty(),
+            "Should return empty vec when input is empty"
+        );
     }
 }

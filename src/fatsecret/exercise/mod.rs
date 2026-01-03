@@ -76,13 +76,13 @@
 //! - [`FatSecret` Exercise API docs](https://platform.fatsecret.com/api/Default.aspx?screen=rapiref2&method=exercise_entries.get.v2)
 
 pub mod client;
+pub mod month_summary_validation;
 pub mod types;
 pub mod validation;
-pub mod month_summary_validation;
 
 #[cfg(test)]
 mod tests;
 
 pub use client::*;
-pub use types::*;
 pub use month_summary_validation::*;
+pub use types::*;

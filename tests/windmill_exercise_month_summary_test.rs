@@ -34,11 +34,10 @@ fn exercise_month_summary_script_yaml_exists() {
 #[test]
 fn exercise_month_summary_script_yaml_is_valid() {
     let yaml_path = "windmill/f/fatsecret/exercise_month_summary.script.yaml";
-    let content = std::fs::read_to_string(yaml_path)
-        .expect("Should read script YAML file");
+    let content = std::fs::read_to_string(yaml_path).expect("Should read script YAML file");
 
-    let parsed: serde_yaml::Value = serde_yaml::from_str(&content)
-        .expect("Script YAML should be valid YAML");
+    let parsed: serde_yaml::Value =
+        serde_yaml::from_str(&content).expect("Script YAML should be valid YAML");
 
     assert!(
         parsed.get("summary").is_some(),
@@ -57,22 +56,19 @@ fn exercise_month_summary_script_yaml_is_valid() {
 #[test]
 fn exercise_month_summary_schema_has_required_fields() {
     let yaml_path = "windmill/f/fatsecret/exercise_month_summary.script.yaml";
-    let content = std::fs::read_to_string(yaml_path)
-        .expect("Should read script YAML file");
+    let content = std::fs::read_to_string(yaml_path).expect("Should read script YAML file");
 
-    let parsed: serde_yaml::Value = serde_yaml::from_str(&content)
-        .expect("Script YAML should be valid YAML");
+    let parsed: serde_yaml::Value =
+        serde_yaml::from_str(&content).expect("Script YAML should be valid YAML");
 
-    let schema = parsed.get("schema")
-        .expect("Script should have schema");
+    let schema = parsed.get("schema").expect("Script should have schema");
 
-    let required = schema.get("required")
+    let required = schema
+        .get("required")
         .and_then(|v| v.as_sequence())
         .expect("Schema should have required array");
 
-    let required_fields: Vec<&str> = required.iter()
-        .filter_map(|v| v.as_str())
-        .collect();
+    let required_fields: Vec<&str> = required.iter().filter_map(|v| v.as_str()).collect();
 
     assert!(
         required_fields.contains(&"fatsecret"),

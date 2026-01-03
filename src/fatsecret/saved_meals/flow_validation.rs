@@ -33,20 +33,34 @@ pub enum InputValidationError {
 }
 
 pub fn validate_input(input: &Value) -> Result<(), InputValidationError> {
-    if !input.get("saved_meal_id").map(|v| v.is_string()).unwrap_or(false) {
+    if !input
+        .get("saved_meal_id")
+        .map(|v| v.is_string())
+        .unwrap_or(false)
+    {
         return Err(InputValidationError::MissingSavedMealId);
     }
-    if !input.get("access_token").map(|v| v.is_string()).unwrap_or(false) {
+    if !input
+        .get("access_token")
+        .map(|v| v.is_string())
+        .unwrap_or(false)
+    {
         return Err(InputValidationError::MissingAccessToken);
     }
-    if !input.get("access_secret").map(|v| v.is_string()).unwrap_or(false) {
+    if !input
+        .get("access_secret")
+        .map(|v| v.is_string())
+        .unwrap_or(false)
+    {
         return Err(InputValidationError::MissingAccessSecret);
     }
     Ok(())
 }
 
 pub fn extract_saved_meal_id(input: &Value) -> Option<String> {
-    input.get("saved_meal_id").and_then(|v| v.as_str().map(|s| s.to_string()))
+    input
+        .get("saved_meal_id")
+        .and_then(|v| v.as_str().map(|s| s.to_string()))
 }
 
 pub fn extract_oauth_tokens(input: &Value) -> Option<(String, String)> {
@@ -84,11 +98,18 @@ pub fn parse_json_input(input_str: &str) -> Result<Value, String> {
 }
 
 pub fn count_items_in_response(response: &Value) -> usize {
-    response.get("items").and_then(|v| v.as_array()).map(|a| a.len()).unwrap_or(0)
+    response
+        .get("items")
+        .and_then(|v| v.as_array())
+        .map(|a| a.len())
+        .unwrap_or(0)
 }
 
 pub fn is_success_response(response: &Value) -> bool {
-    response.get("success").and_then(|v| v.as_bool()).unwrap_or(false)
+    response
+        .get("success")
+        .and_then(|v| v.as_bool())
+        .unwrap_or(false)
 }
 
 #[cfg(test)]
@@ -108,7 +129,10 @@ mod tests {
     #[test]
     fn test_validate_missing_id() {
         let input = json!({"access_token": "token", "access_secret": "secret"});
-        assert_eq!(validate_input(&input), Err(InputValidationError::MissingSavedMealId));
+        assert_eq!(
+            validate_input(&input),
+            Err(InputValidationError::MissingSavedMealId)
+        );
     }
 
     #[test]

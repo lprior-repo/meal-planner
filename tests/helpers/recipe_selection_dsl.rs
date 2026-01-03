@@ -176,8 +176,7 @@ impl RecipeSelectionDSL {
         second: &RecipeSelectionResult,
     ) {
         assert_ne!(
-            first.recipes,
-            second.recipes,
+            first.recipes, second.recipes,
             "two sequential selections returned identical recipes"
         );
     }

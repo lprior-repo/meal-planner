@@ -45,8 +45,8 @@ fn windmill_script_is_executable() {
 #[test]
 fn windmill_script_yaml_is_valid() {
     let yaml_content = std::fs::read_to_string(SCRIPT_YAML_PATH).unwrap();
-    let parsed: serde_yaml::Value = serde_yaml::from_str(&yaml_content)
-        .expect("Script YAML should be valid YAML");
+    let parsed: serde_yaml::Value =
+        serde_yaml::from_str(&yaml_content).expect("Script YAML should be valid YAML");
 
     assert_eq!(
         parsed["kind"].as_str().unwrap(),

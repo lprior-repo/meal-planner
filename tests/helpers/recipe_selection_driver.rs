@@ -55,9 +55,7 @@ impl RecipeSelectionDriver {
 
     pub fn with_binary(path: impl Into<String>) -> Self {
         Self {
-            implementation: RecipeSelectionDriverImpl::Binary {
-                path: path.into(),
-            },
+            implementation: RecipeSelectionDriverImpl::Binary { path: path.into() },
         }
     }
 

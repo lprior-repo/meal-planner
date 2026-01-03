@@ -34,7 +34,11 @@ fn get_windmill_workspace() -> String {
 fn get_oauth_tokens() -> Option<(String, String)> {
     fn get_pass_value(path: &str) -> Option<String> {
         let output = Command::new("pass").args(["show", path]).output().ok()?;
-        String::from_utf8(output.stdout).ok()?.trim().to_string().into()
+        String::from_utf8(output.stdout)
+            .ok()?
+            .trim()
+            .to_string()
+            .into()
     }
 
     let access_token = env::var("FATSECRET_ACCESS_TOKEN")
@@ -61,7 +65,10 @@ fn script_exists_in_repo(script_name: &str) -> bool {
     std::path::Path::new(&path).exists()
 }
 
-fn run_windmill_script(script_path: &str, args: &serde_json::Value) -> Result<serde_json::Value, String> {
+fn run_windmill_script(
+    script_path: &str,
+    args: &serde_json::Value,
+) -> Result<serde_json::Value, String> {
     let base_url = get_windmill_base_url();
     let args_json = serde_json::to_string(args).map_err(|e| e.to_string())?;
 
@@ -380,5 +387,9 @@ fn test_windmill_weight_month_summary_date_range() {
     );
 
     let month_year = core::date_int_to_month(date_int);
-    assert_eq!(month_year, Some((2025, 1)), "Should resolve to January 2025");
+    assert_eq!(
+        month_year,
+        Some((2025, 1)),
+        "Should resolve to January 2025"
+    );
 }

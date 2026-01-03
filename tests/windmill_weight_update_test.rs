@@ -77,8 +77,7 @@ fn weight_update_script_is_readable() {
     let sh_path = "windmill/f/fatsecret/weight_update.sh";
     let yaml_path = "windmill/f/fatsecret/weight_update.script.yaml";
 
-    let sh_content =
-        std::fs::read_to_string(sh_path).expect("weight_update.sh should be readable");
+    let sh_content = std::fs::read_to_string(sh_path).expect("weight_update.sh should be readable");
     assert!(
         sh_content.contains("fatsecret_weight_update"),
         "Script should invoke the binary"
@@ -86,7 +85,10 @@ fn weight_update_script_is_readable() {
 
     let yaml_content =
         std::fs::read_to_string(yaml_path).expect("weight_update.script.yaml should be readable");
-    assert!(yaml_content.contains("summary"), "YAML should have summary field");
+    assert!(
+        yaml_content.contains("summary"),
+        "YAML should have summary field"
+    );
     assert!(
         yaml_content.contains("current_weight_kg"),
         "YAML should have current_weight_kg parameter"
@@ -163,7 +165,10 @@ fn validate_weight_input_negative_weight() {
         "current_weight_kg": -10.0,
         "date_int": 20088
     });
-    assert!(!is_valid_weight_input(&input), "Negative weight should fail");
+    assert!(
+        !is_valid_weight_input(&input),
+        "Negative weight should fail"
+    );
 }
 
 #[test]
@@ -235,7 +240,10 @@ fn format_windmill_args_with_optional_fields() {
     let args = format_windmill_args(&input);
     assert!(args.contains("goal=70"), "Should contain goal");
     assert!(args.contains("height=180"), "Should contain height");
-    assert!(args.contains("comment=Morning weigh-in"), "Should contain comment");
+    assert!(
+        args.contains("comment=Morning weigh-in"),
+        "Should contain comment"
+    );
 }
 
 // =============================================================================

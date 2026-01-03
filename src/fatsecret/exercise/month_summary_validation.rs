@@ -20,19 +20,22 @@ pub fn validate_year(year: Value) -> Result<i32, String> {
 }
 
 pub fn validate_month(month: Value) -> Result<i32, String> {
-    month.as_i64()
+    month
+        .as_i64()
         .and_then(|m| i32::try_from(m).ok())
         .filter(|&m| (MIN_MONTH..=MAX_MONTH).contains(&m))
         .ok_or_else(|| format!("Month must be between {} and {}", MIN_MONTH, MAX_MONTH))
 }
 
 pub fn validate_oauth_tokens(input: &Value) -> Result<(), String> {
-    let has_token = input.get("access_token")
+    let has_token = input
+        .get("access_token")
         .and_then(|v| v.as_str())
         .filter(|s| !s.is_empty())
         .is_some();
 
-    let has_secret = input.get("access_secret")
+    let has_secret = input
+        .get("access_secret")
         .and_then(|v| v.as_str())
         .filter(|s| !s.is_empty())
         .is_some();
@@ -45,7 +48,10 @@ pub fn validate_oauth_tokens(input: &Value) -> Result<(), String> {
 }
 
 pub fn validate_input(input: &Value) -> Result<(), String> {
-    match (validate_year(input["year"].clone()), validate_month(input["month"].clone())) {
+    match (
+        validate_year(input["year"].clone()),
+        validate_month(input["month"].clone()),
+    ) {
         (Ok(_), Ok(_)) => validate_oauth_tokens(input),
         (Err(e), _) => Err(e),
         (_, Err(e)) => Err(e),
@@ -57,13 +63,15 @@ pub fn extract_summary(response: &Value) -> Option<&Value> {
 }
 
 pub fn is_success(response: &Value) -> bool {
-    response.get("success")
+    response
+        .get("success")
         .and_then(|v| v.as_bool())
         .unwrap_or(false)
 }
 
 pub fn has_days_data(summary: &Value) -> bool {
-    summary.get("days")
+    summary
+        .get("days")
         .and_then(|v| v.as_array())
         .map(|a| !a.is_empty())
         .unwrap_or(false)

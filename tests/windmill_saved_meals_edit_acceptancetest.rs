@@ -18,7 +18,6 @@
 
 #![allow(clippy::unwrap_used, clippy::indexing_slicing)]
 
-
 // =============================================================================
 // Structure Tests
 // =============================================================================
@@ -46,8 +45,7 @@ fn saved_meals_edit_schema_exists() {
 #[test]
 fn saved_meals_edit_script_is_readable() {
     let script_path = "windmill/f/fatsecret/saved_meals_edit.sh";
-    let content = std::fs::read_to_string(script_path)
-        .expect("Script should be readable");
+    let content = std::fs::read_to_string(script_path).expect("Script should be readable");
     assert!(
         content.contains("fatsecret_saved_meals_edit"),
         "Script should call fatsecret_saved_meals_edit binary"
@@ -57,9 +55,8 @@ fn saved_meals_edit_script_is_readable() {
 #[test]
 fn saved_meals_edit_schema_is_valid_yaml() {
     let schema_path = "windmill/f/fatsecret/saved_meals_edit.script.yaml";
-    let content = std::fs::read_to_string(schema_path)
-        .expect("Schema should be readable");
-    
+    let content = std::fs::read_to_string(schema_path).expect("Schema should be readable");
+
     assert!(
         content.contains("kind: script"),
         "Schema should define script kind"
@@ -81,16 +78,15 @@ fn saved_meals_edit_schema_is_valid_yaml() {
 #[test]
 fn saved_meals_edit_schema_has_required_fields() {
     let schema_path = "windmill/f/fatsecret/saved_meals_edit.script.yaml";
-    let content = std::fs::read_to_string(schema_path)
-        .expect("Schema should be readable");
-    
+    let content = std::fs::read_to_string(schema_path).expect("Schema should be readable");
+
     let required_fields = [
         "fatsecret",
-        "access_token", 
+        "access_token",
         "access_secret",
         "saved_meal_id",
     ];
-    
+
     for field in &required_fields {
         assert!(
             content.contains(field),
@@ -103,15 +99,10 @@ fn saved_meals_edit_schema_has_required_fields() {
 #[test]
 fn saved_meals_edit_schema_has_optional_fields() {
     let schema_path = "windmill/f/fatsecret/saved_meals_edit.script.yaml";
-    let content = std::fs::read_to_string(schema_path)
-        .expect("Schema should be readable");
-    
-    let optional_fields = [
-        "saved_meal_name",
-        "saved_meal_description",
-        "meals",
-    ];
-    
+    let content = std::fs::read_to_string(schema_path).expect("Schema should be readable");
+
+    let optional_fields = ["saved_meal_name", "saved_meal_description", "meals"];
+
     for field in &optional_fields {
         assert!(
             content.contains(field),
@@ -149,30 +140,30 @@ fn test_documentation_coverage() {
     println!("\n========================================");
     println!("fatsecret_saved_meals_edit Test Coverage");
     println!("========================================\n");
-    
+
     println!("✅ Structure validated:");
     println!("   [x] Script file exists (saved_meals_edit.sh)");
     println!("   [x] Schema file exists (saved_meals_edit.script.yaml)");
     println!("   [x] Script calls binary correctly");
     println!();
-    
+
     println!("✅ Fields validated:");
     println!("   [x] Required: fatsecret, access_token, access_secret, saved_meal_id");
     println!("   [x] Optional: saved_meal_name, saved_meal_description, meals");
     println!();
-    
+
     println!("📝 Manual Testing Instructions:");
     println!();
     println!("   Via Windmill CLI:");
     println!("   wmill script run f/fatsecret/saved_meals_edit.sh \\");
     println!("     -d '{{\"saved_meal_id\": \"1\", \"saved_meal_name\": \"Updated\"}}'");
     println!();
-    
+
     println!("   Via Windmill UI:");
     println!("   1. Navigate to Scripts → fatsecret → saved_meals_edit");
     println!("   2. Click Run with parameters");
     println!("   3. Verify success response");
     println!();
-    
+
     println!("========================================\n");
 }

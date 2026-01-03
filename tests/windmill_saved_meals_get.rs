@@ -19,8 +19,8 @@
 #![allow(clippy::unwrap_used, clippy::indexing_slicing)]
 
 use serde_json::json;
-use std::process::{Command, Stdio};
 use std::io::Write;
+use std::process::{Command, Stdio};
 
 // ========================================
 // GATE-1: Acceptance Tests (Windmill Flow)
@@ -65,11 +65,14 @@ fn windmill_saved_meals_get_script_yaml_is_valid() {
     let yaml_content = std::fs::read_to_string("windmill/f/fatsecret/saved_meals_get.script.yaml")
         .expect("Should read script YAML");
 
-    let parsed: serde_yaml::Value = serde_yaml::from_str(&yaml_content)
-        .expect("Should parse as valid YAML");
+    let parsed: serde_yaml::Value =
+        serde_yaml::from_str(&yaml_content).expect("Should parse as valid YAML");
 
     assert!(parsed.get("summary").is_some(), "YAML should have summary");
-    assert!(parsed.get("language").is_some(), "YAML should have language");
+    assert!(
+        parsed.get("language").is_some(),
+        "YAML should have language"
+    );
     assert_eq!(parsed["language"], "bash", "Language should be bash");
     assert!(parsed.get("schema").is_some(), "YAML should have schema");
 }
@@ -79,15 +82,24 @@ fn windmill_saved_meals_get_schema_has_required_fields() {
     let yaml_content = std::fs::read_to_string("windmill/f/fatsecret/saved_meals_get.script.yaml")
         .expect("Should read script YAML");
 
-    let parsed: serde_yaml::Value = serde_yaml::from_str(&yaml_content)
-        .expect("Should parse as valid YAML");
+    let parsed: serde_yaml::Value =
+        serde_yaml::from_str(&yaml_content).expect("Should parse as valid YAML");
 
     let schema = &parsed["schema"];
     let props = &schema["properties"];
 
-    assert!(props.get("fatsecret").is_some(), "Should have fatsecret param");
-    assert!(props.get("access_token").is_some(), "Should have access_token param");
-    assert!(props.get("access_secret").is_some(), "Should have access_secret param");
+    assert!(
+        props.get("fatsecret").is_some(),
+        "Should have fatsecret param"
+    );
+    assert!(
+        props.get("access_token").is_some(),
+        "Should have access_token param"
+    );
+    assert!(
+        props.get("access_secret").is_some(),
+        "Should have access_secret param"
+    );
     assert!(props.get("meal").is_some(), "Should have meal param");
 }
 
