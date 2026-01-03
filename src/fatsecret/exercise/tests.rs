@@ -824,3 +824,90 @@ fn test_exercise_month_summary_response_wrapper() {
     assert_eq!(response.exercise_month.month, 1);
     assert_eq!(response.exercise_month.year, 2024);
 }
+
+// =============================================================================
+// Validation Function Tests
+// =============================================================================
+
+use super::validation::*;
+
+#[test]
+fn validate_exercise_entry_id_valid() {
+    assert!(validate_exercise_entry_id("12345").is_ok());
+    assert!(validate_exercise_entry_id("67890").is_ok());
+    assert!(validate_exercise_entry_id("0").is_ok());
+}
+
+#[test]
+fn validate_exercise_entry_id_empty() {
+    assert!(validate_exercise_entry_id("").is_err());
+    assert!(validate_exercise_entry_id(" ").is_err());
+}
+
+#[test]
+fn validate_exercise_entry_id_non_numeric() {
+    assert!(validate_exercise_entry_id("abc").is_err());
+    assert!(validate_exercise_entry_id("12a").is_err());
+    assert!(validate_exercise_entry_id("123-456").is_err());
+}
+
+#[test]
+fn validate_duration_min_valid() {
+    assert!(validate_duration_min(1).is_ok());
+    assert!(validate_duration_min(60).is_ok());
+    assert!(validate_duration_min(1440).is_ok());
+}
+
+#[test]
+fn validate_duration_min_too_low() {
+    assert!(validate_duration_min(0).is_err());
+    assert!(validate_duration_min(-1).is_err());
+}
+
+#[test]
+fn validate_duration_min_too_high() {
+    assert!(validate_duration_min(1441).is_err());
+    assert!(validate_duration_min(10000).is_err());
+}
+
+#[test]
+fn validate_exercise_id_valid() {
+    assert!(validate_exercise_id("12345").is_ok());
+    assert!(validate_exercise_id("67890").is_ok());
+}
+
+#[test]
+fn validate_exercise_id_empty() {
+    assert!(validate_exercise_id("").is_err());
+    assert!(validate_exercise_id(" ").is_err());
+}
+
+#[test]
+fn validate_exercise_id_non_numeric() {
+    assert!(validate_exercise_id("abc").is_err());
+    assert!(validate_exercise_id("running").is_err());
+}
+
+#[test]
+fn validate_access_token_valid() {
+    assert!(validate_access_token("token123").is_ok());
+    assert!(validate_access_token("abc-def-ghi").is_ok());
+}
+
+#[test]
+fn validate_access_token_empty() {
+    assert!(validate_access_token("").is_err());
+    assert!(validate_access_token("   ").is_err());
+}
+
+#[test]
+fn validate_access_secret_valid() {
+    assert!(validate_access_secret("secret123").is_ok());
+    assert!(validate_access_secret("abc-def-ghi").is_ok());
+}
+
+#[test]
+fn validate_access_secret_empty() {
+    assert!(validate_access_secret("").is_err());
+    assert!(validate_access_secret("   ").is_err());
+}

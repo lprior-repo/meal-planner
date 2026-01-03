@@ -12,7 +12,7 @@ use wiremock::{
 };
 
 mod helpers;
-use helpers::support::{run_binary, BinaryError};
+use helpers::{run_binary, BinaryError};
 
 #[tokio::test]
 async fn should_return_food_when_id_exists() {

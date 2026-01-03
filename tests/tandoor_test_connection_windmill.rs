@@ -215,5 +215,5 @@ fn test_tandoor_test_connection_integration_suite() {
         "  2. test_windmill_tandoor_test_connection_invalid_credentials - Invalid credentials"
     );
     println!("\nManual testing:");
-    println!("  wmill script run f/tandoor/test_connection.sh -d '{\"tandoor\": \"$res:u/admin/tandoor_api\"}'\n");
+    println!(r#"  wmill script run f/tandoor/test_connection.sh -d '{{"tandoor": "$res:u/admin/tandoor_api"}}'"#);
 }

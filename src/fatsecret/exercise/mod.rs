@@ -77,6 +77,7 @@
 
 pub mod client;
 pub mod types;
+pub mod validation;
 
 #[cfg(test)]
 mod tests;

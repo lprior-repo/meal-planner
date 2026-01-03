@@ -187,7 +187,9 @@
 //! - [`fatsecret::diary`] - For viewing logged meal entries
 
 pub mod client;
+pub mod flow_validation;
 pub mod types;
 
 pub use client::*;
+pub use flow_validation::*;
 pub use types::*;

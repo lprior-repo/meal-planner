@@ -14,6 +14,7 @@ use std::env;
 use std::process::Command;
 
 const DEFAULT_BASE_URL: &str = "http://localhost:8000";
+const DEFAULT_WORKSPACE: &str = "meal-planner";
 
 #[allow(dead_code)]
 fn get_windmill_base_url() -> String {
