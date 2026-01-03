@@ -2,7 +2,7 @@
 id: ops/windmill/implementation-summary
 title: "Documentation Indexing Implementation Summary"
 category: ops
-tags: ["operations", "documentation", "windmill", "advanced"]
+tags: ["windmill", "operations", "advanced", "documentation"]
 ---
 
 # Documentation Indexing Implementation Summary

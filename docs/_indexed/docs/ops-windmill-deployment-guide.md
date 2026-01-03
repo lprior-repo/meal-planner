@@ -2,7 +2,7 @@
 id: ops/windmill/deployment-guide
 title: "Windmill Deployment Guide"
 category: ops
-tags: ["operations", "windmill", "oauth", "advanced"]
+tags: ["windmill", "operations", "advanced", "oauth"]
 ---
 
 <!--

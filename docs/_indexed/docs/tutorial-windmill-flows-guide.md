@@ -2,7 +2,7 @@
 id: tutorial/windmill/flows-guide
 title: "Windmill Flows Guide"
 category: tutorial
-tags: ["windmill", "beginner", "tutorial"]
+tags: ["windmill", "tutorial", "beginner"]
 ---
 
 # Windmill Flows Guide
@@ -218,8 +218,8 @@ curl -X POST -H "Authorization: Bearer $TOKEN" \
 ## Related Documentation
 
 - [Windmill Development Guide](./ops-windmill-development-guide.md) - Scripts, resources, CLI
-- [Flow Approval Docs](./tutorial-flows-11-flow-approval.md) - Suspend/resume details
-- [Webhooks](./meta-4_webhooks-index.md) - Triggering flows externally
+- [Flow Approval Docs](./tutorial-windmill-11-flow-approval.md) - Suspend/resume details
+- [Webhooks](./meta-windmill-index-68.md) - Triggering flows externally
 
 
 ## See Also

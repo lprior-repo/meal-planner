@@ -2,7 +2,7 @@
 id: concept/moonrepo/config
 title: "Config files"
 category: concept
-tags: ["concept", "config", "moonrepo"]
+tags: ["config", "moonrepo", "concept"]
 ---
 
 # Config files

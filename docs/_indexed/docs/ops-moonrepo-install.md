@@ -2,7 +2,7 @@
 id: ops/moonrepo/install
 title: "Install moon"
 category: ops
-tags: ["operations", "install", "advanced", "moonrepo"]
+tags: ["install", "moonrepo", "operations", "advanced"]
 ---
 
 # Install moon

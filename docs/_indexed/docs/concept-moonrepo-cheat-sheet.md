@@ -2,7 +2,7 @@
 id: concept/moonrepo/cheat-sheet
 title: "Cheat sheet"
 category: concept
-tags: ["concept", "cheat", "moonrepo"]
+tags: ["moonrepo", "concept", "cheat"]
 ---
 
 # Cheat sheet

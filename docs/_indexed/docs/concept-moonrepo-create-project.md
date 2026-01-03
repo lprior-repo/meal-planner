@@ -2,7 +2,7 @@
 id: concept/moonrepo/create-project
 title: "Create a project"
 category: concept
-tags: ["concept", "create", "moonrepo"]
+tags: ["create", "moonrepo", "concept"]
 ---
 
 # Create a project

@@ -2,7 +2,7 @@
 id: ops/moonrepo/run-task
 title: "Run a task"
 category: ops
-tags: ["operations", "advanced", "run", "moonrepo"]
+tags: ["moonrepo", "operations", "advanced", "run"]
 ---
 
 # Run a task

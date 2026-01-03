@@ -2,7 +2,7 @@
 id: ops/moonrepo/commands
 title: "Commands"
 category: ops
-tags: ["operations", "commands", "moonrepo"]
+tags: ["commands", "moonrepo", "operations"]
 ---
 
 # Commands

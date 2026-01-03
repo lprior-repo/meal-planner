@@ -2,7 +2,7 @@
 id: ops/moonrepo/migrate-to-moon
 title: "Migrate to moon"
 category: ops
-tags: ["migrate", "operations", "advanced", "moonrepo"]
+tags: ["moonrepo", "operations", "advanced", "migrate"]
 ---
 
 # Migrate to moon

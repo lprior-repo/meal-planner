@@ -15,8 +15,8 @@ If you just set up your Tandoor instance and you're having issues like;
 - CORS errors
 - No recipes are loading
 
-then make sure you have set [all required headers](./ops-install-docker.md#required-headers) in your reverse proxy correctly.
-If that doesn't fix it, you can also refer to the appropriate sub section in the [reverse proxy documentation](./ops-install-docker.md#reverse-proxy) and verify your general webserver configuration.
+then make sure you have set [all required headers](./ops-tandoor-docker.md#required-headers) in your reverse proxy correctly.
+If that doesn't fix it, you can also refer to the appropriate sub section in the [reverse proxy documentation](./ops-tandoor-docker.md#reverse-proxy) and verify your general webserver configuration.
 
 ### Required Headers
 Navigate to `/system/` and review the headers listed in the DEBUG section.  At a minimum, if you are using a reverse proxy the headers must match the below conditions.

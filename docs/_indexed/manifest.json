@@ -1,7 +1,7 @@
 {
   "source_dir": "/home/lewis/src/meal-planner/docs",
   "output_dir": "/home/lewis/src/meal-planner/docs/_indexed",
-  "discovered_at": "2026-01-02T19:44:01.663779",
+  "discovered_at": "2026-01-02T19:47:36.655768",
   "files": [
     {
       "source_path": "AI_DOCUMENTATION_SYSTEM.md",
@@ -25,10 +25,10 @@
       "subcategory": "general",
       "word_count": 331,
       "tags": [
-        "operations",
-        "architecture",
         "windmill",
-        "rust"
+        "operations",
+        "rust",
+        "architecture"
       ]
     },
     {
@@ -40,10 +40,10 @@
       "subcategory": "general",
       "word_count": 229,
       "tags": [
-        "fatsecret",
         "oauth",
         "tutorial",
-        "beginner"
+        "beginner",
+        "fatsecret"
       ]
     },
     {
@@ -68,8 +68,8 @@
       "subcategory": "general",
       "word_count": 186,
       "tags": [
-        "documentation",
-        "meta"
+        "meta",
+        "documentation"
       ]
     },
     {
@@ -81,9 +81,9 @@
       "subcategory": "general",
       "word_count": 274,
       "tags": [
-        "recipe",
+        "tandoor",
         "concept",
-        "tandoor"
+        "recipe"
       ]
     },
     {
@@ -263,11 +263,11 @@
       "subcategory": "fatsecret",
       "word_count": 620,
       "tags": [
-        "fatsecret",
-        "image",
-        "reference",
         "advanced",
-        "api"
+        "api",
+        "reference",
+        "image",
+        "fatsecret"
       ]
     },
     {
@@ -279,11 +279,11 @@
       "subcategory": "fatsecret",
       "word_count": 770,
       "tags": [
-        "fatsecret",
-        "natural",
-        "reference",
         "advanced",
-        "api"
+        "api",
+        "reference",
+        "natural",
+        "fatsecret"
       ]
     },
     {
@@ -337,9 +337,9 @@
       "subcategory": "fatsecret",
       "word_count": 577,
       "tags": [
-        "recipe",
         "fatsecret",
         "reference",
+        "recipe",
         "advanced"
       ]
     },
@@ -352,9 +352,9 @@
       "subcategory": "fatsecret",
       "word_count": 168,
       "tags": [
-        "recipe",
         "fatsecret",
-        "reference"
+        "reference",
+        "recipe"
       ]
     },
     {
@@ -366,9 +366,9 @@
       "subcategory": "fatsecret",
       "word_count": 437,
       "tags": [
-        "recipes",
         "fatsecret",
-        "reference"
+        "reference",
+        "recipes"
       ]
     },
     {
@@ -394,8 +394,8 @@
       "subcategory": "fatsecret",
       "word_count": 745,
       "tags": [
-        "operations",
         "fatsecret",
+        "operations",
         "advanced",
         "api"
       ]
@@ -409,8 +409,8 @@
       "subcategory": "fatsecret",
       "word_count": 390,
       "tags": [
-        "operations",
         "fatsecret",
+        "operations",
         "api"
       ]
     },
@@ -423,8 +423,8 @@
       "subcategory": "fatsecret",
       "word_count": 641,
       "tags": [
-        "concept",
         "fatsecret",
+        "concept",
         "advanced",
         "api"
       ]
@@ -438,11 +438,11 @@
       "subcategory": "fatsecret",
       "word_count": 639,
       "tags": [
-        "fatsecret",
-        "beginner",
+        "tutorial",
         "api",
         "oauth",
-        "tutorial"
+        "beginner",
+        "fatsecret"
       ]
     },
     {
@@ -454,9 +454,9 @@
       "subcategory": "fatsecret",
       "word_count": 467,
       "tags": [
+        "oauth",
         "fatsecret",
         "reference",
-        "oauth",
         "api"
       ]
     },
@@ -469,9 +469,9 @@
       "subcategory": "fatsecret",
       "word_count": 489,
       "tags": [
+        "oauth",
         "fatsecret",
         "reference",
-        "oauth",
         "api"
       ]
     },
@@ -499,9 +499,9 @@
       "subcategory": "fatsecret",
       "word_count": 224,
       "tags": [
-        "fatsecret",
-        "beginner",
         "tutorial",
+        "beginner",
+        "fatsecret",
         "api"
       ]
     },
@@ -514,11 +514,11 @@
       "subcategory": "fatsecret",
       "word_count": 1305,
       "tags": [
-        "operations",
-        "fatsecret",
         "implementation",
         "advanced",
-        "api"
+        "api",
+        "operations",
+        "fatsecret"
       ]
     },
     {
@@ -530,11 +530,11 @@
       "subcategory": "fatsecret",
       "word_count": 1511,
       "tags": [
-        "operations",
-        "fatsecret",
         "implementation",
         "advanced",
-        "api"
+        "api",
+        "operations",
+        "fatsecret"
       ]
     },
     {
@@ -546,9 +546,9 @@
       "subcategory": "moonrepo",
       "word_count": 429,
       "tags": [
+        "moonrepo",
         "concept",
-        "cheat",
-        "moonrepo"
+        "cheat"
       ]
     },
     {
@@ -560,566 +560,583 @@
       "subcategory": "moonrepo",
       "word_count": 407,
       "tags": [
-        "operations",
         "commands",
-        "moonrepo"
+        "moonrepo",
+        "operations"
       ]
     },
     {
       "source_path": "moonrepo/commands/action-graph.md",
-      "id": "ops/commands/action-graph",
-      "filename": "ops-commands-action-graph.md",
+      "id": "ops/moonrepo/action-graph",
+      "filename": "ops-moonrepo-action-graph.md",
       "title": "action-graph",
       "category": "ops",
-      "subcategory": "commands",
+      "subcategory": "moonrepo",
       "word_count": 235,
       "tags": [
+        "moonrepo",
         "operations",
-        "actiongraph",
-        "commands"
+        "actiongraph"
       ]
     },
     {
       "source_path": "moonrepo/commands/bin.md",
-      "id": "ops/commands/bin",
-      "filename": "ops-commands-bin.md",
+      "id": "ops/moonrepo/bin",
+      "filename": "ops-moonrepo-bin.md",
       "title": "bin",
       "category": "ops",
-      "subcategory": "commands",
+      "subcategory": "moonrepo",
       "word_count": 100,
       "tags": [
-        "operations",
         "bin",
-        "commands"
+        "moonrepo",
+        "operations"
       ]
     },
     {
       "source_path": "moonrepo/commands/check.md",
-      "id": "ops/commands/check",
-      "filename": "ops-commands-check.md",
+      "id": "ops/moonrepo/check",
+      "filename": "ops-moonrepo-check.md",
       "title": "check",
       "category": "ops",
-      "subcategory": "commands",
+      "subcategory": "moonrepo",
       "word_count": 155,
       "tags": [
+        "moonrepo",
         "operations",
-        "check",
-        "commands"
+        "check"
       ]
     },
     {
       "source_path": "moonrepo/commands/ci.md",
-      "id": "ops/commands/ci",
-      "filename": "ops-commands-ci.md",
+      "id": "ops/moonrepo/ci",
+      "filename": "ops-moonrepo-ci.md",
       "title": "ci",
       "category": "ops",
-      "subcategory": "commands",
+      "subcategory": "moonrepo",
       "word_count": 210,
       "tags": [
-        "operations",
-        "commands"
+        "moonrepo",
+        "operations"
       ]
     },
     {
       "source_path": "moonrepo/commands/clean.md",
-      "id": "ops/commands/clean",
-      "filename": "ops-commands-clean.md",
+      "id": "ops/moonrepo/clean",
+      "filename": "ops-moonrepo-clean.md",
       "title": "clean",
       "category": "ops",
-      "subcategory": "commands",
+      "subcategory": "moonrepo",
       "word_count": 74,
       "tags": [
-        "clean",
+        "moonrepo",
         "operations",
-        "commands"
+        "clean"
       ]
     },
     {
       "source_path": "moonrepo/commands/completions.md",
-      "id": "ops/commands/completions",
-      "filename": "ops-commands-completions.md",
+      "id": "ops/moonrepo/completions",
+      "filename": "ops-moonrepo-completions.md",
       "title": "completions",
       "category": "ops",
-      "subcategory": "commands",
+      "subcategory": "moonrepo",
       "word_count": 141,
       "tags": [
-        "completions",
+        "moonrepo",
         "operations",
-        "commands"
+        "completions"
       ]
     },
     {
       "source_path": "moonrepo/commands/docker.md",
-      "id": "ops/commands/docker",
-      "filename": "ops-commands-docker.md",
+      "id": "ops/moonrepo/docker",
+      "filename": "ops-moonrepo-docker.md",
       "title": "docker",
       "category": "ops",
-      "subcategory": "commands",
+      "subcategory": "moonrepo",
       "word_count": 77,
       "tags": [
         "docker",
-        "operations",
-        "commands"
+        "moonrepo",
+        "operations"
       ]
     },
     {
       "source_path": "moonrepo/commands/docker/file.md",
-      "id": "ops/docker/file",
-      "filename": "ops-docker-file.md",
+      "id": "ops/moonrepo/file",
+      "filename": "ops-moonrepo-file.md",
       "title": "docker file",
       "category": "ops",
-      "subcategory": "docker",
+      "subcategory": "moonrepo",
       "word_count": 305,
       "tags": [
         "docker",
+        "moonrepo",
         "operations"
       ]
     },
     {
       "source_path": "moonrepo/commands/docker/prune.md",
-      "id": "ops/docker/prune",
-      "filename": "ops-docker-prune.md",
+      "id": "ops/moonrepo/prune",
+      "filename": "ops-moonrepo-prune.md",
       "title": "docker prune",
       "category": "ops",
-      "subcategory": "docker",
+      "subcategory": "moonrepo",
       "word_count": 92,
       "tags": [
         "docker",
+        "moonrepo",
         "operations"
       ]
     },
     {
       "source_path": "moonrepo/commands/docker/scaffold.md",
-      "id": "ops/docker/scaffold",
-      "filename": "ops-docker-scaffold.md",
+      "id": "ops/moonrepo/scaffold",
+      "filename": "ops-moonrepo-scaffold.md",
       "title": "docker scaffold",
       "category": "ops",
-      "subcategory": "docker",
+      "subcategory": "moonrepo",
       "word_count": 453,
       "tags": [
         "docker",
+        "moonrepo",
         "operations"
       ]
     },
     {
       "source_path": "moonrepo/commands/docker/setup.md",
-      "id": "ops/docker/setup",
-      "filename": "ops-docker-setup.md",
+      "id": "ops/moonrepo/setup",
+      "filename": "ops-moonrepo-setup.md",
       "title": "docker setup",
       "category": "ops",
-      "subcategory": "docker",
+      "subcategory": "moonrepo",
       "word_count": 92,
       "tags": [
         "docker",
+        "moonrepo",
         "operations"
       ]
     },
     {
       "source_path": "moonrepo/commands/ext.md",
-      "id": "ops/commands/ext",
-      "filename": "ops-commands-ext.md",
+      "id": "ops/moonrepo/ext",
+      "filename": "ops-moonrepo-ext.md",
       "title": "ext",
       "category": "ops",
-      "subcategory": "commands",
+      "subcategory": "moonrepo",
       "word_count": 124,
       "tags": [
+        "moonrepo",
         "operations",
-        "ext",
-        "commands"
+        "ext"
       ]
     },
     {
       "source_path": "moonrepo/commands/generate.md",
-      "id": "ops/commands/generate",
-      "filename": "ops-commands-generate.md",
+      "id": "ops/moonrepo/generate",
+      "filename": "ops-moonrepo-generate.md",
       "title": "generate",
       "category": "ops",
-      "subcategory": "commands",
+      "subcategory": "moonrepo",
       "word_count": 208,
       "tags": [
+        "moonrepo",
         "operations",
-        "commands",
         "generate"
       ]
     },
     {
       "source_path": "moonrepo/commands/init.md",
-      "id": "ops/commands/init",
-      "filename": "ops-commands-init.md",
+      "id": "ops/moonrepo/init",
+      "filename": "ops-moonrepo-init.md",
       "title": "init",
       "category": "ops",
-      "subcategory": "commands",
+      "subcategory": "moonrepo",
       "word_count": 159,
       "tags": [
+        "moonrepo",
         "operations",
-        "init",
-        "commands"
+        "init"
       ]
     },
     {
       "source_path": "moonrepo/commands/mcp.md",
-      "id": "ops/commands/mcp",
-      "filename": "ops-commands-mcp.md",
+      "id": "ops/moonrepo/mcp",
+      "filename": "ops-moonrepo-mcp.md",
       "title": "mcp",
       "category": "ops",
-      "subcategory": "commands",
+      "subcategory": "moonrepo",
       "word_count": 56,
       "tags": [
+        "moonrepo",
         "operations",
-        "commands",
         "mcp"
       ]
     },
     {
       "source_path": "moonrepo/commands/migrate.md",
-      "id": "concept/commands/migrate",
-      "filename": "concept-commands-migrate.md",
+      "id": "concept/moonrepo/migrate",
+      "filename": "concept-moonrepo-migrate.md",
       "title": "migrate",
       "category": "concept",
-      "subcategory": "commands",
+      "subcategory": "moonrepo",
       "word_count": 40,
       "tags": [
-        "migrate",
+        "moonrepo",
         "concept",
-        "commands"
+        "migrate"
       ]
     },
     {
       "source_path": "moonrepo/commands/migrate/from-package-json.md",
-      "id": "ops/migrate/from-package-json",
-      "filename": "ops-migrate-from-package-json.md",
+      "id": "ops/moonrepo/from-package-json",
+      "filename": "ops-moonrepo-from-package-json.md",
       "title": "migrate from-package-json",
       "category": "ops",
-      "subcategory": "migrate",
+      "subcategory": "moonrepo",
       "word_count": 577,
       "tags": [
-        "migrate",
+        "moonrepo",
         "operations",
-        "advanced"
+        "advanced",
+        "migrate"
       ]
     },
     {
       "source_path": "moonrepo/commands/migrate/from-turborepo.md",
-      "id": "concept/migrate/from-turborepo",
-      "filename": "concept-migrate-from-turborepo.md",
+      "id": "concept/moonrepo/from-turborepo",
+      "filename": "concept-moonrepo-from-turborepo.md",
       "title": "migrate from-turborepo",
       "category": "concept",
-      "subcategory": "migrate",
+      "subcategory": "moonrepo",
       "word_count": 15,
       "tags": [
-        "migrate",
-        "concept"
+        "moonrepo",
+        "concept",
+        "migrate"
       ]
     },
     {
       "source_path": "moonrepo/commands/overview.md",
-      "id": "ops/commands/overview",
-      "filename": "ops-commands-overview.md",
+      "id": "ops/moonrepo/overview",
+      "filename": "ops-moonrepo-overview.md",
       "title": "Overview",
       "category": "ops",
-      "subcategory": "commands",
+      "subcategory": "moonrepo",
       "word_count": 997,
       "tags": [
+        "moonrepo",
         "operations",
         "advanced",
-        "commands",
         "overview"
       ]
     },
     {
       "source_path": "moonrepo/commands/project-graph.md",
-      "id": "ops/commands/project-graph",
-      "filename": "ops-commands-project-graph.md",
+      "id": "ops/moonrepo/project-graph",
+      "filename": "ops-moonrepo-project-graph.md",
       "title": "project-graph",
       "category": "ops",
-      "subcategory": "commands",
+      "subcategory": "moonrepo",
       "word_count": 211,
       "tags": [
-        "operations",
-        "commands",
-        "projectgraph"
+        "projectgraph",
+        "moonrepo",
+        "operations"
       ]
     },
     {
       "source_path": "moonrepo/commands/project.md",
-      "id": "ops/commands/project",
-      "filename": "ops-commands-project.md",
+      "id": "ops/moonrepo/project",
+      "filename": "ops-moonrepo-project.md",
       "title": "project",
       "category": "ops",
-      "subcategory": "commands",
+      "subcategory": "moonrepo",
       "word_count": 209,
       "tags": [
+        "moonrepo",
         "operations",
-        "commands",
         "project"
       ]
     },
     {
       "source_path": "moonrepo/commands/query.md",
-      "id": "ops/commands/query",
-      "filename": "ops-commands-query.md",
+      "id": "ops/moonrepo/query",
+      "filename": "ops-moonrepo-query.md",
       "title": "query",
       "category": "ops",
-      "subcategory": "commands",
+      "subcategory": "moonrepo",
       "word_count": 134,
       "tags": [
-        "operations",
         "query",
-        "commands"
+        "moonrepo",
+        "operations"
       ]
     },
     {
       "source_path": "moonrepo/commands/query/hash-diff.md",
-      "id": "ops/query/hash-diff",
-      "filename": "ops-query-hash-diff.md",
+      "id": "ops/moonrepo/hash-diff",
+      "filename": "ops-moonrepo-hash-diff.md",
       "title": "query hash-diff",
       "category": "ops",
-      "subcategory": "query",
+      "subcategory": "moonrepo",
       "word_count": 180,
       "tags": [
-        "operations",
-        "query"
+        "query",
+        "moonrepo",
+        "operations"
       ]
     },
     {
       "source_path": "moonrepo/commands/query/hash.md",
-      "id": "ops/query/hash",
-      "filename": "ops-query-hash.md",
+      "id": "ops/moonrepo/hash",
+      "filename": "ops-moonrepo-hash.md",
       "title": "query hash",
       "category": "ops",
-      "subcategory": "query",
+      "subcategory": "moonrepo",
       "word_count": 113,
       "tags": [
-        "operations",
-        "query"
+        "query",
+        "moonrepo",
+        "operations"
       ]
     },
     {
       "source_path": "moonrepo/commands/query/projects.md",
-      "id": "ops/query/projects",
-      "filename": "ops-query-projects.md",
+      "id": "ops/moonrepo/projects",
+      "filename": "ops-moonrepo-projects.md",
       "title": "query projects",
       "category": "ops",
-      "subcategory": "query",
+      "subcategory": "moonrepo",
       "word_count": 411,
       "tags": [
-        "operations",
-        "query"
+        "query",
+        "moonrepo",
+        "operations"
       ]
     },
     {
       "source_path": "moonrepo/commands/query/tasks.md",
-      "id": "ops/query/tasks",
-      "filename": "ops-query-tasks.md",
+      "id": "ops/moonrepo/tasks",
+      "filename": "ops-moonrepo-tasks.md",
       "title": "query tasks",
       "category": "ops",
-      "subcategory": "query",
+      "subcategory": "moonrepo",
       "word_count": 337,
       "tags": [
-        "operations",
-        "query"
+        "query",
+        "moonrepo",
+        "operations"
       ]
     },
     {
       "source_path": "moonrepo/commands/query/touched-files.md",
-      "id": "ops/query/touched-files",
-      "filename": "ops-query-touched-files.md",
+      "id": "ops/moonrepo/touched-files",
+      "filename": "ops-moonrepo-touched-files.md",
       "title": "query touched-files",
       "category": "ops",
-      "subcategory": "query",
+      "subcategory": "moonrepo",
       "word_count": 296,
       "tags": [
-        "operations",
-        "query"
+        "query",
+        "moonrepo",
+        "operations"
       ]
     },
     {
       "source_path": "moonrepo/commands/run.md",
-      "id": "ops/commands/run",
-      "filename": "ops-commands-run.md",
+      "id": "ops/moonrepo/run",
+      "filename": "ops-moonrepo-run.md",
       "title": "run",
       "category": "ops",
-      "subcategory": "commands",
+      "subcategory": "moonrepo",
       "word_count": 532,
       "tags": [
+        "moonrepo",
         "operations",
         "advanced",
-        "run",
-        "commands"
+        "run"
       ]
     },
     {
       "source_path": "moonrepo/commands/setup.md",
-      "id": "ops/commands/setup",
-      "filename": "ops-commands-setup.md",
+      "id": "ops/moonrepo/setup-2",
+      "filename": "ops-moonrepo-setup.md",
       "title": "setup",
       "category": "ops",
-      "subcategory": "commands",
+      "subcategory": "moonrepo",
       "word_count": 71,
       "tags": [
+        "moonrepo",
         "operations",
-        "setup",
-        "commands"
+        "setup"
       ]
     },
     {
       "source_path": "moonrepo/commands/sync.md",
-      "id": "concept/commands/sync",
-      "filename": "concept-commands-sync.md",
+      "id": "concept/moonrepo/sync",
+      "filename": "concept-moonrepo-sync.md",
       "title": "sync",
       "category": "concept",
-      "subcategory": "commands",
+      "subcategory": "moonrepo",
       "word_count": 90,
       "tags": [
-        "sync",
+        "moonrepo",
         "concept",
-        "commands"
+        "sync"
       ]
     },
     {
       "source_path": "moonrepo/commands/sync/codeowners.md",
-      "id": "ops/sync/codeowners",
-      "filename": "ops-sync-codeowners.md",
+      "id": "ops/moonrepo/codeowners",
+      "filename": "ops-moonrepo-codeowners.md",
       "title": "sync codeowners",
       "category": "ops",
-      "subcategory": "sync",
+      "subcategory": "moonrepo",
       "word_count": 72,
       "tags": [
-        "sync",
-        "operations"
+        "moonrepo",
+        "operations",
+        "sync"
       ]
     },
     {
       "source_path": "moonrepo/commands/sync/config-schemas.md",
-      "id": "ops/sync/config-schemas",
-      "filename": "ops-sync-config-schemas.md",
+      "id": "ops/moonrepo/config-schemas",
+      "filename": "ops-moonrepo-config-schemas.md",
       "title": "sync config-schemas",
       "category": "ops",
-      "subcategory": "sync",
+      "subcategory": "moonrepo",
       "word_count": 39,
       "tags": [
-        "sync",
-        "operations"
+        "moonrepo",
+        "operations",
+        "sync"
       ]
     },
     {
       "source_path": "moonrepo/commands/sync/hooks.md",
-      "id": "ops/sync/hooks",
-      "filename": "ops-sync-hooks.md",
+      "id": "ops/moonrepo/hooks",
+      "filename": "ops-moonrepo-hooks.md",
       "title": "sync hooks",
       "category": "ops",
-      "subcategory": "sync",
+      "subcategory": "moonrepo",
       "word_count": 69,
       "tags": [
-        "sync",
-        "operations"
+        "moonrepo",
+        "operations",
+        "sync"
       ]
     },
     {
       "source_path": "moonrepo/commands/sync/projects.md",
-      "id": "ops/sync/projects",
-      "filename": "ops-sync-projects.md",
+      "id": "ops/moonrepo/projects-2",
+      "filename": "ops-moonrepo-projects.md",
       "title": "sync projects",
       "category": "ops",
-      "subcategory": "sync",
+      "subcategory": "moonrepo",
       "word_count": 107,
       "tags": [
-        "sync",
-        "operations"
+        "moonrepo",
+        "operations",
+        "sync"
       ]
     },
     {
       "source_path": "moonrepo/commands/task-graph.md",
-      "id": "ops/commands/task-graph",
-      "filename": "ops-commands-task-graph.md",
+      "id": "ops/moonrepo/task-graph",
+      "filename": "ops-moonrepo-task-graph.md",
       "title": "task-graph",
       "category": "ops",
-      "subcategory": "commands",
+      "subcategory": "moonrepo",
       "word_count": 210,
       "tags": [
+        "moonrepo",
         "operations",
-        "taskgraph",
-        "commands"
+        "taskgraph"
       ]
     },
     {
       "source_path": "moonrepo/commands/task.md",
-      "id": "ops/commands/task",
-      "filename": "ops-commands-task.md",
+      "id": "ops/moonrepo/task",
+      "filename": "ops-moonrepo-task.md",
       "title": "task",
       "category": "ops",
-      "subcategory": "commands",
+      "subcategory": "moonrepo",
       "word_count": 163,
       "tags": [
+        "moonrepo",
         "operations",
-        "commands",
         "task"
       ]
     },
     {
       "source_path": "moonrepo/commands/teardown.md",
-      "id": "ops/commands/teardown",
-      "filename": "ops-commands-teardown.md",
+      "id": "ops/moonrepo/teardown",
+      "filename": "ops-moonrepo-teardown.md",
       "title": "teardown",
       "category": "ops",
-      "subcategory": "commands",
+      "subcategory": "moonrepo",
       "word_count": 54,
       "tags": [
+        "moonrepo",
         "operations",
-        "teardown",
-        "commands"
+        "teardown"
       ]
     },
     {
       "source_path": "moonrepo/commands/templates.md",
-      "id": "ops/commands/templates",
-      "filename": "ops-commands-templates.md",
+      "id": "ops/moonrepo/templates",
+      "filename": "ops-moonrepo-templates.md",
       "title": "templates",
       "category": "ops",
-      "subcategory": "commands",
+      "subcategory": "moonrepo",
       "word_count": 54,
       "tags": [
+        "moonrepo",
         "operations",
-        "templates",
-        "commands"
+        "templates"
       ]
     },
     {
       "source_path": "moonrepo/commands/toolchain.md",
-      "id": "concept/commands/toolchain",
-      "filename": "concept-commands-toolchain.md",
+      "id": "concept/moonrepo/toolchain",
+      "filename": "concept-moonrepo-toolchain.md",
       "title": "toolchain",
       "category": "concept",
-      "subcategory": "commands",
+      "subcategory": "moonrepo",
       "word_count": 58,
       "tags": [
+        "moonrepo",
         "concept",
-        "toolchain",
-        "commands"
+        "toolchain"
       ]
     },
     {
       "source_path": "moonrepo/commands/toolchain/add.md",
-      "id": "ops/toolchain/add",
-      "filename": "ops-toolchain-add.md",
+      "id": "ops/moonrepo/add",
+      "filename": "ops-moonrepo-add.md",
       "title": "toolchain add",
       "category": "ops",
-      "subcategory": "toolchain",
+      "subcategory": "moonrepo",
       "word_count": 132,
       "tags": [
+        "moonrepo",
         "operations",
         "toolchain"
       ]
     },
     {
       "source_path": "moonrepo/commands/toolchain/info.md",
-      "id": "ops/toolchain/info",
-      "filename": "ops-toolchain-info.md",
+      "id": "ops/moonrepo/info",
+      "filename": "ops-moonrepo-info.md",
       "title": "toolchain info",
       "category": "ops",
-      "subcategory": "toolchain",
+      "subcategory": "moonrepo",
       "word_count": 366,
       "tags": [
+        "moonrepo",
         "operations",
         "toolchain",
         "api"
@@ -1127,16 +1144,16 @@
     },
     {
       "source_path": "moonrepo/commands/upgrade.md",
-      "id": "ops/commands/upgrade",
-      "filename": "ops-commands-upgrade.md",
+      "id": "ops/moonrepo/upgrade",
+      "filename": "ops-moonrepo-upgrade.md",
       "title": "upgrade",
       "category": "ops",
-      "subcategory": "commands",
+      "subcategory": "moonrepo",
       "word_count": 57,
       "tags": [
-        "operations",
         "upgrade",
-        "commands"
+        "moonrepo",
+        "operations"
       ]
     },
     {
@@ -1148,9 +1165,9 @@
       "subcategory": "moonrepo",
       "word_count": 2362,
       "tags": [
-        "feature",
+        "moonrepo",
         "operations",
-        "moonrepo"
+        "feature"
       ]
     },
     {
@@ -1162,169 +1179,169 @@
       "subcategory": "moonrepo",
       "word_count": 195,
       "tags": [
+        "moonrepo",
         "operations",
-        "concepts",
-        "moonrepo"
+        "concepts"
       ]
     },
     {
       "source_path": "moonrepo/concepts/cache.md",
-      "id": "ops/concepts/cache",
-      "filename": "ops-concepts-cache.md",
+      "id": "ops/moonrepo/cache",
+      "filename": "ops-moonrepo-cache.md",
       "title": "Cache",
       "category": "ops",
-      "subcategory": "concepts",
+      "subcategory": "moonrepo",
       "word_count": 559,
       "tags": [
-        "operations",
         "cache",
-        "advanced",
-        "concepts"
-      ]
-    },
-    {
-      "source_path": "moonrepo/concepts/file-group.md",
-      "id": "ref/concepts/file-group",
-      "filename": "ref-concepts-file-group.md",
-      "title": "File groups",
-      "category": "ref",
-      "subcategory": "concepts",
-      "word_count": 228,
-      "tags": [
-        "concepts",
-        "reference",
-        "file"
-      ]
-    },
-    {
-      "source_path": "moonrepo/concepts/file-pattern.md",
-      "id": "concept/concepts/file-pattern",
-      "filename": "concept-concepts-file-pattern.md",
-      "title": "File patterns",
-      "category": "concept",
-      "subcategory": "concepts",
-      "word_count": 297,
-      "tags": [
-        "file",
-        "javascript",
-        "concepts",
-        "rust",
-        "concept"
-      ]
-    },
-    {
-      "source_path": "moonrepo/concepts/project.md",
-      "id": "ref/concepts/project",
-      "filename": "ref-concepts-project.md",
-      "title": "Projects",
-      "category": "ref",
-      "subcategory": "concepts",
-      "word_count": 369,
-      "tags": [
-        "projects",
-        "concepts",
-        "reference"
-      ]
-    },
-    {
-      "source_path": "moonrepo/concepts/query-lang.md",
-      "id": "concept/concepts/query-lang",
-      "filename": "concept-concepts-query-lang.md",
-      "title": "Query language",
-      "category": "concept",
-      "subcategory": "concepts",
-      "word_count": 469,
-      "tags": [
-        "concept",
-        "sql",
-        "query",
-        "concepts"
-      ]
-    },
-    {
-      "source_path": "moonrepo/concepts/target.md",
-      "id": "ops/concepts/target",
-      "filename": "ops-concepts-target.md",
-      "title": "Targets",
-      "category": "ops",
-      "subcategory": "concepts",
-      "word_count": 491,
-      "tags": [
+        "moonrepo",
         "operations",
-        "targets",
-        "concepts"
-      ]
-    },
-    {
-      "source_path": "moonrepo/concepts/task-inheritance.md",
-      "id": "ops/concepts/task-inheritance",
-      "filename": "ops-concepts-task-inheritance.md",
-      "title": "Task inheritance",
-      "category": "ops",
-      "subcategory": "concepts",
-      "word_count": 690,
-      "tags": [
-        "operations",
-        "task",
-        "advanced",
-        "concepts"
-      ]
-    },
-    {
-      "source_path": "moonrepo/concepts/task.md",
-      "id": "ref/concepts/task",
-      "filename": "ref-concepts-task.md",
-      "title": "Tasks",
-      "category": "ref",
-      "subcategory": "concepts",
-      "word_count": 808,
-      "tags": [
-        "tasks",
-        "concepts",
-        "reference",
         "advanced"
       ]
     },
     {
+      "source_path": "moonrepo/concepts/file-group.md",
+      "id": "ref/moonrepo/file-group",
+      "filename": "ref-moonrepo-file-group.md",
+      "title": "File groups",
+      "category": "ref",
+      "subcategory": "moonrepo",
+      "word_count": 228,
+      "tags": [
+        "reference",
+        "file",
+        "moonrepo"
+      ]
+    },
+    {
+      "source_path": "moonrepo/concepts/file-pattern.md",
+      "id": "concept/moonrepo/file-pattern",
+      "filename": "concept-moonrepo-file-pattern.md",
+      "title": "File patterns",
+      "category": "concept",
+      "subcategory": "moonrepo",
+      "word_count": 297,
+      "tags": [
+        "rust",
+        "moonrepo",
+        "concept",
+        "javascript",
+        "file"
+      ]
+    },
+    {
+      "source_path": "moonrepo/concepts/project.md",
+      "id": "ref/moonrepo/project",
+      "filename": "ref-moonrepo-project.md",
+      "title": "Projects",
+      "category": "ref",
+      "subcategory": "moonrepo",
+      "word_count": 369,
+      "tags": [
+        "reference",
+        "projects",
+        "moonrepo"
+      ]
+    },
+    {
+      "source_path": "moonrepo/concepts/query-lang.md",
+      "id": "concept/moonrepo/query-lang",
+      "filename": "concept-moonrepo-query-lang.md",
+      "title": "Query language",
+      "category": "concept",
+      "subcategory": "moonrepo",
+      "word_count": 469,
+      "tags": [
+        "sql",
+        "query",
+        "moonrepo",
+        "concept"
+      ]
+    },
+    {
+      "source_path": "moonrepo/concepts/target.md",
+      "id": "ops/moonrepo/target",
+      "filename": "ops-moonrepo-target.md",
+      "title": "Targets",
+      "category": "ops",
+      "subcategory": "moonrepo",
+      "word_count": 491,
+      "tags": [
+        "moonrepo",
+        "operations",
+        "targets"
+      ]
+    },
+    {
+      "source_path": "moonrepo/concepts/task-inheritance.md",
+      "id": "ops/moonrepo/task-inheritance",
+      "filename": "ops-moonrepo-task-inheritance.md",
+      "title": "Task inheritance",
+      "category": "ops",
+      "subcategory": "moonrepo",
+      "word_count": 690,
+      "tags": [
+        "moonrepo",
+        "operations",
+        "advanced",
+        "task"
+      ]
+    },
+    {
+      "source_path": "moonrepo/concepts/task.md",
+      "id": "ref/moonrepo/task",
+      "filename": "ref-moonrepo-task.md",
+      "title": "Tasks",
+      "category": "ref",
+      "subcategory": "moonrepo",
+      "word_count": 808,
+      "tags": [
+        "reference",
+        "tasks",
+        "advanced",
+        "moonrepo"
+      ]
+    },
+    {
       "source_path": "moonrepo/concepts/token.md",
-      "id": "concept/concepts/token",
-      "filename": "concept-concepts-token.md",
+      "id": "concept/moonrepo/token",
+      "filename": "concept-moonrepo-token.md",
       "title": "Tokens",
       "category": "concept",
-      "subcategory": "concepts",
+      "subcategory": "moonrepo",
       "word_count": 1010,
       "tags": [
-        "concept",
         "tokens",
-        "concepts"
+        "moonrepo",
+        "concept"
       ]
     },
     {
       "source_path": "moonrepo/concepts/toolchain.md",
-      "id": "ops/concepts/toolchain",
-      "filename": "ops-concepts-toolchain.md",
+      "id": "ops/moonrepo/toolchain",
+      "filename": "ops-moonrepo-toolchain.md",
       "title": "Toolchain",
       "category": "ops",
-      "subcategory": "concepts",
+      "subcategory": "moonrepo",
       "word_count": 525,
       "tags": [
+        "moonrepo",
         "operations",
-        "toolchain",
         "advanced",
-        "concepts"
+        "toolchain"
       ]
     },
     {
       "source_path": "moonrepo/concepts/workspace.md",
-      "id": "ref/concepts/workspace",
-      "filename": "ref-concepts-workspace.md",
+      "id": "ref/moonrepo/workspace",
+      "filename": "ref-moonrepo-workspace.md",
       "title": "Workspace",
       "category": "ref",
-      "subcategory": "concepts",
+      "subcategory": "moonrepo",
       "word_count": 61,
       "tags": [
-        "concepts",
         "reference",
+        "moonrepo",
         "workspace"
       ]
     },
@@ -1337,84 +1354,84 @@
       "subcategory": "moonrepo",
       "word_count": 87,
       "tags": [
-        "concept",
         "config",
-        "moonrepo"
+        "moonrepo",
+        "concept"
       ]
     },
     {
       "source_path": "moonrepo/config/project.md",
-      "id": "ops/config/project",
-      "filename": "ops-config-project.md",
+      "id": "ops/moonrepo/project-2",
+      "filename": "ops-moonrepo-project.md",
       "title": "moon.{pkl,yml}",
       "category": "ops",
-      "subcategory": "config",
+      "subcategory": "moonrepo",
       "word_count": 2625,
       "tags": [
+        "moonrepo",
         "operations",
-        "config",
         "advanced",
         "moonpklyml"
       ]
     },
     {
       "source_path": "moonrepo/config/tasks.md",
-      "id": "concept/config/tasks",
-      "filename": "concept-config-tasks.md",
+      "id": "concept/moonrepo/tasks",
+      "filename": "concept-moonrepo-tasks.md",
       "title": ".moon/tasks\\[/\\*\\*/\\*\\].{pkl,yml}",
       "category": "concept",
-      "subcategory": "config",
+      "subcategory": "moonrepo",
       "word_count": 616,
       "tags": [
+        "moontaskspklyml",
+        "moonrepo",
         "concept",
-        "config",
-        "advanced",
-        "moontaskspklyml"
+        "advanced"
       ]
     },
     {
       "source_path": "moonrepo/config/template.md",
-      "id": "concept/config/template",
-      "filename": "concept-config-template.md",
+      "id": "concept/moonrepo/template",
+      "filename": "concept-moonrepo-template.md",
       "title": "template.{pkl,yml}",
       "category": "concept",
-      "subcategory": "config",
+      "subcategory": "moonrepo",
       "word_count": 884,
       "tags": [
         "templatepklyml",
+        "moonrepo",
         "concept",
-        "config",
         "advanced"
       ]
     },
     {
       "source_path": "moonrepo/config/toolchain.md",
-      "id": "ops/config/toolchain",
-      "filename": "ops-config-toolchain.md",
+      "id": "ops/moonrepo/toolchain-2",
+      "filename": "ops-moonrepo-toolchain.md",
       "title": ".moon/toolchain.{pkl,yml}",
       "category": "ops",
-      "subcategory": "config",
+      "subcategory": "moonrepo",
       "word_count": 918,
       "tags": [
+        "moonrepo",
         "operations",
-        "config",
         "moontoolchainpklyml",
         "advanced"
       ]
     },
     {
       "source_path": "moonrepo/config/workspace.md",
-      "id": "ops/config/workspace",
-      "filename": "ops-config-workspace.md",
+      "id": "ops/moonrepo/workspace",
+      "filename": "ops-moonrepo-workspace.md",
       "title": ".moon/workspace.{pkl,yml}",
       "category": "ops",
-      "subcategory": "config",
+      "subcategory": "moonrepo",
       "word_count": 1402,
       "tags": [
+        "moonworkspacepklyml",
+        "moonrepo",
         "operations",
-        "config",
-        "advanced",
-        "moonworkspacepklyml"
+        "advanced"
       ]
     },
     {
@@ -1426,9 +1443,9 @@
       "subcategory": "moonrepo",
       "word_count": 493,
       "tags": [
-        "concept",
         "create",
-        "moonrepo"
+        "moonrepo",
+        "concept"
       ]
     },
     {
@@ -1440,10 +1457,10 @@
       "subcategory": "moonrepo",
       "word_count": 863,
       "tags": [
-        "operations",
         "create",
-        "advanced",
-        "moonrepo"
+        "moonrepo",
+        "operations",
+        "advanced"
       ]
     },
     {
@@ -1455,9 +1472,9 @@
       "subcategory": "moonrepo",
       "word_count": 1120,
       "tags": [
-        "introduction",
+        "moonrepo",
         "operations",
-        "moonrepo"
+        "introduction"
       ]
     },
     {
@@ -1469,22 +1486,22 @@
       "subcategory": "moonrepo",
       "word_count": 23,
       "tags": [
+        "moonrepo",
         "concept",
-        "editors",
-        "moonrepo"
+        "editors"
       ]
     },
     {
       "source_path": "moonrepo/editors/vscode.md",
-      "id": "ops/editors/vscode",
-      "filename": "ops-editors-vscode.md",
+      "id": "ops/moonrepo/vscode",
+      "filename": "ops-moonrepo-vscode.md",
       "title": "VS Code extension",
       "category": "ops",
-      "subcategory": "editors",
+      "subcategory": "moonrepo",
       "word_count": 298,
       "tags": [
-        "operations",
-        "editors"
+        "moonrepo",
+        "operations"
       ]
     },
     {
@@ -1496,567 +1513,568 @@
       "subcategory": "moonrepo",
       "word_count": 1379,
       "tags": [
+        "moonrepo",
         "operations",
         "advanced",
-        "faq",
-        "moonrepo"
+        "faq"
       ]
     },
     {
       "source_path": "moonrepo/guides/ci.md",
-      "id": "ops/guides/ci",
-      "filename": "ops-guides-ci.md",
+      "id": "ops/moonrepo/ci-2",
+      "filename": "ops-moonrepo-ci.md",
       "title": "Continuous integration (CI)",
       "category": "ops",
-      "subcategory": "guides",
+      "subcategory": "moonrepo",
       "word_count": 1059,
       "tags": [
+        "continuous",
+        "moonrepo",
         "operations",
-        "advanced",
-        "guides",
-        "continuous"
+        "advanced"
       ]
     },
     {
       "source_path": "moonrepo/guides/codegen.md",
-      "id": "ops/guides/codegen",
-      "filename": "ops-guides-codegen.md",
+      "id": "ops/moonrepo/codegen",
+      "filename": "ops-moonrepo-codegen.md",
       "title": "Code generation",
       "category": "ops",
-      "subcategory": "guides",
+      "subcategory": "moonrepo",
       "word_count": 1742,
       "tags": [
+        "moonrepo",
         "operations",
-        "code",
-        "guides",
-        "advanced"
+        "advanced",
+        "code"
       ]
     },
     {
       "source_path": "moonrepo/guides/codeowners.md",
-      "id": "ops/guides/codeowners",
-      "filename": "ops-guides-codeowners.md",
+      "id": "ops/moonrepo/codeowners-2",
+      "filename": "ops-moonrepo-codeowners.md",
       "title": "Code owners",
       "category": "ops",
-      "subcategory": "guides",
+      "subcategory": "moonrepo",
       "word_count": 688,
       "tags": [
+        "moonrepo",
         "operations",
-        "code",
-        "guides",
-        "advanced"
+        "advanced",
+        "code"
       ]
     },
     {
       "source_path": "moonrepo/guides/debug-task.md",
-      "id": "ops/guides/debug-task",
-      "filename": "ops-guides-debug-task.md",
+      "id": "ops/moonrepo/debug-task",
+      "filename": "ops-moonrepo-debug-task.md",
       "title": "Debugging a task",
       "category": "ops",
-      "subcategory": "guides",
+      "subcategory": "moonrepo",
       "word_count": 1102,
       "tags": [
         "debugging",
+        "moonrepo",
         "operations",
-        "guides",
         "advanced"
       ]
     },
     {
       "source_path": "moonrepo/guides/docker.md",
-      "id": "ops/guides/docker",
-      "filename": "ops-guides-docker.md",
+      "id": "ops/moonrepo/docker-2",
+      "filename": "ops-moonrepo-docker.md",
       "title": "Docker integration",
       "category": "ops",
-      "subcategory": "guides",
+      "subcategory": "moonrepo",
       "word_count": 1393,
       "tags": [
         "docker",
+        "moonrepo",
         "operations",
-        "guides",
         "advanced"
       ]
     },
     {
       "source_path": "moonrepo/guides/examples/angular.md",
-      "id": "tutorial/examples/angular",
-      "filename": "tutorial-examples-angular.md",
+      "id": "tutorial/moonrepo/angular",
+      "filename": "tutorial-moonrepo-angular.md",
       "title": "Angular example",
       "category": "tutorial",
-      "subcategory": "examples",
+      "subcategory": "moonrepo",
       "word_count": 586,
       "tags": [
-        "examples",
-        "angular",
+        "tutorial",
+        "moonrepo",
         "beginner",
-        "tutorial"
+        "angular"
       ]
     },
     {
       "source_path": "moonrepo/guides/examples/astro.md",
-      "id": "ops/examples/astro",
-      "filename": "ops-examples-astro.md",
+      "id": "ops/moonrepo/astro",
+      "filename": "ops-moonrepo-astro.md",
       "title": "Astro example",
       "category": "ops",
-      "subcategory": "examples",
+      "subcategory": "moonrepo",
       "word_count": 476,
       "tags": [
-        "operations",
         "astro",
-        "examples"
+        "moonrepo",
+        "operations"
       ]
     },
     {
       "source_path": "moonrepo/guides/examples/eslint.md",
-      "id": "ops/examples/eslint",
-      "filename": "ops-examples-eslint.md",
+      "id": "ops/moonrepo/eslint",
+      "filename": "ops-moonrepo-eslint.md",
       "title": "ESLint example",
       "category": "ops",
-      "subcategory": "examples",
+      "subcategory": "moonrepo",
       "word_count": 771,
       "tags": [
+        "moonrepo",
         "operations",
         "advanced",
-        "eslint",
-        "examples"
+        "eslint"
       ]
     },
     {
       "source_path": "moonrepo/guides/examples/jest.md",
-      "id": "ops/examples/jest",
-      "filename": "ops-examples-jest.md",
+      "id": "ops/moonrepo/jest",
+      "filename": "ops-moonrepo-jest.md",
       "title": "Jest example",
       "category": "ops",
-      "subcategory": "examples",
+      "subcategory": "moonrepo",
       "word_count": 368,
       "tags": [
-        "operations",
         "jest",
-        "examples"
+        "moonrepo",
+        "operations"
       ]
     },
     {
       "source_path": "moonrepo/guides/examples/nest.md",
-      "id": "tutorial/examples/nest",
-      "filename": "tutorial-examples-nest.md",
+      "id": "tutorial/moonrepo/nest",
+      "filename": "tutorial-moonrepo-nest.md",
       "title": "Nest example",
       "category": "tutorial",
-      "subcategory": "examples",
+      "subcategory": "moonrepo",
       "word_count": 239,
       "tags": [
-        "examples",
         "nest",
-        "beginner",
-        "tutorial"
+        "tutorial",
+        "moonrepo",
+        "beginner"
       ]
     },
     {
       "source_path": "moonrepo/guides/examples/next.md",
-      "id": "tutorial/examples/next",
-      "filename": "tutorial-examples-next.md",
+      "id": "tutorial/moonrepo/next",
+      "filename": "tutorial-moonrepo-next.md",
       "title": "Next example",
       "category": "tutorial",
-      "subcategory": "examples",
+      "subcategory": "moonrepo",
       "word_count": 550,
       "tags": [
-        "examples",
+        "tutorial",
+        "moonrepo",
         "beginner",
-        "next",
-        "tutorial"
+        "next"
       ]
     },
     {
       "source_path": "moonrepo/guides/examples/nuxt.md",
-      "id": "tutorial/examples/nuxt",
-      "filename": "tutorial-examples-nuxt.md",
+      "id": "tutorial/moonrepo/nuxt",
+      "filename": "tutorial-moonrepo-nuxt.md",
       "title": "Nuxt example",
       "category": "tutorial",
-      "subcategory": "examples",
+      "subcategory": "moonrepo",
       "word_count": 302,
       "tags": [
-        "nuxt",
-        "examples",
+        "tutorial",
+        "moonrepo",
         "beginner",
-        "tutorial"
+        "nuxt"
       ]
     },
     {
       "source_path": "moonrepo/guides/examples/packemon.md",
-      "id": "ops/examples/packemon",
-      "filename": "ops-examples-packemon.md",
+      "id": "ops/moonrepo/packemon",
+      "filename": "ops-moonrepo-packemon.md",
       "title": "Packemon example",
       "category": "ops",
-      "subcategory": "examples",
+      "subcategory": "moonrepo",
       "word_count": 262,
       "tags": [
+        "moonrepo",
         "operations",
-        "packemon",
-        "examples"
+        "packemon"
       ]
     },
     {
       "source_path": "moonrepo/guides/examples/prettier.md",
-      "id": "ops/examples/prettier",
-      "filename": "ops-examples-prettier.md",
+      "id": "ops/moonrepo/prettier",
+      "filename": "ops-moonrepo-prettier.md",
       "title": "Prettier example",
       "category": "ops",
-      "subcategory": "examples",
+      "subcategory": "moonrepo",
       "word_count": 322,
       "tags": [
-        "prettier",
+        "moonrepo",
         "operations",
-        "examples"
+        "prettier"
       ]
     },
     {
       "source_path": "moonrepo/guides/examples/react.md",
-      "id": "concept/examples/react",
-      "filename": "concept-examples-react.md",
+      "id": "concept/moonrepo/react",
+      "filename": "concept-moonrepo-react.md",
       "title": "React example",
       "category": "concept",
-      "subcategory": "examples",
+      "subcategory": "moonrepo",
       "word_count": 101,
       "tags": [
-        "concept",
         "react",
-        "examples"
+        "moonrepo",
+        "concept"
       ]
     },
     {
       "source_path": "moonrepo/guides/examples/remix.md",
-      "id": "tutorial/examples/remix",
-      "filename": "tutorial-examples-remix.md",
+      "id": "tutorial/moonrepo/remix",
+      "filename": "tutorial-moonrepo-remix.md",
       "title": "Remix example",
       "category": "tutorial",
-      "subcategory": "examples",
+      "subcategory": "moonrepo",
       "word_count": 413,
       "tags": [
-        "examples",
+        "tutorial",
+        "moonrepo",
         "beginner",
-        "remix",
-        "tutorial"
+        "remix"
       ]
     },
     {
       "source_path": "moonrepo/guides/examples/solid.md",
-      "id": "ops/examples/solid",
-      "filename": "ops-examples-solid.md",
+      "id": "ops/moonrepo/solid",
+      "filename": "ops-moonrepo-solid.md",
       "title": "Solid example",
       "category": "ops",
-      "subcategory": "examples",
+      "subcategory": "moonrepo",
       "word_count": 219,
       "tags": [
+        "moonrepo",
         "operations",
         "solid",
-        "javascript",
-        "examples"
+        "javascript"
       ]
     },
     {
       "source_path": "moonrepo/guides/examples/storybook.md",
-      "id": "ops/examples/storybook",
-      "filename": "ops-examples-storybook.md",
+      "id": "ops/moonrepo/storybook",
+      "filename": "ops-moonrepo-storybook.md",
       "title": "Storybook example",
       "category": "ops",
-      "subcategory": "examples",
+      "subcategory": "moonrepo",
       "word_count": 509,
       "tags": [
+        "moonrepo",
         "operations",
-        "storybook",
         "advanced",
-        "examples"
+        "storybook"
       ]
     },
     {
       "source_path": "moonrepo/guides/examples/sveltekit.md",
-      "id": "ops/examples/sveltekit",
-      "filename": "ops-examples-sveltekit.md",
+      "id": "ops/moonrepo/sveltekit",
+      "filename": "ops-moonrepo-sveltekit.md",
       "title": "SvelteKit example",
       "category": "ops",
-      "subcategory": "examples",
+      "subcategory": "moonrepo",
       "word_count": 520,
       "tags": [
-        "operations",
-        "javascript",
-        "examples",
+        "advanced",
         "sveltekit",
-        "advanced"
+        "moonrepo",
+        "operations",
+        "javascript"
       ]
     },
     {
       "source_path": "moonrepo/guides/examples/typescript.md",
-      "id": "ops/examples/typescript",
-      "filename": "ops-examples-typescript.md",
+      "id": "ops/moonrepo/typescript",
+      "filename": "ops-moonrepo-typescript.md",
       "title": "TypeScript example",
       "category": "ops",
-      "subcategory": "examples",
+      "subcategory": "moonrepo",
       "word_count": 556,
       "tags": [
+        "advanced",
+        "moonrepo",
         "operations",
         "javascript",
-        "examples",
-        "typescript",
-        "advanced"
+        "typescript"
       ]
     },
     {
       "source_path": "moonrepo/guides/examples/vite.md",
-      "id": "ops/examples/vite",
-      "filename": "ops-examples-vite.md",
+      "id": "ops/moonrepo/vite",
+      "filename": "ops-moonrepo-vite.md",
       "title": "Vite & Vitest example",
       "category": "ops",
-      "subcategory": "examples",
+      "subcategory": "moonrepo",
       "word_count": 228,
       "tags": [
+        "moonrepo",
         "operations",
-        "vite",
-        "examples"
+        "vite"
       ]
     },
     {
       "source_path": "moonrepo/guides/examples/vue.md",
-      "id": "ops/examples/vue",
-      "filename": "ops-examples-vue.md",
+      "id": "ops/moonrepo/vue",
+      "filename": "ops-moonrepo-vue.md",
       "title": "Vue example",
       "category": "ops",
-      "subcategory": "examples",
+      "subcategory": "moonrepo",
       "word_count": 322,
       "tags": [
+        "moonrepo",
         "operations",
-        "vue",
-        "examples"
+        "vue"
       ]
     },
     {
       "source_path": "moonrepo/guides/extensions.md",
-      "id": "ops/guides/extensions",
-      "filename": "ops-guides-extensions.md",
+      "id": "ops/moonrepo/extensions",
+      "filename": "ops-moonrepo-extensions.md",
       "title": "Extensions",
       "category": "ops",
-      "subcategory": "guides",
+      "subcategory": "moonrepo",
       "word_count": 1148,
       "tags": [
+        "moonrepo",
         "operations",
-        "extensions",
-        "guides",
-        "advanced"
+        "advanced",
+        "extensions"
       ]
     },
     {
       "source_path": "moonrepo/guides/javascript/bun-handbook.md",
-      "id": "ops/javascript/bun-handbook",
-      "filename": "ops-javascript-bun-handbook.md",
+      "id": "ops/moonrepo/bun-handbook",
+      "filename": "ops-moonrepo-bun-handbook.md",
       "title": "Bun handbook",
       "category": "ops",
-      "subcategory": "javascript",
+      "subcategory": "moonrepo",
       "word_count": 583,
       "tags": [
+        "advanced",
+        "moonrepo",
         "operations",
         "javascript",
-        "bun",
-        "typescript",
-        "advanced"
+        "bun"
       ]
     },
     {
       "source_path": "moonrepo/guides/javascript/deno-handbook.md",
-      "id": "concept/javascript/deno-handbook",
-      "filename": "concept-javascript-deno-handbook.md",
+      "id": "concept/moonrepo/deno-handbook",
+      "filename": "concept-moonrepo-deno-handbook.md",
       "title": "Deno handbook",
       "category": "concept",
-      "subcategory": "javascript",
+      "subcategory": "moonrepo",
       "word_count": 246,
       "tags": [
+        "moonrepo",
         "concept",
         "typescript",
-        "deno",
-        "javascript"
+        "deno"
       ]
     },
     {
       "source_path": "moonrepo/guides/javascript/node-handbook.md",
-      "id": "ops/javascript/node-handbook",
-      "filename": "ops-javascript-node-handbook.md",
+      "id": "ops/moonrepo/node-handbook",
+      "filename": "ops-moonrepo-node-handbook.md",
       "title": "Node.js handbook",
       "category": "ops",
-      "subcategory": "javascript",
+      "subcategory": "moonrepo",
       "word_count": 2256,
       "tags": [
-        "operations",
-        "javascript",
         "nodejs",
-        "typescript",
-        "advanced"
+        "advanced",
+        "moonrepo",
+        "operations",
+        "javascript"
       ]
     },
     {
       "source_path": "moonrepo/guides/javascript/typescript-eslint.md",
-      "id": "ops/javascript/typescript-eslint",
-      "filename": "ops-javascript-typescript-eslint.md",
+      "id": "ops/moonrepo/typescript-eslint",
+      "filename": "ops-moonrepo-typescript-eslint.md",
       "title": "typescript-eslint",
       "category": "ops",
-      "subcategory": "javascript",
+      "subcategory": "moonrepo",
       "word_count": 262,
       "tags": [
+        "moonrepo",
         "operations",
-        "typescripteslint",
         "typescript",
-        "javascript"
+        "typescripteslint"
       ]
     },
     {
       "source_path": "moonrepo/guides/javascript/typescript-project-refs.md",
-      "id": "ref/javascript/typescript-project-refs",
-      "filename": "ref-javascript-typescript-project-refs.md",
+      "id": "ref/moonrepo/typescript-project-refs",
+      "filename": "ref-moonrepo-typescript-project-refs.md",
       "title": "TypeScript project references",
       "category": "ref",
-      "subcategory": "javascript",
+      "subcategory": "moonrepo",
       "word_count": 3984,
       "tags": [
-        "typescript",
         "reference",
         "advanced",
-        "javascript"
+        "typescript",
+        "moonrepo"
       ]
     },
     {
       "source_path": "moonrepo/guides/mcp.md",
-      "id": "ops/guides/mcp",
-      "filename": "ops-guides-mcp.md",
+      "id": "ops/moonrepo/mcp-2",
+      "filename": "ops-moonrepo-mcp.md",
       "title": "MCP integration",
       "category": "ops",
-      "subcategory": "guides",
+      "subcategory": "moonrepo",
       "word_count": 482,
       "tags": [
+        "moonrepo",
         "operations",
-        "guides",
         "mcp"
       ]
     },
     {
       "source_path": "moonrepo/guides/node/examples.md",
-      "id": "concept/node/examples",
-      "filename": "concept-node-examples.md",
+      "id": "concept/moonrepo/examples",
+      "filename": "concept-moonrepo-examples.md",
       "title": "Node.js examples",
       "category": "concept",
-      "subcategory": "node",
+      "subcategory": "moonrepo",
       "word_count": 279,
       "tags": [
-        "nodejs",
+        "moonrepo",
         "concept",
-        "node"
+        "nodejs"
       ]
     },
     {
       "source_path": "moonrepo/guides/notifications.md",
-      "id": "concept/guides/notifications",
-      "filename": "concept-guides-notifications.md",
+      "id": "concept/moonrepo/notifications",
+      "filename": "concept-moonrepo-notifications.md",
       "title": "Terminal notifications",
       "category": "concept",
-      "subcategory": "guides",
+      "subcategory": "moonrepo",
       "word_count": 223,
       "tags": [
+        "moonrepo",
         "concept",
-        "terminal",
-        "guides"
+        "terminal"
       ]
     },
     {
       "source_path": "moonrepo/guides/offline-mode.md",
-      "id": "ops/guides/offline-mode",
-      "filename": "ops-guides-offline-mode.md",
+      "id": "ops/moonrepo/offline-mode",
+      "filename": "ops-moonrepo-offline-mode.md",
       "title": "Offline mode",
       "category": "ops",
-      "subcategory": "guides",
+      "subcategory": "moonrepo",
       "word_count": 237,
       "tags": [
         "offline",
-        "operations",
-        "guides"
+        "moonrepo",
+        "operations"
       ]
     },
     {
       "source_path": "moonrepo/guides/open-source.md",
-      "id": "ops/guides/open-source",
-      "filename": "ops-guides-open-source.md",
+      "id": "ops/moonrepo/open-source",
+      "filename": "ops-moonrepo-open-source.md",
       "title": "Open source usage",
       "category": "ops",
-      "subcategory": "guides",
+      "subcategory": "moonrepo",
       "word_count": 232,
       "tags": [
-        "operations",
-        "guides",
-        "open"
+        "open",
+        "moonrepo",
+        "operations"
       ]
     },
     {
       "source_path": "moonrepo/guides/pkl-config.md",
-      "id": "ops/guides/pkl-config",
-      "filename": "ops-guides-pkl-config.md",
+      "id": "ops/moonrepo/pkl-config",
+      "filename": "ops-moonrepo-pkl-config.md",
       "title": "Pkl configuration",
       "category": "ops",
-      "subcategory": "guides",
+      "subcategory": "moonrepo",
       "word_count": 594,
       "tags": [
+        "pkl",
+        "moonrepo",
         "operations",
-        "guides",
-        "advanced",
-        "pkl"
+        "advanced"
       ]
     },
     {
       "source_path": "moonrepo/guides/profile.md",
-      "id": "ops/guides/profile",
-      "filename": "ops-guides-profile.md",
+      "id": "ops/moonrepo/profile",
+      "filename": "ops-moonrepo-profile.md",
       "title": "Task profiling",
       "category": "ops",
-      "subcategory": "guides",
+      "subcategory": "moonrepo",
       "word_count": 588,
       "tags": [
+        "moonrepo",
         "operations",
-        "guides",
         "advanced",
         "task"
       ]
     },
     {
       "source_path": "moonrepo/guides/remote-cache.md",
-      "id": "concept/guides/remote-cache",
-      "filename": "concept-guides-remote-cache.md",
+      "id": "concept/moonrepo/remote-cache",
+      "filename": "concept-moonrepo-remote-cache.md",
       "title": "Remote caching",
       "category": "concept",
-      "subcategory": "guides",
+      "subcategory": "moonrepo",
       "word_count": 688,
       "tags": [
-        "remote",
+        "moonrepo",
         "concept",
-        "guides",
+        "remote",
         "advanced"
       ]
     },
     {
       "source_path": "moonrepo/guides/root-project.md",
-      "id": "concept/guides/root-project",
-      "filename": "concept-guides-root-project.md",
+      "id": "concept/moonrepo/root-project",
+      "filename": "concept-moonrepo-root-project.md",
       "title": "Root-level project",
       "category": "concept",
-      "subcategory": "guides",
+      "subcategory": "moonrepo",
       "word_count": 303,
       "tags": [
+        "moonrepo",
         "concept",
-        "guides",
         "rootlevel"
       ]
     },
     {
       "source_path": "moonrepo/guides/rust/handbook.md",
-      "id": "ops/rust/handbook",
-      "filename": "ops-rust-handbook.md",
+      "id": "ops/moonrepo/handbook",
+      "filename": "ops-moonrepo-handbook.md",
       "title": "Rust handbook",
       "category": "ops",
-      "subcategory": "rust",
+      "subcategory": "moonrepo",
       "word_count": 1207,
       "tags": [
+        "moonrepo",
         "operations",
         "rust",
         "advanced"
@@ -2064,47 +2082,47 @@
     },
     {
       "source_path": "moonrepo/guides/sharing-config.md",
-      "id": "concept/guides/sharing-config",
-      "filename": "concept-guides-sharing-config.md",
+      "id": "concept/moonrepo/sharing-config",
+      "filename": "concept-moonrepo-sharing-config.md",
       "title": "Sharing workspace configuration",
       "category": "concept",
-      "subcategory": "guides",
+      "subcategory": "moonrepo",
       "word_count": 250,
       "tags": [
+        "moonrepo",
         "concept",
-        "guides",
         "sharing"
       ]
     },
     {
       "source_path": "moonrepo/guides/vcs-hooks.md",
-      "id": "ops/guides/vcs-hooks",
-      "filename": "ops-guides-vcs-hooks.md",
+      "id": "ops/moonrepo/vcs-hooks",
+      "filename": "ops-moonrepo-vcs-hooks.md",
       "title": "VCS hooks",
       "category": "ops",
-      "subcategory": "guides",
+      "subcategory": "moonrepo",
       "word_count": 894,
       "tags": [
-        "operations",
         "vcs",
-        "guides",
+        "moonrepo",
+        "operations",
         "advanced"
       ]
     },
     {
       "source_path": "moonrepo/guides/wasm-plugins.md",
-      "id": "ops/guides/wasm-plugins",
-      "filename": "ops-guides-wasm-plugins.md",
+      "id": "ops/moonrepo/wasm-plugins",
+      "filename": "ops-moonrepo-wasm-plugins.md",
       "title": "WASM plugins",
       "category": "ops",
-      "subcategory": "guides",
+      "subcategory": "moonrepo",
       "word_count": 2142,
       "tags": [
-        "operations",
-        "guides",
         "rust",
+        "advanced",
         "wasm",
-        "typescript"
+        "moonrepo",
+        "operations"
       ]
     },
     {
@@ -2117,66 +2135,66 @@
       "word_count": 103,
       "tags": [
         "how",
+        "moonrepo",
         "concept",
-        "javascript",
-        "moonrepo"
+        "javascript"
       ]
     },
     {
       "source_path": "moonrepo/how-it-works/action-graph.md",
-      "id": "ops/how-it-works/action-graph",
-      "filename": "ops-how-it-works-action-graph.md",
+      "id": "ops/moonrepo/action-graph-2",
+      "filename": "ops-moonrepo-action-graph.md",
       "title": "Action graph",
       "category": "ops",
-      "subcategory": "how-it-works",
+      "subcategory": "moonrepo",
       "word_count": 679,
       "tags": [
-        "operations",
         "action",
-        "how-it-works"
+        "moonrepo",
+        "operations"
       ]
     },
     {
       "source_path": "moonrepo/how-it-works/languages.md",
-      "id": "ops/how-it-works/languages",
-      "filename": "ops-how-it-works-languages.md",
+      "id": "ops/moonrepo/languages",
+      "filename": "ops-moonrepo-languages.md",
       "title": "Languages",
       "category": "ops",
-      "subcategory": "how-it-works",
+      "subcategory": "moonrepo",
       "word_count": 717,
       "tags": [
+        "advanced",
+        "moonrepo",
         "operations",
         "javascript",
-        "languages",
-        "advanced",
-        "how-it-works"
+        "languages"
       ]
     },
     {
       "source_path": "moonrepo/how-it-works/project-graph.md",
-      "id": "ops/how-it-works/project-graph",
-      "filename": "ops-how-it-works-project-graph.md",
+      "id": "ops/moonrepo/project-graph-2",
+      "filename": "ops-moonrepo-project-graph.md",
       "title": "Project graph",
       "category": "ops",
-      "subcategory": "how-it-works",
+      "subcategory": "moonrepo",
       "word_count": 390,
       "tags": [
+        "moonrepo",
         "operations",
-        "how-it-works",
         "project"
       ]
     },
     {
       "source_path": "moonrepo/how-it-works/task-graph.md",
-      "id": "concept/how-it-works/task-graph",
-      "filename": "concept-how-it-works-task-graph.md",
+      "id": "concept/moonrepo/task-graph",
+      "filename": "concept-moonrepo-task-graph.md",
       "title": "Task graph",
       "category": "concept",
-      "subcategory": "how-it-works",
+      "subcategory": "moonrepo",
       "word_count": 201,
       "tags": [
+        "moonrepo",
         "concept",
-        "how-it-works",
         "task"
       ]
     },
@@ -2189,10 +2207,10 @@
       "subcategory": "moonrepo",
       "word_count": 641,
       "tags": [
-        "operations",
         "install",
-        "advanced",
-        "moonrepo"
+        "moonrepo",
+        "operations",
+        "advanced"
       ]
     },
     {
@@ -2204,10 +2222,10 @@
       "subcategory": "moonrepo",
       "word_count": 561,
       "tags": [
-        "migrate",
+        "moonrepo",
         "operations",
         "advanced",
-        "moonrepo"
+        "migrate"
       ]
     },
     {
@@ -2219,10 +2237,10 @@
       "subcategory": "moonrepo",
       "word_count": 609,
       "tags": [
+        "moonrepo",
         "operations",
         "advanced",
-        "run",
-        "moonrepo"
+        "run"
       ]
     },
     {
@@ -2234,9 +2252,9 @@
       "subcategory": "moonrepo",
       "word_count": 410,
       "tags": [
+        "moonrepo",
         "operations",
-        "setup",
-        "moonrepo"
+        "setup"
       ]
     },
     {
@@ -2248,9 +2266,9 @@
       "subcategory": "moonrepo",
       "word_count": 290,
       "tags": [
+        "moonrepo",
         "operations",
-        "setup",
-        "moonrepo"
+        "setup"
       ]
     },
     {
@@ -2262,9 +2280,9 @@
       "subcategory": "moonrepo",
       "word_count": 500,
       "tags": [
+        "moonrepo",
         "operations",
-        "terminology",
-        "moonrepo"
+        "terminology"
       ]
     },
     {
@@ -2277,121 +2295,120 @@
       "word_count": 174,
       "tags": [
         "moon",
-        "beginner",
         "tutorial",
-        "moonrepo"
+        "moonrepo",
+        "beginner"
       ]
     },
     {
       "source_path": "tandoor/contribute/contribute.md",
-      "id": "ops/contribute/contribute",
-      "filename": "ops-contribute-contribute.md",
+      "id": "ops/tandoor/contribute",
+      "filename": "ops-tandoor-contribute.md",
       "title": "Contribute",
       "category": "ops",
-      "subcategory": "contribute",
+      "subcategory": "tandoor",
       "word_count": 255,
       "tags": [
+        "tandoor",
         "operations",
         "contribute"
       ]
     },
     {
       "source_path": "tandoor/contribute/documentation.md",
-      "id": "ops/contribute/documentation",
-      "filename": "ops-contribute-documentation.md",
+      "id": "ops/tandoor/documentation",
+      "filename": "ops-tandoor-documentation.md",
       "title": "Documentation",
       "category": "ops",
-      "subcategory": "contribute",
+      "subcategory": "tandoor",
       "word_count": 154,
       "tags": [
+        "tandoor",
         "operations",
-        "documentation",
-        "contribute"
+        "documentation"
       ]
     },
     {
       "source_path": "tandoor/contribute/guidelines.md",
-      "id": "ops/contribute/guidelines",
-      "filename": "ops-contribute-guidelines.md",
+      "id": "ops/tandoor/guidelines",
+      "filename": "ops-tandoor-guidelines.md",
       "title": "Guidelines",
       "category": "ops",
-      "subcategory": "contribute",
+      "subcategory": "tandoor",
       "word_count": 347,
       "tags": [
+        "tandoor",
         "operations",
-        "guidelines",
-        "contribute"
+        "guidelines"
       ]
     },
     {
       "source_path": "tandoor/contribute/installation.md",
-      "id": "ops/contribute/installation",
-      "filename": "ops-contribute-installation.md",
+      "id": "ops/tandoor/installation",
+      "filename": "ops-tandoor-installation.md",
       "title": "Installation",
       "category": "ops",
-      "subcategory": "contribute",
+      "subcategory": "tandoor",
       "word_count": 417,
       "tags": [
-        "operations",
-        "contribute",
-        "installation"
+        "installation",
+        "tandoor",
+        "operations"
       ]
     },
     {
       "source_path": "tandoor/contribute/pycharm.md",
-      "id": "ops/contribute/pycharm",
-      "filename": "ops-contribute-pycharm.md",
+      "id": "ops/tandoor/pycharm",
+      "filename": "ops-tandoor-pycharm.md",
       "title": "Pycharm",
       "category": "ops",
-      "subcategory": "contribute",
+      "subcategory": "tandoor",
       "word_count": 317,
       "tags": [
-        "operations",
-        "contribute",
-        "pycharm"
+        "tandoor",
+        "pycharm",
+        "operations"
       ]
     },
     {
       "source_path": "tandoor/contribute/related.md",
-      "id": "concept/contribute/related",
-      "filename": "concept-contribute-related.md",
+      "id": "concept/tandoor/related",
+      "filename": "concept-tandoor-related.md",
       "title": "Related",
       "category": "concept",
-      "subcategory": "contribute",
+      "subcategory": "tandoor",
       "word_count": 112,
       "tags": [
-        "concept",
         "tandoor",
-        "related",
-        "contribute"
+        "concept",
+        "related"
       ]
     },
     {
       "source_path": "tandoor/contribute/translations.md",
-      "id": "concept/contribute/translations",
-      "filename": "concept-contribute-translations.md",
+      "id": "concept/tandoor/translations",
+      "filename": "concept-tandoor-translations.md",
       "title": "Translations",
       "category": "concept",
-      "subcategory": "contribute",
+      "subcategory": "tandoor",
       "word_count": 229,
       "tags": [
-        "concept",
         "tandoor",
-        "contribute",
+        "concept",
         "translations"
       ]
     },
     {
       "source_path": "tandoor/contribute/vscode.md",
-      "id": "ops/contribute/vscode",
-      "filename": "ops-contribute-vscode.md",
+      "id": "ops/tandoor/vscode",
+      "filename": "ops-tandoor-vscode.md",
       "title": "Vscode",
       "category": "ops",
-      "subcategory": "contribute",
+      "subcategory": "tandoor",
       "word_count": 387,
       "tags": [
+        "tandoor",
         "operations",
-        "contribute",
         "vscode"
       ]
     },
@@ -2404,139 +2421,137 @@
       "subcategory": "tandoor",
       "word_count": 1251,
       "tags": [
-        "operations",
         "tandoor",
+        "operations",
         "faq"
       ]
     },
     {
       "source_path": "tandoor/features/ai.md",
-      "id": "concept/features/ai",
-      "filename": "concept-features-ai.md",
+      "id": "concept/tandoor/ai",
+      "filename": "concept-tandoor-ai.md",
       "title": "Ai",
       "category": "concept",
-      "subcategory": "features",
+      "subcategory": "tandoor",
       "word_count": 202,
       "tags": [
-        "concept",
         "tandoor",
-        "features"
+        "concept"
       ]
     },
     {
       "source_path": "tandoor/features/authentication.md",
-      "id": "ops/features/authentication",
-      "filename": "ops-features-authentication.md",
+      "id": "ops/tandoor/authentication",
+      "filename": "ops-tandoor-authentication.md",
       "title": "Authentication",
       "category": "ops",
-      "subcategory": "features",
+      "subcategory": "tandoor",
       "word_count": 1233,
       "tags": [
-        "operations",
+        "tandoor",
         "advanced",
-        "authentication",
-        "features"
+        "operations",
+        "authentication"
       ]
     },
     {
       "source_path": "tandoor/features/automation.md",
-      "id": "concept/features/automation",
-      "filename": "concept-features-automation.md",
+      "id": "concept/tandoor/automation",
+      "filename": "concept-tandoor-automation.md",
       "title": "Automation",
       "category": "concept",
-      "subcategory": "features",
+      "subcategory": "tandoor",
       "word_count": 784,
       "tags": [
-        "concept",
         "automation",
-        "features"
+        "tandoor",
+        "concept"
       ]
     },
     {
       "source_path": "tandoor/features/connectors.md",
-      "id": "tutorial/features/connectors",
-      "filename": "tutorial-features-connectors.md",
+      "id": "tutorial/tandoor/connectors",
+      "filename": "tutorial-tandoor-connectors.md",
       "title": "Connectors",
       "category": "tutorial",
-      "subcategory": "features",
+      "subcategory": "tandoor",
       "word_count": 162,
       "tags": [
-        "connectors",
+        "tutorial",
+        "tandoor",
         "beginner",
-        "features",
-        "tutorial"
+        "connectors"
       ]
     },
     {
       "source_path": "tandoor/features/external_recipes.md",
-      "id": "ops/features/external-recipes",
-      "filename": "ops-features-external-recipes.md",
+      "id": "ops/tandoor/external-recipes",
+      "filename": "ops-tandoor-external-recipes.md",
       "title": "External Recipes",
       "category": "ops",
-      "subcategory": "features",
+      "subcategory": "tandoor",
       "word_count": 704,
       "tags": [
-        "external",
+        "tandoor",
         "operations",
         "advanced",
-        "features"
+        "external"
       ]
     },
     {
       "source_path": "tandoor/features/import_export.md",
-      "id": "ops/features/import-export",
-      "filename": "ops-features-import-export.md",
+      "id": "ops/tandoor/import-export",
+      "filename": "ops-tandoor-import-export.md",
       "title": "Import Export",
       "category": "ops",
-      "subcategory": "features",
+      "subcategory": "tandoor",
       "word_count": 1928,
       "tags": [
-        "import",
+        "tandoor",
         "operations",
         "advanced",
-        "features"
+        "import"
       ]
     },
     {
       "source_path": "tandoor/features/shopping.md",
-      "id": "concept/features/shopping",
-      "filename": "concept-features-shopping.md",
+      "id": "concept/tandoor/shopping",
+      "filename": "concept-tandoor-shopping.md",
       "title": "Shopping",
       "category": "concept",
-      "subcategory": "features",
+      "subcategory": "tandoor",
       "word_count": 417,
       "tags": [
-        "concept",
-        "features",
-        "shopping"
+        "shopping",
+        "tandoor",
+        "concept"
       ]
     },
     {
       "source_path": "tandoor/features/telegram_bot.md",
-      "id": "ops/features/telegram-bot",
-      "filename": "ops-features-telegram-bot.md",
+      "id": "ops/tandoor/telegram-bot",
+      "filename": "ops-tandoor-telegram-bot.md",
       "title": "Telegram Bot",
       "category": "ops",
-      "subcategory": "features",
+      "subcategory": "tandoor",
       "word_count": 331,
       "tags": [
-        "operations",
         "tandoor",
-        "telegram",
-        "features"
+        "operations",
+        "telegram"
       ]
     },
     {
       "source_path": "tandoor/features/templating.md",
-      "id": "concept/features/templating",
-      "filename": "concept-features-templating.md",
+      "id": "concept/tandoor/templating",
+      "filename": "concept-tandoor-templating.md",
       "title": "Templating",
       "category": "concept",
-      "subcategory": "features",
+      "subcategory": "tandoor",
       "word_count": 368,
       "tags": [
+        "tandoor",
         "concept",
-        "features",
         "templating"
       ]
     },
@@ -2550,262 +2565,261 @@
       "word_count": 699,
       "tags": [
         "tandoor",
-        "index",
-        "meta"
+        "meta",
+        "index"
       ]
     },
     {
       "source_path": "tandoor/install/archlinux.md",
-      "id": "ops/install/archlinux",
-      "filename": "ops-install-archlinux.md",
+      "id": "ops/tandoor/archlinux",
+      "filename": "ops-tandoor-archlinux.md",
       "title": "Archlinux",
       "category": "ops",
-      "subcategory": "install",
+      "subcategory": "tandoor",
       "word_count": 265,
       "tags": [
-        "archlinux",
+        "tandoor",
         "operations",
-        "install"
+        "archlinux"
       ]
     },
     {
       "source_path": "tandoor/install/docker.md",
-      "id": "ops/install/docker",
-      "filename": "ops-install-docker.md",
+      "id": "ops/tandoor/docker",
+      "filename": "ops-tandoor-docker.md",
       "title": "Docker",
       "category": "ops",
-      "subcategory": "install",
+      "subcategory": "tandoor",
       "word_count": 1193,
       "tags": [
+        "tandoor",
         "docker",
         "operations",
-        "install",
         "advanced"
       ]
     },
     {
       "source_path": "tandoor/install/homeassistant.md",
-      "id": "ops/install/homeassistant",
-      "filename": "ops-install-homeassistant.md",
+      "id": "ops/tandoor/homeassistant",
+      "filename": "ops-tandoor-homeassistant.md",
       "title": "Homeassistant",
       "category": "ops",
-      "subcategory": "install",
+      "subcategory": "tandoor",
       "word_count": 636,
       "tags": [
-        "operations",
-        "homeassistant",
-        "install",
         "tandoor",
-        "advanced"
+        "operations",
+        "advanced",
+        "homeassistant"
       ]
     },
     {
       "source_path": "tandoor/install/kubernetes.md",
-      "id": "ops/install/kubernetes",
-      "filename": "ops-install-kubernetes.md",
+      "id": "ops/tandoor/kubernetes",
+      "filename": "ops-tandoor-kubernetes.md",
       "title": "Kubernetes",
       "category": "ops",
-      "subcategory": "install",
+      "subcategory": "tandoor",
       "word_count": 742,
       "tags": [
-        "operations",
-        "install",
-        "kubernetes"
+        "kubernetes",
+        "tandoor",
+        "operations"
       ]
     },
     {
       "source_path": "tandoor/install/kubesail.md",
-      "id": "ops/install/kubesail",
-      "filename": "ops-install-kubesail.md",
+      "id": "ops/tandoor/kubesail",
+      "filename": "ops-tandoor-kubesail.md",
       "title": "Kubesail",
       "category": "ops",
-      "subcategory": "install",
+      "subcategory": "tandoor",
       "word_count": 190,
       "tags": [
+        "tandoor",
         "operations",
-        "install",
         "kubesail"
       ]
     },
     {
       "source_path": "tandoor/install/manual.md",
-      "id": "ops/install/manual",
-      "filename": "ops-install-manual.md",
+      "id": "ops/tandoor/manual",
+      "filename": "ops-tandoor-manual.md",
       "title": "Manual installation instructions",
       "category": "ops",
-      "subcategory": "install",
+      "subcategory": "tandoor",
       "word_count": 891,
       "tags": [
+        "sql",
+        "advanced",
         "operations",
         "manual",
-        "install",
-        "sql",
-        "advanced"
+        "tandoor"
       ]
     },
     {
       "source_path": "tandoor/install/other.md",
-      "id": "ops/install/other",
-      "filename": "ops-install-other.md",
+      "id": "ops/tandoor/other",
+      "filename": "ops-tandoor-other.md",
       "title": "Other",
       "category": "ops",
-      "subcategory": "install",
+      "subcategory": "tandoor",
       "word_count": 692,
       "tags": [
-        "operations",
-        "install",
+        "tandoor",
         "advanced",
+        "operations",
         "other"
       ]
     },
     {
       "source_path": "tandoor/install/swag.md",
-      "id": "ops/install/swag",
-      "filename": "ops-install-swag.md",
+      "id": "ops/tandoor/swag",
+      "filename": "ops-tandoor-swag.md",
       "title": "Swag",
       "category": "ops",
-      "subcategory": "install",
+      "subcategory": "tandoor",
       "word_count": 412,
       "tags": [
+        "tandoor",
         "docker",
         "operations",
-        "install",
         "swag"
       ]
     },
     {
       "source_path": "tandoor/install/synology.md",
-      "id": "tutorial/install/synology",
-      "filename": "tutorial-install-synology.md",
+      "id": "tutorial/tandoor/synology",
+      "filename": "tutorial-tandoor-synology.md",
       "title": "Synology",
       "category": "tutorial",
-      "subcategory": "install",
+      "subcategory": "tandoor",
       "word_count": 936,
       "tags": [
-        "install",
-        "synology",
+        "tutorial",
+        "tandoor",
         "beginner",
-        "tutorial"
+        "synology"
       ]
     },
     {
       "source_path": "tandoor/install/truenas_portainer.md",
-      "id": "ops/install/truenas-portainer",
-      "filename": "ops-install-truenas-portainer.md",
+      "id": "ops/tandoor/truenas-portainer",
+      "filename": "ops-tandoor-truenas-portainer.md",
       "title": "Truenas Portainer",
       "category": "ops",
-      "subcategory": "install",
+      "subcategory": "tandoor",
       "word_count": 1076,
       "tags": [
+        "tandoor",
         "operations",
-        "install",
         "advanced",
         "truenas"
       ]
     },
     {
       "source_path": "tandoor/install/unraid.md",
-      "id": "ops/install/unraid",
-      "filename": "ops-install-unraid.md",
+      "id": "ops/tandoor/unraid",
+      "filename": "ops-tandoor-unraid.md",
       "title": "Unraid",
       "category": "ops",
-      "subcategory": "install",
+      "subcategory": "tandoor",
       "word_count": 224,
       "tags": [
+        "tandoor",
         "operations",
-        "install",
         "unraid"
       ]
     },
     {
       "source_path": "tandoor/install/wsl.md",
-      "id": "ops/install/wsl",
-      "filename": "ops-install-wsl.md",
+      "id": "ops/tandoor/wsl",
+      "filename": "ops-tandoor-wsl.md",
       "title": "Ubuntu Installation on Windows (WSL) and Docker Desktop",
       "category": "ops",
-      "subcategory": "install",
+      "subcategory": "tandoor",
       "word_count": 543,
       "tags": [
+        "tandoor",
         "ubuntu",
         "operations",
-        "install",
         "docker"
       ]
     },
     {
       "source_path": "tandoor/system/backup.md",
-      "id": "ops/system/backup",
-      "filename": "ops-system-backup.md",
+      "id": "ops/tandoor/backup",
+      "filename": "ops-tandoor-backup.md",
       "title": "Backup",
       "category": "ops",
-      "subcategory": "system",
+      "subcategory": "tandoor",
       "word_count": 667,
       "tags": [
+        "tandoor",
         "operations",
-        "backup",
         "advanced",
-        "system"
+        "backup"
       ]
     },
     {
       "source_path": "tandoor/system/configuration.md",
-      "id": "ops/system/configuration",
-      "filename": "ops-system-configuration.md",
+      "id": "ops/tandoor/configuration",
+      "filename": "ops-tandoor-configuration.md",
       "title": "Configuration",
       "category": "ops",
-      "subcategory": "system",
+      "subcategory": "tandoor",
       "word_count": 2917,
       "tags": [
-        "operations",
-        "advanced",
+        "tandoor",
         "configuration",
-        "system"
+        "operations",
+        "advanced"
       ]
     },
     {
       "source_path": "tandoor/system/migration_sqlite-postgres.md",
-      "id": "ops/system/migration-sqlite-postgres",
-      "filename": "ops-system-migration-sqlite-postgres.md",
+      "id": "ops/tandoor/migration-sqlite-postgres",
+      "filename": "ops-tandoor-migration-sqlite-postgres.md",
       "title": "How to migrate from sqlite3 database to postgresql",
       "category": "ops",
-      "subcategory": "system",
+      "subcategory": "tandoor",
       "word_count": 224,
       "tags": [
-        "operations",
-        "tandoor",
         "how",
-        "system",
-        "sql"
+        "sql",
+        "docker",
+        "operations",
+        "tandoor"
       ]
     },
     {
       "source_path": "tandoor/system/permissions.md",
-      "id": "concept/system/permissions",
-      "filename": "concept-system-permissions.md",
+      "id": "concept/tandoor/permissions",
+      "filename": "concept-tandoor-permissions.md",
       "title": "Permissions",
       "category": "concept",
-      "subcategory": "system",
+      "subcategory": "tandoor",
       "word_count": 265,
       "tags": [
-        "concept",
-        "rust",
+        "tandoor",
         "permissions",
-        "system"
+        "concept",
+        "rust"
       ]
     },
     {
       "source_path": "tandoor/system/updating.md",
-      "id": "ops/system/updating",
-      "filename": "ops-system-updating.md",
+      "id": "ops/tandoor/updating",
+      "filename": "ops-tandoor-updating.md",
       "title": "Updating",
       "category": "ops",
-      "subcategory": "system",
+      "subcategory": "tandoor",
       "word_count": 380,
       "tags": [
+        "tandoor",
         "docker",
         "operations",
-        "updating",
-        "system"
+        "updating"
       ]
     },
     {
@@ -2817,8 +2831,8 @@
       "subcategory": "windmill",
       "word_count": 467,
       "tags": [
-        "operations",
-        "windmill"
+        "windmill",
+        "operations"
       ]
     },
     {
@@ -2830,10 +2844,10 @@
       "subcategory": "windmill",
       "word_count": 2446,
       "tags": [
-        "operations",
         "windmill",
-        "oauth",
-        "advanced"
+        "operations",
+        "advanced",
+        "oauth"
       ]
     },
     {
@@ -2845,8 +2859,8 @@
       "subcategory": "windmill",
       "word_count": 677,
       "tags": [
-        "operations",
         "windmill",
+        "operations",
         "advanced"
       ]
     },
@@ -2860,8 +2874,8 @@
       "word_count": 579,
       "tags": [
         "windmill",
-        "beginner",
-        "tutorial"
+        "tutorial",
+        "beginner"
       ]
     },
     {
@@ -2873,10 +2887,10 @@
       "subcategory": "windmill",
       "word_count": 888,
       "tags": [
-        "operations",
-        "documentation",
         "windmill",
-        "advanced"
+        "operations",
+        "advanced",
+        "documentation"
       ]
     },
     {
@@ -2895,496 +2909,481 @@
     },
     {
       "source_path": "windmill/advanced/10_browser_automation/index.mdx",
-      "id": "meta/10_browser_automation/index",
-      "filename": "meta-10_browser_automation-index.md",
+      "id": "meta/windmill/index",
+      "filename": "meta-windmill-index.md",
       "title": "Browser automation",
       "category": "meta",
-      "subcategory": "10_browser_automation",
+      "subcategory": "windmill",
       "word_count": 284,
       "tags": [
-        "browser",
         "windmill",
-        "10_browser_automation",
+        "meta",
         "api",
-        "meta"
+        "browser"
       ]
     },
     {
       "source_path": "windmill/advanced/11_git_sync/cli_sync.mdx",
-      "id": "ops/11_git_sync/cli-sync",
-      "filename": "ops-11_git_sync-cli-sync.md",
+      "id": "ops/windmill/cli-sync",
+      "filename": "ops-windmill-cli-sync.md",
       "title": "CLI sync",
       "category": "ops",
-      "subcategory": "11_git_sync",
+      "subcategory": "windmill",
       "word_count": 111,
       "tags": [
-        "operations",
-        "11_git_sync",
-        "cli"
+        "windmill",
+        "cli",
+        "operations"
       ]
     },
     {
       "source_path": "windmill/advanced/11_git_sync/index.mdx",
-      "id": "meta/11_git_sync/index",
-      "filename": "meta-11_git_sync-index.md",
+      "id": "meta/windmill/index-2",
+      "filename": "meta-windmill-index.md",
       "title": "Git sync",
       "category": "meta",
-      "subcategory": "11_git_sync",
+      "subcategory": "windmill",
       "word_count": 1563,
       "tags": [
-        "git",
-        "11_git_sync",
+        "windmill",
         "advanced",
-        "meta"
+        "meta",
+        "git"
       ]
     },
     {
       "source_path": "windmill/advanced/12_deploy_to_prod/index.mdx",
-      "id": "meta/12_deploy_to_prod/index",
-      "filename": "meta-12_deploy_to_prod-index.md",
+      "id": "meta/windmill/index-3",
+      "filename": "meta-windmill-index.md",
       "title": "Deploy to prod",
       "category": "meta",
-      "subcategory": "12_deploy_to_prod",
+      "subcategory": "windmill",
       "word_count": 352,
       "tags": [
-        "12_deploy_to_prod",
+        "windmill",
         "deploy",
         "meta"
       ]
     },
     {
       "source_path": "windmill/advanced/13_version_control/index.mdx",
-      "id": "meta/13_version_control/index",
-      "filename": "meta-13_version_control-index.md",
+      "id": "meta/windmill/index-4",
+      "filename": "meta-windmill-index.md",
       "title": "Version control",
       "category": "meta",
-      "subcategory": "13_version_control",
+      "subcategory": "windmill",
       "word_count": 239,
       "tags": [
-        "version",
-        "13_version_control",
-        "meta"
+        "windmill",
+        "meta",
+        "version"
       ]
     },
     {
       "source_path": "windmill/advanced/14_dependencies_in_typescript/index.mdx",
-      "id": "meta/14_dependencies_in_typescript/index",
-      "filename": "meta-14_dependencies_in_typescript-index.md",
+      "id": "meta/windmill/index-5",
+      "filename": "meta-windmill-index.md",
       "title": "Dependencies in TypeScript",
       "category": "meta",
-      "subcategory": "14_dependencies_in_typescript",
+      "subcategory": "windmill",
       "word_count": 1768,
       "tags": [
-        "14_dependencies_in_typescript",
-        "typescript",
         "advanced",
+        "meta",
         "dependencies",
-        "meta"
+        "windmill",
+        "typescript"
       ]
     },
     {
       "source_path": "windmill/advanced/15_dependencies_in_python/index.mdx",
-      "id": "meta/15_dependencies_in_python/index",
-      "filename": "meta-15_dependencies_in_python-index.md",
+      "id": "meta/windmill/index-6",
+      "filename": "meta-windmill-index.md",
       "title": "Dependencies in Python",
       "category": "meta",
-      "subcategory": "15_dependencies_in_python",
+      "subcategory": "windmill",
       "word_count": 1971,
       "tags": [
-        "python",
-        "15_dependencies_in_python",
         "advanced",
-        "dependencies",
-        "meta"
+        "meta",
+        "windmill",
+        "python",
+        "dependencies"
       ]
     },
     {
       "source_path": "windmill/advanced/16_external_auth_with_jwt/index.mdx",
-      "id": "meta/16_external_auth_with_jwt/index",
-      "filename": "meta-16_external_auth_with_jwt-index.md",
+      "id": "meta/windmill/index-7",
+      "filename": "meta-windmill-index.md",
       "title": "External auth with JWT",
       "category": "meta",
-      "subcategory": "16_external_auth_with_jwt",
+      "subcategory": "windmill",
       "word_count": 597,
       "tags": [
-        "external",
         "windmill",
-        "16_external_auth_with_jwt",
         "advanced",
-        "meta"
+        "meta",
+        "external"
       ]
     },
     {
       "source_path": "windmill/advanced/17_email_triggers/index.mdx",
-      "id": "meta/17_email_triggers/index",
-      "filename": "meta-17_email_triggers-index.md",
+      "id": "meta/windmill/index-8",
+      "filename": "meta-windmill-index.md",
       "title": "Email triggers",
       "category": "meta",
-      "subcategory": "17_email_triggers",
+      "subcategory": "windmill",
       "word_count": 850,
       "tags": [
+        "windmill",
         "advanced",
-        "email",
-        "17_email_triggers",
-        "meta"
+        "meta",
+        "email"
       ]
     },
     {
       "source_path": "windmill/advanced/18_instance_settings/index.mdx",
-      "id": "meta/18_instance_settings/index",
-      "filename": "meta-18_instance_settings-index.md",
+      "id": "meta/windmill/index-9",
+      "filename": "meta-windmill-index.md",
       "title": "Instance settings",
       "category": "meta",
-      "subcategory": "18_instance_settings",
+      "subcategory": "windmill",
       "word_count": 2699,
       "tags": [
-        "18_instance_settings",
-        "instance",
+        "windmill",
         "advanced",
-        "meta"
+        "meta",
+        "instance"
       ]
     },
     {
       "source_path": "windmill/advanced/19_explicit_progress/index.mdx",
-      "id": "meta/19_explicit_progress/index",
-      "filename": "meta-19_explicit_progress-index.md",
+      "id": "meta/windmill/index-10",
+      "filename": "meta-windmill-index.md",
       "title": "Set/Get progress from code",
       "category": "meta",
-      "subcategory": "19_explicit_progress",
+      "subcategory": "windmill",
       "word_count": 313,
       "tags": [
-        "setget",
-        "19_explicit_progress",
-        "meta"
+        "windmill",
+        "meta",
+        "setget"
       ]
     },
     {
       "source_path": "windmill/advanced/1_self_host/aws_eks_ecs.mdx",
-      "id": "ops/1_self_host/aws-eks-ecs",
-      "filename": "ops-1_self_host-aws-eks-ecs.md",
+      "id": "ops/windmill/aws-eks-ecs",
+      "filename": "ops-windmill-aws-eks-ecs.md",
       "title": "Windmill on AWS",
       "category": "ops",
-      "subcategory": "1_self_host",
+      "subcategory": "windmill",
       "word_count": 3702,
       "tags": [
-        "operations",
         "windmill",
-        "aws",
         "advanced",
-        "1_self_host"
+        "operations",
+        "aws"
       ]
     },
     {
       "source_path": "windmill/advanced/1_self_host/index.mdx",
-      "id": "meta/1_self_host/index",
-      "filename": "meta-1_self_host-index.md",
+      "id": "meta/windmill/index-11",
+      "filename": "meta-windmill-index.md",
       "title": "Self-host",
       "category": "meta",
-      "subcategory": "1_self_host",
+      "subcategory": "windmill",
       "word_count": 3010,
       "tags": [
+        "windmill",
         "selfhost",
-        "advanced",
-        "1_self_host",
-        "meta"
+        "meta",
+        "advanced"
       ]
     },
     {
       "source_path": "windmill/advanced/20_workspace_forks/index.mdx",
-      "id": "meta/20_workspace_forks/index",
-      "filename": "meta-20_workspace_forks-index.md",
+      "id": "meta/windmill/index-12",
+      "filename": "meta-windmill-index.md",
       "title": "Workspace forks",
       "category": "meta",
-      "subcategory": "20_workspace_forks",
+      "subcategory": "windmill",
       "word_count": 965,
       "tags": [
+        "windmill",
         "workspace",
-        "20_workspace_forks",
         "meta"
       ]
     },
     {
       "source_path": "windmill/advanced/21_scaling/index.mdx",
-      "id": "meta/21_scaling/index",
-      "filename": "meta-21_scaling-index.md",
+      "id": "meta/windmill/index-13",
+      "filename": "meta-windmill-index.md",
       "title": "Scaling workers",
       "category": "meta",
-      "subcategory": "21_scaling",
+      "subcategory": "windmill",
       "word_count": 1300,
       "tags": [
-        "scaling",
-        "21_scaling",
+        "windmill",
         "advanced",
-        "meta"
+        "meta",
+        "scaling"
       ]
     },
     {
       "source_path": "windmill/advanced/2_clients/python_client.md",
-      "id": "ops/2_clients/python-client",
-      "filename": "ops-2_clients-python-client.md",
+      "id": "ops/windmill/python-client",
+      "filename": "ops-windmill-python-client.md",
       "title": "Python client",
       "category": "ops",
-      "subcategory": "2_clients",
+      "subcategory": "windmill",
       "word_count": 405,
       "tags": [
-        "2_clients",
-        "operations",
+        "windmill",
         "python",
-        "windmill"
+        "operations"
       ]
     },
     {
       "source_path": "windmill/advanced/2_clients/rust_client.mdx",
-      "id": "ops/2_clients/rust-client",
-      "filename": "ops-2_clients-rust-client.md",
+      "id": "ops/windmill/rust-client",
+      "filename": "ops-windmill-rust-client.md",
       "title": "Rust client",
       "category": "ops",
-      "subcategory": "2_clients",
+      "subcategory": "windmill",
       "word_count": 448,
       "tags": [
-        "operations",
         "windmill",
+        "operations",
         "rust",
-        "2_clients",
         "api"
       ]
     },
     {
       "source_path": "windmill/advanced/2_clients/ts_client.mdx",
-      "id": "ops/2_clients/ts-client",
-      "filename": "ops-2_clients-ts-client.md",
+      "id": "ops/windmill/ts-client",
+      "filename": "ops-windmill-ts-client.md",
       "title": "TypeScript client",
       "category": "ops",
-      "subcategory": "2_clients",
+      "subcategory": "windmill",
       "word_count": 292,
       "tags": [
-        "2_clients",
+        "windmill",
         "operations",
         "typescript"
       ]
     },
     {
       "source_path": "windmill/advanced/3_cli/app.md",
-      "id": "concept/3_cli/app",
-      "filename": "concept-3_cli-app.md",
+      "id": "concept/windmill/app",
+      "filename": "concept-windmill-app.md",
       "title": "Apps",
       "category": "concept",
-      "subcategory": "3_cli",
+      "subcategory": "windmill",
       "word_count": 148,
       "tags": [
-        "apps",
-        "concept",
         "windmill",
-        "3_cli"
+        "concept",
+        "apps"
       ]
     },
     {
       "source_path": "windmill/advanced/3_cli/branch-specific-items.mdx",
-      "id": "ops/3_cli/branch-specific-items",
-      "filename": "ops-3_cli-branch-specific-items.md",
+      "id": "ops/windmill/branch-specific-items",
+      "filename": "ops-windmill-branch-specific-items.md",
       "title": "Branch-specific items",
       "category": "ops",
-      "subcategory": "3_cli",
+      "subcategory": "windmill",
       "word_count": 919,
       "tags": [
+        "windmill",
         "operations",
         "advanced",
-        "branchspecific",
-        "3_cli"
+        "branchspecific"
       ]
     },
     {
       "source_path": "windmill/advanced/3_cli/flow.md",
-      "id": "concept/3_cli/flow",
-      "filename": "concept-3_cli-flow.md",
+      "id": "concept/windmill/flow",
+      "filename": "concept-windmill-flow.md",
       "title": "Flows",
       "category": "concept",
-      "subcategory": "3_cli",
+      "subcategory": "windmill",
       "word_count": 441,
       "tags": [
-        "flows",
-        "concept",
         "windmill",
-        "3_cli"
+        "concept",
+        "flows"
       ]
     },
     {
       "source_path": "windmill/advanced/3_cli/folder.md",
-      "id": "concept/3_cli/folder",
-      "filename": "concept-3_cli-folder.md",
+      "id": "concept/windmill/folder",
+      "filename": "concept-windmill-folder.md",
       "title": "Folder",
       "category": "concept",
-      "subcategory": "3_cli",
+      "subcategory": "windmill",
       "word_count": 141,
       "tags": [
-        "concept",
         "windmill",
-        "folder",
-        "3_cli"
+        "concept",
+        "folder"
       ]
     },
     {
       "source_path": "windmill/advanced/3_cli/gitsync-settings.mdx",
-      "id": "ops/3_cli/gitsync-settings",
-      "filename": "ops-3_cli-gitsync-settings.md",
+      "id": "ops/windmill/gitsync-settings",
+      "filename": "ops-windmill-gitsync-settings.md",
       "title": "Git sync settings",
       "category": "ops",
-      "subcategory": "3_cli",
+      "subcategory": "windmill",
       "word_count": 1119,
       "tags": [
-        "operations",
         "windmill",
-        "git",
+        "operations",
         "advanced",
-        "3_cli"
+        "git"
       ]
     },
     {
       "source_path": "windmill/advanced/3_cli/index.mdx",
-      "id": "meta/3_cli/index",
-      "filename": "meta-3_cli-index.md",
+      "id": "meta/windmill/index-14",
+      "filename": "meta-windmill-index.md",
       "title": "Command-line interface (CLI)",
       "category": "meta",
-      "subcategory": "3_cli",
+      "subcategory": "windmill",
       "word_count": 110,
       "tags": [
+        "windmill",
         "commandline",
-        "3_cli",
         "meta"
       ]
     },
     {
       "source_path": "windmill/advanced/3_cli/installation.md",
-      "id": "ops/3_cli/installation",
-      "filename": "ops-3_cli-installation.md",
+      "id": "ops/windmill/installation",
+      "filename": "ops-windmill-installation.md",
       "title": "Installation",
       "category": "ops",
-      "subcategory": "3_cli",
+      "subcategory": "windmill",
       "word_count": 270,
       "tags": [
-        "operations",
         "windmill",
         "installation",
-        "3_cli"
+        "operations"
       ]
     },
     {
       "source_path": "windmill/advanced/3_cli/resource.md",
-      "id": "concept/3_cli/resource",
-      "filename": "concept-3_cli-resource.md",
+      "id": "concept/windmill/resource",
+      "filename": "concept-windmill-resource.md",
       "title": "Resources",
       "category": "concept",
-      "subcategory": "3_cli",
+      "subcategory": "windmill",
       "word_count": 310,
       "tags": [
-        "concept",
         "windmill",
         "resources",
-        "3_cli"
+        "concept"
       ]
     },
     {
       "source_path": "windmill/advanced/3_cli/script.md",
-      "id": "concept/3_cli/script",
-      "filename": "concept-3_cli-script.md",
+      "id": "concept/windmill/script",
+      "filename": "concept-windmill-script.md",
       "title": "Scripts",
       "category": "concept",
-      "subcategory": "3_cli",
+      "subcategory": "windmill",
       "word_count": 868,
       "tags": [
-        "scripts",
         "windmill",
         "concept",
         "advanced",
-        "3_cli"
+        "scripts"
       ]
     },
     {
       "source_path": "windmill/advanced/3_cli/sync.mdx",
-      "id": "ops/3_cli/sync",
-      "filename": "ops-3_cli-sync.md",
+      "id": "ops/windmill/sync",
+      "filename": "ops-windmill-sync.md",
       "title": "Sync",
       "category": "ops",
-      "subcategory": "3_cli",
+      "subcategory": "windmill",
       "word_count": 1988,
       "tags": [
-        "sync",
+        "windmill",
         "operations",
         "advanced",
-        "3_cli"
+        "sync"
       ]
     },
     {
       "source_path": "windmill/advanced/3_cli/user.md",
-      "id": "concept/3_cli/user",
-      "filename": "concept-3_cli-user.md",
+      "id": "concept/windmill/user",
+      "filename": "concept-windmill-user.md",
       "title": "Users management",
       "category": "concept",
-      "subcategory": "3_cli",
+      "subcategory": "windmill",
       "word_count": 500,
       "tags": [
-        "concept",
         "windmill",
-        "3_cli",
+        "concept",
         "users"
       ]
     },
     {
       "source_path": "windmill/advanced/3_cli/variable.md",
-      "id": "concept/3_cli/variable",
-      "filename": "concept-3_cli-variable.md",
+      "id": "concept/windmill/variable",
+      "filename": "concept-windmill-variable.md",
       "title": "Variables",
       "category": "concept",
-      "subcategory": "3_cli",
+      "subcategory": "windmill",
       "word_count": 442,
       "tags": [
-        "concept",
-        "variables",
         "windmill",
-        "3_cli"
+        "variables",
+        "concept"
       ]
     },
     {
       "source_path": "windmill/advanced/3_cli/workspace-management.md",
-      "id": "ops/3_cli/workspace-management",
-      "filename": "ops-3_cli-workspace-management.md",
+      "id": "ops/windmill/workspace-management",
+      "filename": "ops-windmill-workspace-management.md",
       "title": "Workspace management",
       "category": "ops",
-      "subcategory": "3_cli",
+      "subcategory": "windmill",
       "word_count": 839,
       "tags": [
-        "operations",
         "windmill",
-        "advanced",
-        "3_cli",
-        "workspace"
+        "workspace",
+        "operations",
+        "advanced"
       ]
     },
     {
       "source_path": "windmill/advanced/4_local_development/index.mdx",
-      "id": "meta/4_local_development/index",
-      "filename": "meta-4_local_development-index.md",
+      "id": "meta/windmill/index-15",
+      "filename": "meta-windmill-index.md",
       "title": "Local development",
       "category": "meta",
-      "subcategory": "4_local_development",
+      "subcategory": "windmill",
       "word_count": 2239,
       "tags": [
-        "4_local_development",
-        "advanced",
+        "windmill",
         "local",
-        "meta"
+        "meta",
+        "advanced"
       ]
     },
     {
       "source_path": "windmill/advanced/4_local_development/run_locally.mdx",
-      "id": "ops/4_local_development/run-locally",
-      "filename": "ops-4_local_development-run-locally.md",
+      "id": "ops/windmill/run-locally",
+      "filename": "ops-windmill-run-locally.md",
       "title": "Run locally",
       "category": "ops",
-      "subcategory": "4_local_development",
+      "subcategory": "windmill",
       "word_count": 835,
       "tags": [
-        "4_local_development",
+        "windmill",
         "operations",
         "advanced",
         "run"
@@ -3392,75 +3391,75 @@
     },
     {
       "source_path": "windmill/advanced/5_sharing_common_logic/index.mdx",
-      "id": "meta/5_sharing_common_logic/index",
-      "filename": "meta-5_sharing_common_logic-index.md",
+      "id": "meta/windmill/index-16",
+      "filename": "meta-windmill-index.md",
       "title": "Sharing common logic",
       "category": "meta",
-      "subcategory": "5_sharing_common_logic",
+      "subcategory": "windmill",
       "word_count": 803,
       "tags": [
-        "sharing",
-        "5_sharing_common_logic",
+        "windmill",
         "advanced",
-        "meta"
+        "meta",
+        "sharing"
       ]
     },
     {
       "source_path": "windmill/advanced/6_imports/index.mdx",
-      "id": "meta/6_imports/index",
-      "filename": "meta-6_imports-index.md",
+      "id": "meta/windmill/index-17",
+      "filename": "meta-windmill-index.md",
       "title": "Dependency management & imports",
       "category": "meta",
-      "subcategory": "6_imports",
+      "subcategory": "windmill",
       "word_count": 1457,
       "tags": [
+        "windmill",
         "advanced",
-        "6_imports",
         "dependency",
         "meta"
       ]
     },
     {
       "source_path": "windmill/advanced/7_docker/index.mdx",
-      "id": "meta/7_docker/index",
-      "filename": "meta-7_docker-index.md",
+      "id": "meta/windmill/index-18",
+      "filename": "meta-windmill-index.md",
       "title": "Run Docker containers",
       "category": "meta",
-      "subcategory": "7_docker",
+      "subcategory": "windmill",
       "word_count": 717,
       "tags": [
-        "7_docker",
         "docker",
         "advanced",
         "run",
-        "meta"
+        "meta",
+        "windmill"
       ]
     },
     {
       "source_path": "windmill/advanced/8_preinstall_binaries/index.mdx",
-      "id": "meta/8_preinstall_binaries/index",
-      "filename": "meta-8_preinstall_binaries-index.md",
+      "id": "meta/windmill/index-19",
+      "filename": "meta-windmill-index.md",
       "title": "Preinstall binaries",
       "category": "meta",
-      "subcategory": "8_preinstall_binaries",
+      "subcategory": "windmill",
       "word_count": 681,
       "tags": [
+        "windmill",
         "advanced",
-        "8_preinstall_binaries",
-        "preinstall",
-        "meta"
+        "meta",
+        "preinstall"
       ]
     },
     {
       "source_path": "windmill/advanced/9_deploy_gh_gl/index.mdx",
-      "id": "meta/9_deploy_gh_gl/index",
-      "filename": "meta-9_deploy_gh_gl-index.md",
+      "id": "meta/windmill/index-20",
+      "filename": "meta-windmill-index.md",
       "title": "Deploy to prod using a git workflow",
       "category": "meta",
-      "subcategory": "9_deploy_gh_gl",
+      "subcategory": "windmill",
       "word_count": 2477,
       "tags": [
-        "9_deploy_gh_gl",
+        "windmill",
         "deploy",
         "advanced",
         "meta"
@@ -3468,164 +3467,161 @@
     },
     {
       "source_path": "windmill/advanced/security_isolation/index.mdx",
-      "id": "meta/security_isolation/index",
-      "filename": "meta-security_isolation-index.md",
+      "id": "meta/windmill/index-21",
+      "filename": "meta-windmill-index.md",
       "title": "Security and process isolation",
       "category": "meta",
-      "subcategory": "security_isolation",
+      "subcategory": "windmill",
       "word_count": 1964,
       "tags": [
-        "security_isolation",
         "windmill",
-        "security",
         "advanced",
-        "meta"
+        "meta",
+        "security"
       ]
     },
     {
       "source_path": "windmill/cli_local_dev/1_vscode-extension/index.mdx",
-      "id": "meta/1_vscode-extension/index",
-      "filename": "meta-1_vscode-extension-index.md",
+      "id": "meta/windmill/index-22",
+      "filename": "meta-windmill-index.md",
       "title": "VS Code extension",
       "category": "meta",
-      "subcategory": "1_vscode-extension",
+      "subcategory": "windmill",
       "word_count": 1028,
       "tags": [
-        "1_vscode-extension",
+        "windmill",
         "meta"
       ]
     },
     {
       "source_path": "windmill/core_concepts/0_draft_and_deploy/index.mdx",
-      "id": "meta/0_draft_and_deploy/index",
-      "filename": "meta-0_draft_and_deploy-index.md",
+      "id": "meta/windmill/index-23",
+      "filename": "meta-windmill-index.md",
       "title": "Draft and deploy",
       "category": "meta",
-      "subcategory": "0_draft_and_deploy",
+      "subcategory": "windmill",
       "word_count": 646,
       "tags": [
-        "0_draft_and_deploy",
-        "draft",
-        "meta"
+        "windmill",
+        "meta",
+        "draft"
       ]
     },
     {
       "source_path": "windmill/core_concepts/10_error_handling/index.mdx",
-      "id": "meta/10_error_handling/index",
-      "filename": "meta-10_error_handling-index.md",
+      "id": "meta/windmill/index-24",
+      "filename": "meta-windmill-index.md",
       "title": "Error handling",
       "category": "meta",
-      "subcategory": "10_error_handling",
+      "subcategory": "windmill",
       "word_count": 1734,
       "tags": [
-        "10_error_handling",
+        "windmill",
         "advanced",
-        "error",
-        "meta"
+        "meta",
+        "error"
       ]
     },
     {
       "source_path": "windmill/core_concepts/11_persistent_storage/data_tables.mdx",
-      "id": "tutorial/11_persistent_storage/data-tables",
-      "filename": "tutorial-11_persistent_storage-data-tables.md",
+      "id": "tutorial/windmill/data-tables",
+      "filename": "tutorial-windmill-data-tables.md",
       "title": "Data tables",
       "category": "tutorial",
-      "subcategory": "11_persistent_storage",
+      "subcategory": "windmill",
       "word_count": 643,
       "tags": [
-        "data",
-        "beginner",
+        "windmill",
         "tutorial",
-        "11_persistent_storage"
+        "data",
+        "beginner"
       ]
     },
     {
       "source_path": "windmill/core_concepts/11_persistent_storage/ducklake.mdx",
-      "id": "tutorial/11_persistent_storage/ducklake",
-      "filename": "tutorial-11_persistent_storage-ducklake.md",
+      "id": "tutorial/windmill/ducklake",
+      "filename": "tutorial-windmill-ducklake.md",
       "title": "Ducklake",
       "category": "tutorial",
-      "subcategory": "11_persistent_storage",
+      "subcategory": "windmill",
       "word_count": 621,
       "tags": [
-        "beginner",
-        "ducklake",
+        "windmill",
         "tutorial",
-        "11_persistent_storage"
+        "ducklake",
+        "beginner"
       ]
     },
     {
       "source_path": "windmill/core_concepts/11_persistent_storage/index.mdx",
-      "id": "meta/11_persistent_storage/index",
-      "filename": "meta-11_persistent_storage-index.md",
+      "id": "meta/windmill/index-25",
+      "filename": "meta-windmill-index.md",
       "title": "Persistent storage & databases",
       "category": "meta",
-      "subcategory": "11_persistent_storage",
+      "subcategory": "windmill",
       "word_count": 734,
       "tags": [
-        "persistent",
-        "11_persistent_storage",
-        "meta"
+        "windmill",
+        "meta",
+        "persistent"
       ]
     },
     {
       "source_path": "windmill/core_concepts/11_persistent_storage/key_value_stores.mdx",
-      "id": "ops/11_persistent_storage/key-value-stores",
-      "filename": "ops-11_persistent_storage-key-value-stores.md",
+      "id": "ops/windmill/key-value-stores",
+      "filename": "ops-windmill-key-value-stores.md",
       "title": "NoSQL & Document databases (Mongodb, Key-Value Stores)",
       "category": "ops",
-      "subcategory": "11_persistent_storage",
+      "subcategory": "windmill",
       "word_count": 355,
       "tags": [
-        "operations",
         "windmill",
         "nosql",
-        "11_persistent_storage",
-        "sql"
+        "sql",
+        "operations"
       ]
     },
     {
       "source_path": "windmill/core_concepts/11_persistent_storage/large_data_files.mdx",
-      "id": "concept/11_persistent_storage/large-data-files",
-      "filename": "concept-11_persistent_storage-large-data-files.md",
+      "id": "concept/windmill/large-data-files",
+      "filename": "concept-windmill-large-data-files.md",
       "title": "Large data: S3, R2, MinIO, Azure Blob, Google Cloud Storage",
       "category": "concept",
-      "subcategory": "11_persistent_storage",
+      "subcategory": "windmill",
       "word_count": 878,
       "tags": [
-        "concept",
-        "advanced",
+        "windmill",
         "large",
-        "11_persistent_storage"
+        "concept",
+        "advanced"
       ]
     },
     {
       "source_path": "windmill/core_concepts/11_persistent_storage/structured_databases.mdx",
-      "id": "tutorial/11_persistent_storage/structured-databases",
-      "filename": "tutorial-11_persistent_storage-structured-databases.md",
+      "id": "tutorial/windmill/structured-databases",
+      "filename": "tutorial-windmill-structured-databases.md",
       "title": "Big structured SQL data: Postgres (Supabase, Neon.tech)",
       "category": "tutorial",
-      "subcategory": "11_persistent_storage",
+      "subcategory": "windmill",
       "word_count": 626,
       "tags": [
+        "sql",
+        "tutorial",
         "big",
         "beginner",
-        "11_persistent_storage",
-        "sql",
-        "tutorial"
+        "windmill"
       ]
     },
     {
       "source_path": "windmill/core_concepts/11_persistent_storage/within_windmill.mdx",
-      "id": "concept/11_persistent_storage/within-windmill",
-      "filename": "concept-11_persistent_storage-within-windmill.md",
+      "id": "concept/windmill/within-windmill",
+      "filename": "concept-windmill-within-windmill.md",
       "title": "Within Windmill: Not recommended",
       "category": "concept",
-      "subcategory": "11_persistent_storage",
+      "subcategory": "windmill",
       "word_count": 1170,
       "tags": [
         "windmill",
-        "11_persistent_storage",
         "concept",
         "advanced",
         "within"
@@ -3633,405 +3629,402 @@
     },
     {
       "source_path": "windmill/core_concepts/12_staging_prod/index.md",
-      "id": "meta/12_staging_prod/index",
-      "filename": "meta-12_staging_prod-index.md",
+      "id": "meta/windmill/index-26",
+      "filename": "meta-windmill-index.md",
       "title": "Deploy to prod using the UI",
       "category": "meta",
-      "subcategory": "12_staging_prod",
+      "subcategory": "windmill",
       "word_count": 505,
       "tags": [
-        "12_staging_prod",
+        "windmill",
         "deploy",
         "meta"
       ]
     },
     {
       "source_path": "windmill/core_concepts/13_json_schema_and_parsing/index.mdx",
-      "id": "meta/13_json_schema_and_parsing/index",
-      "filename": "meta-13_json_schema_and_parsing-index.md",
+      "id": "meta/windmill/index-27",
+      "filename": "meta-windmill-index.md",
       "title": "JSON schema and parsing",
       "category": "meta",
-      "subcategory": "13_json_schema_and_parsing",
+      "subcategory": "windmill",
       "word_count": 2360,
       "tags": [
-        "json",
+        "windmill",
         "advanced",
-        "13_json_schema_and_parsing",
-        "meta"
+        "meta",
+        "json"
       ]
     },
     {
       "source_path": "windmill/core_concepts/14_audit_logs/index.mdx",
-      "id": "meta/14_audit_logs/index",
-      "filename": "meta-14_audit_logs-index.md",
+      "id": "meta/windmill/index-28",
+      "filename": "meta-windmill-index.md",
       "title": "Audit logs",
       "category": "meta",
-      "subcategory": "14_audit_logs",
+      "subcategory": "windmill",
       "word_count": 321,
       "tags": [
-        "audit",
-        "14_audit_logs",
-        "meta"
+        "windmill",
+        "meta",
+        "audit"
       ]
     },
     {
       "source_path": "windmill/core_concepts/15_authentification/index.mdx",
-      "id": "meta/15_authentification/index",
-      "filename": "meta-15_authentification-index.md",
+      "id": "meta/windmill/index-29",
+      "filename": "meta-windmill-index.md",
       "title": "Authentication",
       "category": "meta",
-      "subcategory": "15_authentification",
+      "subcategory": "windmill",
       "word_count": 849,
       "tags": [
-        "15_authentification",
+        "windmill",
         "authentication",
         "meta"
       ]
     },
     {
       "source_path": "windmill/core_concepts/16_roles_and_permissions/index.mdx",
-      "id": "meta/16_roles_and_permissions/index",
-      "filename": "meta-16_roles_and_permissions-index.md",
+      "id": "meta/windmill/index-30",
+      "filename": "meta-windmill-index.md",
       "title": "Roles and permissions",
       "category": "meta",
-      "subcategory": "16_roles_and_permissions",
+      "subcategory": "windmill",
       "word_count": 1431,
       "tags": [
-        "16_roles_and_permissions",
+        "windmill",
         "roles",
         "meta"
       ]
     },
     {
       "source_path": "windmill/core_concepts/17_collaboration/index.mdx",
-      "id": "meta/17_collaboration/index",
-      "filename": "meta-17_collaboration-index.md",
+      "id": "meta/windmill/index-31",
+      "filename": "meta-windmill-index.md",
       "title": "Collaboration in Windmill",
       "category": "meta",
-      "subcategory": "17_collaboration",
+      "subcategory": "windmill",
       "word_count": 635,
       "tags": [
-        "collaboration",
         "windmill",
-        "17_collaboration",
+        "collaboration",
         "meta"
       ]
     },
     {
       "source_path": "windmill/core_concepts/18_files_binary_data/index.mdx",
-      "id": "meta/18_files_binary_data/index",
-      "filename": "meta-18_files_binary_data-index.md",
+      "id": "meta/windmill/index-32",
+      "filename": "meta-windmill-index.md",
       "title": "Handling files and binary data",
       "category": "meta",
-      "subcategory": "18_files_binary_data",
+      "subcategory": "windmill",
       "word_count": 737,
       "tags": [
-        "handling",
-        "18_files_binary_data",
+        "windmill",
         "advanced",
-        "meta"
+        "meta",
+        "handling"
       ]
     },
     {
       "source_path": "windmill/core_concepts/19_rich_display_rendering/index.mdx",
-      "id": "meta/19_rich_display_rendering/index",
-      "filename": "meta-19_rich_display_rendering-index.md",
+      "id": "meta/windmill/index-33",
+      "filename": "meta-windmill-index.md",
       "title": "Rich display rendering",
       "category": "meta",
-      "subcategory": "19_rich_display_rendering",
+      "subcategory": "windmill",
       "word_count": 1939,
       "tags": [
+        "windmill",
         "rich",
-        "19_rich_display_rendering",
         "advanced",
         "meta"
       ]
     },
     {
       "source_path": "windmill/core_concepts/1_scheduling/index.mdx",
-      "id": "meta/1_scheduling/index",
-      "filename": "meta-1_scheduling-index.md",
+      "id": "meta/windmill/index-34",
+      "filename": "meta-windmill-index.md",
       "title": "Schedules",
       "category": "meta",
-      "subcategory": "1_scheduling",
+      "subcategory": "windmill",
       "word_count": 2610,
       "tags": [
-        "schedules",
+        "windmill",
         "advanced",
-        "1_scheduling",
-        "meta"
+        "meta",
+        "schedules"
       ]
     },
     {
       "source_path": "windmill/core_concepts/20_jobs/index.mdx",
-      "id": "meta/20_jobs/index",
-      "filename": "meta-20_jobs-index.md",
+      "id": "meta/windmill/index-35",
+      "filename": "meta-windmill-index.md",
       "title": "Jobs",
       "category": "meta",
-      "subcategory": "20_jobs",
+      "subcategory": "windmill",
       "word_count": 3067,
       "tags": [
-        "jobs",
+        "windmill",
         "advanced",
-        "20_jobs",
-        "meta"
+        "meta",
+        "jobs"
       ]
     },
     {
       "source_path": "windmill/core_concepts/21_concurrency_limits/index.md",
-      "id": "meta/21_concurrency_limits/index",
-      "filename": "meta-21_concurrency_limits-index.md",
+      "id": "meta/windmill/index-36",
+      "filename": "meta-windmill-index.md",
       "title": "Concurrency limits",
       "category": "meta",
-      "subcategory": "21_concurrency_limits",
+      "subcategory": "windmill",
       "word_count": 442,
       "tags": [
-        "21_concurrency_limits",
+        "windmill",
         "concurrency",
-        "api",
-        "meta"
+        "meta",
+        "api"
       ]
     },
     {
       "source_path": "windmill/core_concepts/22_ai_generation/index.mdx",
-      "id": "meta/22_ai_generation/index",
-      "filename": "meta-22_ai_generation-index.md",
+      "id": "meta/windmill/index-37",
+      "filename": "meta-windmill-index.md",
       "title": "Windmill AI",
       "category": "meta",
-      "subcategory": "22_ai_generation",
+      "subcategory": "windmill",
       "word_count": 1546,
       "tags": [
-        "22_ai_generation",
         "windmill",
         "meta"
       ]
     },
     {
       "source_path": "windmill/core_concepts/22_job_debouncing/index.md",
-      "id": "meta/22_job_debouncing/index",
-      "filename": "meta-22_job_debouncing-index.md",
+      "id": "meta/windmill/index-38",
+      "filename": "meta-windmill-index.md",
       "title": "Job debouncing",
       "category": "meta",
-      "subcategory": "22_job_debouncing",
+      "subcategory": "windmill",
       "word_count": 324,
       "tags": [
-        "22_job_debouncing",
+        "windmill",
         "job",
         "meta"
       ]
     },
     {
       "source_path": "windmill/core_concepts/23_instant_preview/index.mdx",
-      "id": "meta/23_instant_preview/index",
-      "filename": "meta-23_instant_preview-index.md",
+      "id": "meta/windmill/index-39",
+      "filename": "meta-windmill-index.md",
       "title": "Instant preview & testing",
       "category": "meta",
-      "subcategory": "23_instant_preview",
+      "subcategory": "windmill",
       "word_count": 817,
       "tags": [
-        "23_instant_preview",
-        "instant",
-        "meta"
+        "windmill",
+        "meta",
+        "instant"
       ]
     },
     {
       "source_path": "windmill/core_concepts/24_caching/index.md",
-      "id": "meta/24_caching/index",
-      "filename": "meta-24_caching-index.md",
+      "id": "meta/windmill/index-40",
+      "filename": "meta-windmill-index.md",
       "title": "Caching",
       "category": "meta",
-      "subcategory": "24_caching",
+      "subcategory": "windmill",
       "word_count": 781,
       "tags": [
-        "24_caching",
+        "windmill",
         "caching",
         "meta"
       ]
     },
     {
       "source_path": "windmill/core_concepts/25_dedicated_workers/index.mdx",
-      "id": "meta/25_dedicated_workers/index",
-      "filename": "meta-25_dedicated_workers-index.md",
+      "id": "meta/windmill/index-41",
+      "filename": "meta-windmill-index.md",
       "title": "Dedicated workers / High throughput",
       "category": "meta",
-      "subcategory": "25_dedicated_workers",
+      "subcategory": "windmill",
       "word_count": 657,
       "tags": [
+        "windmill",
         "dedicated",
-        "25_dedicated_workers",
         "meta"
       ]
     },
     {
       "source_path": "windmill/core_concepts/26_content_search/index.mdx",
-      "id": "meta/26_content_search/index",
-      "filename": "meta-26_content_search-index.md",
+      "id": "meta/windmill/index-42",
+      "filename": "meta-windmill-index.md",
       "title": "Content search",
       "category": "meta",
-      "subcategory": "26_content_search",
+      "subcategory": "windmill",
       "word_count": 66,
       "tags": [
-        "26_content_search",
-        "content",
-        "meta"
+        "windmill",
+        "meta",
+        "content"
       ]
     },
     {
       "source_path": "windmill/core_concepts/27_data_pipelines/index.mdx",
-      "id": "meta/27_data_pipelines/index",
-      "filename": "meta-27_data_pipelines-index.md",
+      "id": "meta/windmill/index-43",
+      "filename": "meta-windmill-index.md",
       "title": "Data pipelines",
       "category": "meta",
-      "subcategory": "27_data_pipelines",
+      "subcategory": "windmill",
       "word_count": 3113,
       "tags": [
-        "27_data_pipelines",
-        "data",
+        "windmill",
         "advanced",
+        "data",
         "meta"
       ]
     },
     {
       "source_path": "windmill/core_concepts/28_agent_workers/index.mdx",
-      "id": "meta/28_agent_workers/index",
-      "filename": "meta-28_agent_workers-index.md",
+      "id": "meta/windmill/index-44",
+      "filename": "meta-windmill-index.md",
       "title": "Agent workers",
       "category": "meta",
-      "subcategory": "28_agent_workers",
+      "subcategory": "windmill",
       "word_count": 844,
       "tags": [
-        "agent",
+        "windmill",
         "advanced",
-        "28_agent_workers",
-        "meta"
+        "meta",
+        "agent"
       ]
     },
     {
       "source_path": "windmill/core_concepts/29_oidc/index.mdx",
-      "id": "meta/29_oidc/index",
-      "filename": "meta-29_oidc-index.md",
+      "id": "meta/windmill/index-45",
+      "filename": "meta-windmill-index.md",
       "title": "OpenID Connect (OIDC)",
       "category": "meta",
-      "subcategory": "29_oidc",
+      "subcategory": "windmill",
       "word_count": 1422,
       "tags": [
-        "advanced",
-        "29_oidc",
+        "windmill",
         "openid",
+        "advanced",
         "meta"
       ]
     },
     {
       "source_path": "windmill/core_concepts/2_variables_and_secrets/index.mdx",
-      "id": "meta/2_variables_and_secrets/index",
-      "filename": "meta-2_variables_and_secrets-index.md",
+      "id": "meta/windmill/index-46",
+      "filename": "meta-windmill-index.md",
       "title": "Variables and secrets",
       "category": "meta",
-      "subcategory": "2_variables_and_secrets",
+      "subcategory": "windmill",
       "word_count": 988,
       "tags": [
-        "2_variables_and_secrets",
+        "windmill",
         "variables",
-        "advanced",
-        "meta"
+        "meta",
+        "advanced"
       ]
     },
     {
       "source_path": "windmill/core_concepts/30_workspace_secret_encryption/index.mdx",
-      "id": "meta/30_workspace_secret_encryption/index",
-      "filename": "meta-30_workspace_secret_encryption-index.md",
+      "id": "meta/windmill/index-47",
+      "filename": "meta-windmill-index.md",
       "title": "Workspace secret encryption",
       "category": "meta",
-      "subcategory": "30_workspace_secret_encryption",
+      "subcategory": "windmill",
       "word_count": 127,
       "tags": [
+        "windmill",
         "workspace",
-        "30_workspace_secret_encryption",
         "meta"
       ]
     },
     {
       "source_path": "windmill/core_concepts/31_workflows_as_code/index.mdx",
-      "id": "meta/31_workflows_as_code/index",
-      "filename": "meta-31_workflows_as_code-index.md",
+      "id": "meta/windmill/index-48",
+      "filename": "meta-windmill-index.md",
       "title": "Workflows as code",
       "category": "meta",
-      "subcategory": "31_workflows_as_code",
+      "subcategory": "windmill",
       "word_count": 435,
       "tags": [
-        "31_workflows_as_code",
-        "workflows",
-        "meta"
+        "windmill",
+        "meta",
+        "workflows"
       ]
     },
     {
       "source_path": "windmill/core_concepts/32_private_hub/index.mdx",
-      "id": "meta/32_private_hub/index",
-      "filename": "meta-32_private_hub-index.md",
+      "id": "meta/windmill/index-49",
+      "filename": "meta-windmill-index.md",
       "title": "Private Hub",
       "category": "meta",
-      "subcategory": "32_private_hub",
+      "subcategory": "windmill",
       "word_count": 684,
       "tags": [
         "windmill",
-        "32_private_hub",
-        "private",
-        "meta"
+        "meta",
+        "private"
       ]
     },
     {
       "source_path": "windmill/core_concepts/33_codebases_and_bundles/index.mdx",
-      "id": "meta/33_codebases_and_bundles/index",
-      "filename": "meta-33_codebases_and_bundles-index.md",
+      "id": "meta/windmill/index-50",
+      "filename": "meta-windmill-index.md",
       "title": "Codebases & bundles",
       "category": "meta",
-      "subcategory": "33_codebases_and_bundles",
+      "subcategory": "windmill",
       "word_count": 363,
       "tags": [
+        "windmill",
         "codebases",
-        "33_codebases_and_bundles",
         "meta"
       ]
     },
     {
       "source_path": "windmill/core_concepts/34_versioning/index.mdx",
-      "id": "meta/34_versioning/index",
-      "filename": "meta-34_versioning-index.md",
+      "id": "meta/windmill/index-51",
+      "filename": "meta-windmill-index.md",
       "title": "Versioning",
       "category": "meta",
-      "subcategory": "34_versioning",
+      "subcategory": "windmill",
       "word_count": 302,
       "tags": [
-        "34_versioning",
+        "windmill",
         "versioning",
         "meta"
       ]
     },
     {
       "source_path": "windmill/core_concepts/35_search_bar/index.mdx",
-      "id": "meta/35_search_bar/index",
-      "filename": "meta-35_search_bar-index.md",
+      "id": "meta/windmill/index-52",
+      "filename": "meta-windmill-index.md",
       "title": "Search bar",
       "category": "meta",
-      "subcategory": "35_search_bar",
+      "subcategory": "windmill",
       "word_count": 524,
       "tags": [
-        "search",
-        "35_search_bar",
+        "windmill",
         "advanced",
-        "meta"
+        "meta",
+        "search"
       ]
     },
     {
       "source_path": "windmill/core_concepts/36_service_logs/index.mdx",
-      "id": "meta/36_service_logs/index",
-      "filename": "meta-36_service_logs-index.md",
+      "id": "meta/windmill/index-53",
+      "filename": "meta-windmill-index.md",
       "title": "Service logs",
       "category": "meta",
-      "subcategory": "36_service_logs",
+      "subcategory": "windmill",
       "word_count": 581,
       "tags": [
-        "36_service_logs",
+        "windmill",
         "advanced",
         "service",
         "meta"
@@ -4039,60 +4032,58 @@
     },
     {
       "source_path": "windmill/core_concepts/37_critical_alerts/index.mdx",
-      "id": "meta/37_critical_alerts/index",
-      "filename": "meta-37_critical_alerts-index.md",
+      "id": "meta/windmill/index-54",
+      "filename": "meta-windmill-index.md",
       "title": "Critical alerts",
       "category": "meta",
-      "subcategory": "37_critical_alerts",
+      "subcategory": "windmill",
       "word_count": 307,
       "tags": [
+        "windmill",
         "critical",
-        "37_critical_alerts",
         "meta"
       ]
     },
     {
       "source_path": "windmill/core_concepts/38_object_storage_in_windmill/index.mdx",
-      "id": "meta/38_object_storage_in_windmill/index",
-      "filename": "meta-38_object_storage_in_windmill-index.md",
+      "id": "meta/windmill/index-55",
+      "filename": "meta-windmill-index.md",
       "title": "Object storage in Windmill (S3)",
       "category": "meta",
-      "subcategory": "38_object_storage_in_windmill",
+      "subcategory": "windmill",
       "word_count": 2843,
       "tags": [
         "windmill",
-        "object",
-        "38_object_storage_in_windmill",
         "advanced",
-        "meta"
+        "meta",
+        "object"
       ]
     },
     {
       "source_path": "windmill/core_concepts/39_http_routing/index.mdx",
-      "id": "meta/39_http_routing/index",
-      "filename": "meta-39_http_routing-index.md",
+      "id": "meta/windmill/index-56",
+      "filename": "meta-windmill-index.md",
       "title": "HTTP routes",
       "category": "meta",
-      "subcategory": "39_http_routing",
+      "subcategory": "windmill",
       "word_count": 2128,
       "tags": [
         "windmill",
-        "39_http_routing",
-        "http",
         "advanced",
+        "http",
         "meta"
       ]
     },
     {
       "source_path": "windmill/core_concepts/3_resources_and_types/index.mdx",
-      "id": "meta/3_resources_and_types/index",
-      "filename": "meta-3_resources_and_types-index.md",
+      "id": "meta/windmill/index-57",
+      "filename": "meta-windmill-index.md",
       "title": "Resources and resource types",
       "category": "meta",
-      "subcategory": "3_resources_and_types",
+      "subcategory": "windmill",
       "word_count": 2626,
       "tags": [
-        "3_resources_and_types",
+        "windmill",
         "resources",
         "advanced",
         "meta"
@@ -4100,197 +4091,191 @@
     },
     {
       "source_path": "windmill/core_concepts/40_websocket_triggers/index.mdx",
-      "id": "meta/40_websocket_triggers/index",
-      "filename": "meta-40_websocket_triggers-index.md",
+      "id": "meta/windmill/index-58",
+      "filename": "meta-windmill-index.md",
       "title": "WebSocket triggers",
       "category": "meta",
-      "subcategory": "40_websocket_triggers",
+      "subcategory": "windmill",
       "word_count": 543,
       "tags": [
-        "windmill",
-        "40_websocket_triggers",
-        "websocket",
         "advanced",
-        "api"
+        "api",
+        "meta",
+        "windmill",
+        "websocket"
       ]
     },
     {
       "source_path": "windmill/core_concepts/41_kafka_triggers/index.mdx",
-      "id": "meta/41_kafka_triggers/index",
-      "filename": "meta-41_kafka_triggers-index.md",
+      "id": "meta/windmill/index-59",
+      "filename": "meta-windmill-index.md",
       "title": "Kafka triggers",
       "category": "meta",
-      "subcategory": "41_kafka_triggers",
+      "subcategory": "windmill",
       "word_count": 331,
       "tags": [
-        "kafka",
-        "41_kafka_triggers",
         "windmill",
-        "meta"
+        "meta",
+        "kafka"
       ]
     },
     {
       "source_path": "windmill/core_concepts/42_autoscaling/index.mdx",
-      "id": "meta/42_autoscaling/index",
-      "filename": "meta-42_autoscaling-index.md",
+      "id": "meta/windmill/index-60",
+      "filename": "meta-windmill-index.md",
       "title": "Autoscaling",
       "category": "meta",
-      "subcategory": "42_autoscaling",
+      "subcategory": "windmill",
       "word_count": 1345,
       "tags": [
-        "42_autoscaling",
+        "windmill",
         "autoscaling",
-        "advanced",
-        "meta"
+        "meta",
+        "advanced"
       ]
     },
     {
       "source_path": "windmill/core_concepts/43_preprocessors/index.mdx",
-      "id": "meta/43_preprocessors/index",
-      "filename": "meta-43_preprocessors-index.md",
+      "id": "meta/windmill/index-61",
+      "filename": "meta-windmill-index.md",
       "title": "Preprocessors",
       "category": "meta",
-      "subcategory": "43_preprocessors",
+      "subcategory": "windmill",
       "word_count": 1475,
       "tags": [
+        "windmill",
         "preprocessors",
-        "43_preprocessors",
         "advanced",
         "meta"
       ]
     },
     {
       "source_path": "windmill/core_concepts/44_workspace_settings/index.mdx",
-      "id": "meta/44_workspace_settings/index",
-      "filename": "meta-44_workspace_settings-index.md",
+      "id": "meta/windmill/index-62",
+      "filename": "meta-windmill-index.md",
       "title": "Workspace settings",
       "category": "meta",
-      "subcategory": "44_workspace_settings",
+      "subcategory": "windmill",
       "word_count": 383,
       "tags": [
+        "windmill",
         "workspace",
-        "44_workspace_settings",
         "meta"
       ]
     },
     {
       "source_path": "windmill/core_concepts/45_nats_triggers/index.mdx",
-      "id": "meta/45_nats_triggers/index",
-      "filename": "meta-45_nats_triggers-index.md",
+      "id": "meta/windmill/index-63",
+      "filename": "meta-windmill-index.md",
       "title": "NATS triggers",
       "category": "meta",
-      "subcategory": "45_nats_triggers",
+      "subcategory": "windmill",
       "word_count": 450,
       "tags": [
         "windmill",
         "nats",
-        "45_nats_triggers",
         "meta"
       ]
     },
     {
       "source_path": "windmill/core_concepts/46_postgres_triggers/index.mdx",
-      "id": "meta/46_postgres_triggers/index",
-      "filename": "meta-46_postgres_triggers-index.md",
+      "id": "meta/windmill/index-64",
+      "filename": "meta-windmill-index.md",
       "title": "Postgres triggers",
       "category": "meta",
-      "subcategory": "46_postgres_triggers",
+      "subcategory": "windmill",
       "word_count": 4388,
       "tags": [
-        "windmill",
-        "46_postgres_triggers",
-        "postgres",
         "sql",
-        "advanced"
+        "advanced",
+        "postgres",
+        "meta",
+        "windmill"
       ]
     },
     {
       "source_path": "windmill/core_concepts/47_environment_variables/index.mdx",
-      "id": "meta/47_environment_variables/index",
-      "filename": "meta-47_environment_variables-index.md",
+      "id": "meta/windmill/index-65",
+      "filename": "meta-windmill-index.md",
       "title": "Environment variables",
       "category": "meta",
-      "subcategory": "47_environment_variables",
+      "subcategory": "windmill",
       "word_count": 1593,
       "tags": [
-        "47_environment_variables",
+        "windmill",
         "environment",
         "meta"
       ]
     },
     {
       "source_path": "windmill/core_concepts/48_sqs_triggers/index.mdx",
-      "id": "meta/48_sqs_triggers/index",
-      "filename": "meta-48_sqs_triggers-index.md",
+      "id": "meta/windmill/index-66",
+      "filename": "meta-windmill-index.md",
       "title": "SQS triggers",
       "category": "meta",
-      "subcategory": "48_sqs_triggers",
+      "subcategory": "windmill",
       "word_count": 495,
       "tags": [
         "windmill",
         "aws",
-        "48_sqs_triggers",
-        "sqs",
-        "meta"
+        "meta",
+        "sqs"
       ]
     },
     {
       "source_path": "windmill/core_concepts/49_mqtt_triggers/index.mdx",
-      "id": "meta/49_mqtt_triggers/index",
-      "filename": "meta-49_mqtt_triggers-index.md",
+      "id": "meta/windmill/index-67",
+      "filename": "meta-windmill-index.md",
       "title": "MQTT triggers",
       "category": "meta",
-      "subcategory": "49_mqtt_triggers",
+      "subcategory": "windmill",
       "word_count": 901,
       "tags": [
         "windmill",
-        "mqtt",
-        "49_mqtt_triggers",
         "advanced",
-        "meta"
+        "meta",
+        "mqtt"
       ]
     },
     {
       "source_path": "windmill/core_concepts/4_webhooks/index.mdx",
-      "id": "meta/4_webhooks/index",
-      "filename": "meta-4_webhooks-index.md",
+      "id": "meta/windmill/index-68",
+      "filename": "meta-windmill-index.md",
       "title": "Webhooks",
       "category": "meta",
-      "subcategory": "4_webhooks",
+      "subcategory": "windmill",
       "word_count": 2377,
       "tags": [
-        "4_webhooks",
-        "webhooks",
+        "windmill",
         "advanced",
-        "meta"
+        "meta",
+        "webhooks"
       ]
     },
     {
       "source_path": "windmill/core_concepts/50_gcp_triggers/index.mdx",
-      "id": "meta/50_gcp_triggers/index",
-      "filename": "meta-50_gcp_triggers-index.md",
+      "id": "meta/windmill/index-69",
+      "filename": "meta-windmill-index.md",
       "title": "GCP Pub/Sub triggers",
       "category": "meta",
-      "subcategory": "50_gcp_triggers",
+      "subcategory": "windmill",
       "word_count": 916,
       "tags": [
         "windmill",
-        "50_gcp_triggers",
-        "gcp",
         "advanced",
-        "meta"
+        "meta",
+        "gcp"
       ]
     },
     {
       "source_path": "windmill/core_concepts/51_mcp/index.mdx",
-      "id": "meta/51_mcp/index",
-      "filename": "meta-51_mcp-index.md",
+      "id": "meta/windmill/index-70",
+      "filename": "meta-windmill-index.md",
       "title": "Windmill MCP",
       "category": "meta",
-      "subcategory": "51_mcp",
+      "subcategory": "windmill",
       "word_count": 642,
       "tags": [
-        "51_mcp",
         "windmill",
         "advanced",
         "meta"
@@ -4298,59 +4283,56 @@
     },
     {
       "source_path": "windmill/core_concepts/51_sql_to_s3_streaming/index.mdx",
-      "id": "meta/51_sql_to_s3_streaming/index",
-      "filename": "meta-51_sql_to_s3_streaming-index.md",
+      "id": "meta/windmill/index-71",
+      "filename": "meta-windmill-index.md",
       "title": "S3 streaming for large queries",
       "category": "meta",
-      "subcategory": "51_sql_to_s3_streaming",
+      "subcategory": "windmill",
       "word_count": 150,
       "tags": [
-        "sql",
         "windmill",
-        "51_sql_to_s3_streaming",
+        "sql",
         "meta"
       ]
     },
     {
       "source_path": "windmill/core_concepts/52_assets/index.mdx",
-      "id": "meta/52_assets/index",
-      "filename": "meta-52_assets-index.md",
+      "id": "meta/windmill/index-72",
+      "filename": "meta-windmill-index.md",
       "title": "Assets",
       "category": "meta",
-      "subcategory": "52_assets",
+      "subcategory": "windmill",
       "word_count": 327,
       "tags": [
-        "assets",
-        "52_assets",
-        "meta"
+        "windmill",
+        "meta",
+        "assets"
       ]
     },
     {
       "source_path": "windmill/core_concepts/53_custom_instance_database/index.mdx",
-      "id": "meta/53_custom_instance_database/index",
-      "filename": "meta-53_custom_instance_database-index.md",
+      "id": "meta/windmill/index-73",
+      "filename": "meta-windmill-index.md",
       "title": "Custom Instance Database",
       "category": "meta",
-      "subcategory": "53_custom_instance_database",
+      "subcategory": "windmill",
       "word_count": 348,
       "tags": [
         "windmill",
-        "sql",
         "custom",
-        "53_custom_instance_database",
+        "sql",
         "meta"
       ]
     },
     {
       "source_path": "windmill/core_concepts/54_ai_agents/index.mdx",
-      "id": "meta/54_ai_agents/index",
-      "filename": "meta-54_ai_agents-index.md",
+      "id": "meta/windmill/index-74",
+      "filename": "meta-windmill-index.md",
       "title": "AI agents",
       "category": "meta",
-      "subcategory": "54_ai_agents",
+      "subcategory": "windmill",
       "word_count": 1551,
       "tags": [
-        "54_ai_agents",
         "windmill",
         "advanced",
         "meta"
@@ -4358,491 +4340,489 @@
     },
     {
       "source_path": "windmill/core_concepts/55_workspace_dependencies/index.mdx",
-      "id": "meta/55_workspace_dependencies/index",
-      "filename": "meta-55_workspace_dependencies-index.md",
+      "id": "meta/windmill/index-75",
+      "filename": "meta-windmill-index.md",
       "title": "Workspace dependencies",
       "category": "meta",
-      "subcategory": "55_workspace_dependencies",
+      "subcategory": "windmill",
       "word_count": 816,
       "tags": [
+        "windmill",
         "workspace",
-        "55_workspace_dependencies",
-        "advanced",
-        "meta"
+        "meta",
+        "advanced"
       ]
     },
     {
       "source_path": "windmill/core_concepts/55_workspace_dependencies/migration.mdx",
-      "id": "ops/55_workspace_dependencies/migration",
-      "filename": "ops-55_workspace_dependencies-migration.md",
+      "id": "ops/windmill/migration",
+      "filename": "ops-windmill-migration.md",
       "title": "Migration guide",
       "category": "ops",
-      "subcategory": "55_workspace_dependencies",
+      "subcategory": "windmill",
       "word_count": 264,
       "tags": [
-        "operations",
+        "windmill",
         "migration",
-        "55_workspace_dependencies"
+        "operations"
       ]
     },
     {
       "source_path": "windmill/core_concepts/5_monitor_past_and_future_runs/index.mdx",
-      "id": "meta/5_monitor_past_and_future_runs/index",
-      "filename": "meta-5_monitor_past_and_future_runs-index.md",
+      "id": "meta/windmill/index-76",
+      "filename": "meta-windmill-index.md",
       "title": "Jobs runs",
       "category": "meta",
-      "subcategory": "5_monitor_past_and_future_runs",
+      "subcategory": "windmill",
       "word_count": 745,
       "tags": [
+        "windmill",
         "advanced",
-        "5_monitor_past_and_future_runs",
-        "jobs",
-        "meta"
+        "meta",
+        "jobs"
       ]
     },
     {
       "source_path": "windmill/core_concepts/6_auto_generated_uis/index.mdx",
-      "id": "meta/6_auto_generated_uis/index",
-      "filename": "meta-6_auto_generated_uis-index.md",
+      "id": "meta/windmill/index-77",
+      "filename": "meta-windmill-index.md",
       "title": "Auto-generated UIs",
       "category": "meta",
-      "subcategory": "6_auto_generated_uis",
+      "subcategory": "windmill",
       "word_count": 1036,
       "tags": [
-        "6_auto_generated_uis",
-        "autogenerated",
-        "meta"
+        "windmill",
+        "meta",
+        "autogenerated"
       ]
     },
     {
       "source_path": "windmill/core_concepts/7_multiplayer/index.md",
-      "id": "meta/7_multiplayer/index",
-      "filename": "meta-7_multiplayer-index.md",
+      "id": "meta/windmill/index-78",
+      "filename": "meta-windmill-index.md",
       "title": "Multiplayer",
       "category": "meta",
-      "subcategory": "7_multiplayer",
+      "subcategory": "windmill",
       "word_count": 113,
       "tags": [
-        "7_multiplayer",
-        "multiplayer",
-        "meta"
+        "windmill",
+        "meta",
+        "multiplayer"
       ]
     },
     {
       "source_path": "windmill/core_concepts/8_groups_and_folders/index.mdx",
-      "id": "meta/8_groups_and_folders/index",
-      "filename": "meta-8_groups_and_folders-index.md",
+      "id": "meta/windmill/index-79",
+      "filename": "meta-windmill-index.md",
       "title": "Groups and folders",
       "category": "meta",
-      "subcategory": "8_groups_and_folders",
+      "subcategory": "windmill",
       "word_count": 697,
       "tags": [
-        "8_groups_and_folders",
+        "windmill",
         "groups",
         "meta"
       ]
     },
     {
       "source_path": "windmill/core_concepts/9_worker_groups/index.mdx",
-      "id": "meta/9_worker_groups/index",
-      "filename": "meta-9_worker_groups-index.md",
+      "id": "meta/windmill/index-80",
+      "filename": "meta-windmill-index.md",
       "title": "Workers and worker groups",
       "category": "meta",
-      "subcategory": "9_worker_groups",
+      "subcategory": "windmill",
       "word_count": 3665,
       "tags": [
-        "9_worker_groups",
-        "workers",
+        "windmill",
         "advanced",
-        "meta"
+        "meta",
+        "workers"
       ]
     },
     {
       "source_path": "windmill/core_concepts/RUST-SDK-WINMILL-PATTERNS.md",
-      "id": "ops/core_concepts/rust-sdk-winmill-patterns",
-      "filename": "ops-core_concepts-rust-sdk-winmill-patterns.md",
+      "id": "ops/windmill/rust-sdk-winmill-patterns",
+      "filename": "ops-windmill-rust-sdk-winmill-patterns.md",
       "title": "Windmill Rust SDK: Complete Reference Guide for AI Coding Agents",
       "category": "ops",
-      "subcategory": "core_concepts",
+      "subcategory": "windmill",
       "word_count": 2385,
       "tags": [
-        "core_concepts",
-        "operations",
         "windmill",
-        "rust",
-        "advanced"
+        "advanced",
+        "operations",
+        "rust"
       ]
     },
     {
       "source_path": "windmill/core_concepts/index.mdx",
-      "id": "meta/core_concepts/index",
-      "filename": "meta-core_concepts-index.md",
+      "id": "meta/windmill/index-81",
+      "filename": "meta-windmill-index.md",
       "title": "Core concepts",
       "category": "meta",
-      "subcategory": "core_concepts",
+      "subcategory": "windmill",
       "word_count": 2593,
       "tags": [
-        "core_concepts",
+        "windmill",
         "core",
         "meta"
       ]
     },
     {
       "source_path": "windmill/flows/10_flow_trigger.mdx",
-      "id": "concept/flows/10-flow-trigger",
-      "filename": "concept-flows-10-flow-trigger.md",
+      "id": "concept/windmill/10-flow-trigger",
+      "filename": "concept-windmill-10-flow-trigger.md",
       "title": "Trigger scripts",
       "category": "concept",
-      "subcategory": "flows",
+      "subcategory": "windmill",
       "word_count": 543,
       "tags": [
-        "flows",
+        "windmill",
+        "advanced",
         "concept",
-        "trigger",
-        "advanced"
+        "trigger"
       ]
     },
     {
       "source_path": "windmill/flows/11_flow_approval.mdx",
-      "id": "tutorial/flows/11-flow-approval",
-      "filename": "tutorial-flows-11-flow-approval.md",
+      "id": "tutorial/windmill/11-flow-approval",
+      "filename": "tutorial-windmill-11-flow-approval.md",
       "title": "Suspend & Approval / Prompts",
       "category": "tutorial",
-      "subcategory": "flows",
+      "subcategory": "windmill",
       "word_count": 3027,
       "tags": [
-        "flows",
-        "suspend",
+        "windmill",
+        "tutorial",
         "beginner",
-        "tutorial"
+        "suspend"
       ]
     },
     {
       "source_path": "windmill/flows/12_flow_loops.md",
-      "id": "tutorial/flows/12-flow-loops",
-      "filename": "tutorial-flows-12-flow-loops.md",
+      "id": "tutorial/windmill/12-flow-loops",
+      "filename": "tutorial-windmill-12-flow-loops.md",
       "title": "For loops",
       "category": "tutorial",
-      "subcategory": "flows",
+      "subcategory": "windmill",
       "word_count": 453,
       "tags": [
-        "flows",
+        "windmill",
+        "tutorial",
         "for",
-        "beginner",
-        "tutorial"
+        "beginner"
       ]
     },
     {
       "source_path": "windmill/flows/13_flow_branches.md",
-      "id": "concept/flows/13-flow-branches",
-      "filename": "concept-flows-13-flow-branches.md",
+      "id": "concept/windmill/13-flow-branches",
+      "filename": "concept-windmill-13-flow-branches.md",
       "title": "Branches",
       "category": "concept",
-      "subcategory": "flows",
+      "subcategory": "windmill",
       "word_count": 469,
       "tags": [
-        "flows",
+        "windmill",
         "concept",
         "branches"
       ]
     },
     {
       "source_path": "windmill/flows/14_retries.md",
-      "id": "ops/flows/14-retries",
-      "filename": "ops-flows-14-retries.md",
+      "id": "ops/windmill/14-retries",
+      "filename": "ops-windmill-14-retries.md",
       "title": "Retries",
       "category": "ops",
-      "subcategory": "flows",
+      "subcategory": "windmill",
       "word_count": 563,
       "tags": [
-        "flows",
-        "operations",
-        "retries"
+        "windmill",
+        "retries",
+        "operations"
       ]
     },
     {
       "source_path": "windmill/flows/15_sleep.md",
-      "id": "tutorial/flows/15-sleep",
-      "filename": "tutorial-flows-15-sleep.md",
+      "id": "tutorial/windmill/15-sleep",
+      "filename": "tutorial-windmill-15-sleep.md",
       "title": "Sleeps / Delays in flows",
       "category": "tutorial",
-      "subcategory": "flows",
+      "subcategory": "windmill",
       "word_count": 425,
       "tags": [
-        "flows",
-        "sleeps",
+        "windmill",
+        "tutorial",
         "beginner",
-        "tutorial"
+        "sleeps"
       ]
     },
     {
       "source_path": "windmill/flows/16_architecture.mdx",
-      "id": "tutorial/flows/16-architecture",
-      "filename": "tutorial-flows-16-architecture.md",
+      "id": "tutorial/windmill/16-architecture",
+      "filename": "tutorial-windmill-16-architecture.md",
       "title": "Architecture and data exchange",
       "category": "tutorial",
-      "subcategory": "flows",
+      "subcategory": "windmill",
       "word_count": 890,
       "tags": [
-        "flows",
-        "architecture",
+        "windmill",
+        "tutorial",
         "beginner",
-        "tutorial"
+        "architecture"
       ]
     },
     {
       "source_path": "windmill/flows/17_ai_flows.mdx",
-      "id": "concept/flows/17-ai-flows",
-      "filename": "concept-flows-17-ai-flows.md",
+      "id": "concept/windmill/17-ai-flows",
+      "filename": "concept-windmill-17-ai-flows.md",
       "title": "AI-generated flows",
       "category": "concept",
-      "subcategory": "flows",
+      "subcategory": "windmill",
       "word_count": 59,
       "tags": [
-        "flows",
-        "concept",
-        "aigenerated"
+        "windmill",
+        "aigenerated",
+        "concept"
       ]
     },
     {
       "source_path": "windmill/flows/18_test_flows.mdx",
-      "id": "ops/flows/18-test-flows",
-      "filename": "ops-flows-18-test-flows.md",
+      "id": "ops/windmill/18-test-flows",
+      "filename": "ops-windmill-18-test-flows.md",
       "title": "Testing flows",
       "category": "ops",
-      "subcategory": "flows",
+      "subcategory": "windmill",
       "word_count": 506,
       "tags": [
-        "flows",
-        "operations",
-        "testing"
+        "windmill",
+        "testing",
+        "operations"
       ]
     },
     {
       "source_path": "windmill/flows/19_early_return.mdx",
-      "id": "ops/flows/19-early-return",
-      "filename": "ops-flows-19-early-return.md",
+      "id": "ops/windmill/19-early-return",
+      "filename": "ops-windmill-19-early-return.md",
       "title": "Early return",
       "category": "ops",
-      "subcategory": "flows",
+      "subcategory": "windmill",
       "word_count": 104,
       "tags": [
-        "flows",
+        "windmill",
         "operations",
         "early"
       ]
     },
     {
       "source_path": "windmill/flows/1_flow_editor.mdx",
-      "id": "tutorial/flows/1-flow-editor",
-      "filename": "tutorial-flows-1-flow-editor.md",
+      "id": "tutorial/windmill/1-flow-editor",
+      "filename": "tutorial-windmill-1-flow-editor.md",
       "title": "Flow editor",
       "category": "tutorial",
-      "subcategory": "flows",
+      "subcategory": "windmill",
       "word_count": 798,
       "tags": [
-        "flows",
+        "windmill",
+        "tutorial",
         "beginner",
-        "flow",
-        "tutorial"
+        "flow"
       ]
     },
     {
       "source_path": "windmill/flows/20_priority.md",
-      "id": "concept/flows/20-priority",
-      "filename": "concept-flows-20-priority.md",
+      "id": "concept/windmill/20-priority",
+      "filename": "concept-windmill-20-priority.md",
       "title": "Priority for steps",
       "category": "concept",
-      "subcategory": "flows",
+      "subcategory": "windmill",
       "word_count": 124,
       "tags": [
-        "flows",
+        "windmill",
         "concept",
         "priority"
       ]
     },
     {
       "source_path": "windmill/flows/21_lifetime.md",
-      "id": "concept/flows/21-lifetime",
-      "filename": "concept-flows-21-lifetime.md",
+      "id": "concept/windmill/21-lifetime",
+      "filename": "concept-windmill-21-lifetime.md",
       "title": "Lifetime / Delete after use",
       "category": "concept",
-      "subcategory": "flows",
+      "subcategory": "windmill",
       "word_count": 126,
       "tags": [
-        "flows",
+        "windmill",
         "concept",
         "lifetime"
       ]
     },
     {
       "source_path": "windmill/flows/22_while_loops.mdx",
-      "id": "tutorial/flows/22-while-loops",
-      "filename": "tutorial-flows-22-while-loops.md",
+      "id": "tutorial/windmill/22-while-loops",
+      "filename": "tutorial-windmill-22-while-loops.md",
       "title": "While loops",
       "category": "tutorial",
-      "subcategory": "flows",
+      "subcategory": "windmill",
       "word_count": 605,
       "tags": [
-        "flows",
+        "windmill",
+        "tutorial",
         "while",
-        "beginner",
-        "tutorial"
+        "beginner"
       ]
     },
     {
       "source_path": "windmill/flows/23_job_debouncing.mdx",
-      "id": "ref/flows/23-job-debouncing",
-      "filename": "ref-flows-23-job-debouncing.md",
+      "id": "ref/windmill/23-job-debouncing",
+      "filename": "ref-windmill-23-job-debouncing.md",
       "title": "Job debouncing",
       "category": "ref",
-      "subcategory": "flows",
+      "subcategory": "windmill",
       "word_count": 152,
       "tags": [
-        "flows",
+        "windmill",
         "reference",
         "job"
       ]
     },
     {
       "source_path": "windmill/flows/24_sticky_notes.mdx",
-      "id": "concept/flows/24-sticky-notes",
-      "filename": "concept-flows-24-sticky-notes.md",
+      "id": "concept/windmill/24-sticky-notes",
+      "filename": "concept-windmill-24-sticky-notes.md",
       "title": "Sticky notes",
       "category": "concept",
-      "subcategory": "flows",
+      "subcategory": "windmill",
       "word_count": 589,
       "tags": [
-        "flows",
+        "windmill",
         "concept",
         "sticky"
       ]
     },
     {
       "source_path": "windmill/flows/2_early_stop.md",
-      "id": "concept/flows/2-early-stop",
-      "filename": "concept-flows-2-early-stop.md",
+      "id": "concept/windmill/2-early-stop",
+      "filename": "concept-windmill-2-early-stop.md",
       "title": "Early stop / Break",
       "category": "concept",
-      "subcategory": "flows",
+      "subcategory": "windmill",
       "word_count": 287,
       "tags": [
-        "flows",
+        "windmill",
         "concept",
         "early"
       ]
     },
     {
       "source_path": "windmill/flows/3_editor_components.mdx",
-      "id": "tutorial/flows/3-editor-components",
-      "filename": "tutorial-flows-3-editor-components.md",
+      "id": "tutorial/windmill/3-editor-components",
+      "filename": "tutorial-windmill-3-editor-components.md",
       "title": "Flow editor components",
       "category": "tutorial",
-      "subcategory": "flows",
+      "subcategory": "windmill",
       "word_count": 2484,
       "tags": [
-        "flows",
+        "windmill",
+        "tutorial",
         "beginner",
-        "flow",
-        "tutorial"
+        "flow"
       ]
     },
     {
       "source_path": "windmill/flows/4_cache.mdx",
-      "id": "tutorial/flows/4-cache",
-      "filename": "tutorial-flows-4-cache.md",
+      "id": "tutorial/windmill/4-cache",
+      "filename": "tutorial-windmill-4-cache.md",
       "title": "Caching",
       "category": "tutorial",
-      "subcategory": "flows",
+      "subcategory": "windmill",
       "word_count": 544,
       "tags": [
-        "flows",
-        "caching",
+        "windmill",
         "tutorial",
+        "caching",
         "beginner"
       ]
     },
     {
       "source_path": "windmill/flows/5_step_mocking.md",
-      "id": "concept/flows/5-step-mocking",
-      "filename": "concept-flows-5-step-mocking.md",
+      "id": "concept/windmill/5-step-mocking",
+      "filename": "concept-windmill-5-step-mocking.md",
       "title": "Step mocking / Pin result",
       "category": "concept",
-      "subcategory": "flows",
+      "subcategory": "windmill",
       "word_count": 340,
       "tags": [
-        "flows",
+        "windmill",
         "concept",
         "step"
       ]
     },
     {
       "source_path": "windmill/flows/6_concurrency_limit.mdx",
-      "id": "ref/flows/6-concurrency-limit",
-      "filename": "ref-flows-6-concurrency-limit.md",
+      "id": "ref/windmill/6-concurrency-limit",
+      "filename": "ref-windmill-6-concurrency-limit.md",
       "title": "Concurrency limits",
       "category": "ref",
-      "subcategory": "flows",
+      "subcategory": "windmill",
       "word_count": 247,
       "tags": [
-        "flows",
+        "windmill",
         "reference",
         "concurrency"
       ]
     },
     {
       "source_path": "windmill/flows/7_flow_error_handler.md",
-      "id": "tutorial/flows/7-flow-error-handler",
-      "filename": "tutorial-flows-7-flow-error-handler.md",
+      "id": "tutorial/windmill/7-flow-error-handler",
+      "filename": "tutorial-windmill-7-flow-error-handler.md",
       "title": "Error handler",
       "category": "tutorial",
-      "subcategory": "flows",
+      "subcategory": "windmill",
       "word_count": 237,
       "tags": [
-        "flows",
-        "error",
+        "windmill",
+        "tutorial",
         "beginner",
-        "tutorial"
+        "error"
       ]
     },
     {
       "source_path": "windmill/flows/8_error_handling.mdx",
-      "id": "concept/flows/8-error-handling",
-      "filename": "concept-flows-8-error-handling.md",
+      "id": "concept/windmill/8-error-handling",
+      "filename": "concept-windmill-8-error-handling.md",
       "title": "Error handling in flows",
       "category": "concept",
-      "subcategory": "flows",
+      "subcategory": "windmill",
       "word_count": 352,
       "tags": [
-        "flows",
+        "windmill",
         "concept",
         "error"
       ]
     },
     {
       "source_path": "windmill/flows/9_custom_timeout.md",
-      "id": "concept/flows/9-custom-timeout",
-      "filename": "concept-flows-9-custom-timeout.md",
+      "id": "concept/windmill/9-custom-timeout",
+      "filename": "concept-windmill-9-custom-timeout.md",
       "title": "Custom timeout for step",
       "category": "concept",
-      "subcategory": "flows",
+      "subcategory": "windmill",
       "word_count": 113,
       "tags": [
-        "flows",
-        "concept",
-        "custom"
+        "windmill",
+        "custom",
+        "concept"
       ]
     },
     {
       "source_path": "windmill/getting_started/00_how_to_use_windmill/index.mdx",
-      "id": "meta/00_how_to_use_windmill/index",
-      "filename": "meta-00_how_to_use_windmill-index.md",
+      "id": "meta/windmill/index-82",
+      "filename": "meta-windmill-index.md",
       "title": "Getting started with Windmill",
       "category": "meta",
-      "subcategory": "00_how_to_use_windmill",
+      "subcategory": "windmill",
       "word_count": 301,
       "tags": [
-        "00_how_to_use_windmill",
         "windmill",
         "getting",
         "meta"
@@ -4850,252 +4830,252 @@
     },
     {
       "source_path": "windmill/getting_started/0_scripts_quickstart/10_ansible_quickstart/index.mdx",
-      "id": "meta/10_ansible_quickstart/index",
-      "filename": "meta-10_ansible_quickstart-index.md",
+      "id": "meta/windmill/index-83",
+      "filename": "meta-windmill-index.md",
       "title": "Ansible quickstart",
       "category": "meta",
-      "subcategory": "10_ansible_quickstart",
+      "subcategory": "windmill",
       "word_count": 3200,
       "tags": [
+        "windmill",
         "ansible",
         "advanced",
-        "10_ansible_quickstart",
         "meta"
       ]
     },
     {
       "source_path": "windmill/getting_started/0_scripts_quickstart/11_csharp_quickstart/index.mdx",
-      "id": "meta/11_csharp_quickstart/index",
-      "filename": "meta-11_csharp_quickstart-index.md",
+      "id": "meta/windmill/index-84",
+      "filename": "meta-windmill-index.md",
       "title": "C# quickstart",
       "category": "meta",
-      "subcategory": "11_csharp_quickstart",
+      "subcategory": "windmill",
       "word_count": 1455,
       "tags": [
-        "11_csharp_quickstart",
+        "windmill",
         "advanced",
         "meta"
       ]
     },
     {
       "source_path": "windmill/getting_started/0_scripts_quickstart/13_java_quickstart/index.mdx",
-      "id": "meta/13_java_quickstart/index",
-      "filename": "meta-13_java_quickstart-index.md",
+      "id": "meta/windmill/index-85",
+      "filename": "meta-windmill-index.md",
       "title": "Java quickstart",
       "category": "meta",
-      "subcategory": "13_java_quickstart",
+      "subcategory": "windmill",
       "word_count": 1395,
       "tags": [
-        "13_java_quickstart",
-        "java",
+        "windmill",
         "advanced",
-        "meta"
+        "meta",
+        "java"
       ]
     },
     {
       "source_path": "windmill/getting_started/0_scripts_quickstart/14_ruby_quickstart/index.mdx",
-      "id": "meta/14_ruby_quickstart/index",
-      "filename": "meta-14_ruby_quickstart-index.md",
+      "id": "meta/windmill/index-86",
+      "filename": "meta-windmill-index.md",
       "title": "Ruby quickstart",
       "category": "meta",
-      "subcategory": "14_ruby_quickstart",
+      "subcategory": "windmill",
       "word_count": 1933,
       "tags": [
+        "windmill",
         "ruby",
-        "14_ruby_quickstart",
         "advanced",
         "meta"
       ]
     },
     {
       "source_path": "windmill/getting_started/0_scripts_quickstart/1_typescript_quickstart/index.mdx",
-      "id": "meta/1_typescript_quickstart/index",
-      "filename": "meta-1_typescript_quickstart-index.md",
+      "id": "meta/windmill/index-87",
+      "filename": "meta-windmill-index.md",
       "title": "TypeScript quickstart",
       "category": "meta",
-      "subcategory": "1_typescript_quickstart",
+      "subcategory": "windmill",
       "word_count": 2509,
       "tags": [
-        "typescript",
-        "1_typescript_quickstart",
+        "windmill",
         "advanced",
-        "meta"
+        "meta",
+        "typescript"
       ]
     },
     {
       "source_path": "windmill/getting_started/0_scripts_quickstart/2_python_quickstart/index.mdx",
-      "id": "meta/2_python_quickstart/index",
-      "filename": "meta-2_python_quickstart-index.md",
+      "id": "meta/windmill/index-88",
+      "filename": "meta-windmill-index.md",
       "title": "Python quickstart",
       "category": "meta",
-      "subcategory": "2_python_quickstart",
+      "subcategory": "windmill",
       "word_count": 2144,
       "tags": [
-        "advanced",
-        "2_python_quickstart",
+        "windmill",
         "python",
+        "advanced",
         "meta"
       ]
     },
     {
       "source_path": "windmill/getting_started/0_scripts_quickstart/3_go_quickstart/index.mdx",
-      "id": "meta/3_go_quickstart/index",
-      "filename": "meta-3_go_quickstart-index.md",
+      "id": "meta/windmill/index-89",
+      "filename": "meta-windmill-index.md",
       "title": "Go quickstart",
       "category": "meta",
-      "subcategory": "3_go_quickstart",
+      "subcategory": "windmill",
       "word_count": 1594,
       "tags": [
+        "windmill",
         "advanced",
-        "3_go_quickstart",
         "meta"
       ]
     },
     {
       "source_path": "windmill/getting_started/0_scripts_quickstart/4_bash_quickstart/index.mdx",
-      "id": "meta/4_bash_quickstart/index",
-      "filename": "meta-4_bash_quickstart-index.md",
+      "id": "meta/windmill/index-90",
+      "filename": "meta-windmill-index.md",
       "title": "TypeScript quickstart",
       "category": "meta",
-      "subcategory": "4_bash_quickstart",
+      "subcategory": "windmill",
       "word_count": 2072,
       "tags": [
+        "windmill",
         "advanced",
-        "typescript",
-        "4_bash_quickstart",
-        "meta"
+        "meta",
+        "typescript"
       ]
     },
     {
       "source_path": "windmill/getting_started/0_scripts_quickstart/5_sql_quickstart/index.mdx",
-      "id": "meta/5_sql_quickstart/index",
-      "filename": "meta-5_sql_quickstart-index.md",
+      "id": "meta/windmill/index-91",
+      "filename": "meta-windmill-index.md",
       "title": "Quickstart PostgreSQL, MySQL, MS SQL, BigQuery, Snowflake",
       "category": "meta",
-      "subcategory": "5_sql_quickstart",
+      "subcategory": "windmill",
       "word_count": 5323,
       "tags": [
-        "quickstart",
-        "5_sql_quickstart",
         "sql",
         "advanced",
-        "meta"
+        "meta",
+        "windmill",
+        "quickstart"
       ]
     },
     {
       "source_path": "windmill/getting_started/0_scripts_quickstart/6_rest_grapqhql_quickstart/index.mdx",
-      "id": "meta/6_rest_grapqhql_quickstart/index",
-      "filename": "meta-6_rest_grapqhql_quickstart-index.md",
+      "id": "meta/windmill/index-92",
+      "filename": "meta-windmill-index.md",
       "title": "Rest / GraphQL quickstart",
       "category": "meta",
-      "subcategory": "6_rest_grapqhql_quickstart",
+      "subcategory": "windmill",
       "word_count": 1795,
       "tags": [
-        "6_rest_grapqhql_quickstart",
-        "rest",
+        "windmill",
         "advanced",
-        "meta"
+        "meta",
+        "rest"
       ]
     },
     {
       "source_path": "windmill/getting_started/0_scripts_quickstart/7_docker_quickstart/index.mdx",
-      "id": "meta/7_docker_quickstart/index",
-      "filename": "meta-7_docker_quickstart-index.md",
+      "id": "meta/windmill/index-93",
+      "filename": "meta-windmill-index.md",
       "title": "Docker quickstart",
       "category": "meta",
-      "subcategory": "7_docker_quickstart",
+      "subcategory": "windmill",
       "word_count": 1508,
       "tags": [
+        "windmill",
         "docker",
-        "7_docker_quickstart",
-        "advanced",
-        "meta"
+        "meta",
+        "advanced"
       ]
     },
     {
       "source_path": "windmill/getting_started/0_scripts_quickstart/8_php_quickstart/index.mdx",
-      "id": "meta/8_php_quickstart/index",
-      "filename": "meta-8_php_quickstart-index.md",
+      "id": "meta/windmill/index-94",
+      "filename": "meta-windmill-index.md",
       "title": "PHP quickstart",
       "category": "meta",
-      "subcategory": "8_php_quickstart",
+      "subcategory": "windmill",
       "word_count": 1541,
       "tags": [
-        "php",
+        "windmill",
         "advanced",
-        "8_php_quickstart",
-        "meta"
+        "meta",
+        "php"
       ]
     },
     {
       "source_path": "windmill/getting_started/0_scripts_quickstart/9_rust_quickstart/index.mdx",
-      "id": "meta/9_rust_quickstart/index",
-      "filename": "meta-9_rust_quickstart-index.md",
+      "id": "meta/windmill/index-95",
+      "filename": "meta-windmill-index.md",
       "title": "Rust quickstart",
       "category": "meta",
-      "subcategory": "9_rust_quickstart",
+      "subcategory": "windmill",
       "word_count": 1540,
       "tags": [
-        "9_rust_quickstart",
-        "rust",
+        "windmill",
         "advanced",
+        "rust",
         "meta"
       ]
     },
     {
       "source_path": "windmill/getting_started/0_scripts_quickstart/index.mdx",
-      "id": "meta/0_scripts_quickstart/index",
-      "filename": "meta-0_scripts_quickstart-index.md",
+      "id": "meta/windmill/index-96",
+      "filename": "meta-windmill-index.md",
       "title": "Scripts quickstart",
       "category": "meta",
-      "subcategory": "0_scripts_quickstart",
+      "subcategory": "windmill",
       "word_count": 256,
       "tags": [
         "scripts",
-        "0_scripts_quickstart",
-        "python",
         "sql",
-        "rust"
+        "docker",
+        "rust",
+        "meta"
       ]
     },
     {
       "source_path": "windmill/getting_started/6_flows_quickstart/index.mdx",
-      "id": "meta/6_flows_quickstart/index",
-      "filename": "meta-6_flows_quickstart-index.md",
+      "id": "meta/windmill/index-97",
+      "filename": "meta-windmill-index.md",
       "title": "Flows quickstart",
       "category": "meta",
-      "subcategory": "6_flows_quickstart",
+      "subcategory": "windmill",
       "word_count": 1695,
       "tags": [
-        "flows",
-        "6_flows_quickstart",
-        "meta"
+        "windmill",
+        "meta",
+        "flows"
       ]
     },
     {
       "source_path": "windmill/getting_started/7_apps_quickstart/index.mdx",
-      "id": "meta/7_apps_quickstart/index",
-      "filename": "meta-7_apps_quickstart-index.md",
+      "id": "meta/windmill/index-98",
+      "filename": "meta-windmill-index.md",
       "title": "Apps quickstart",
       "category": "meta",
-      "subcategory": "7_apps_quickstart",
+      "subcategory": "windmill",
       "word_count": 1060,
       "tags": [
-        "apps",
-        "7_apps_quickstart",
-        "meta"
+        "windmill",
+        "meta",
+        "apps"
       ]
     },
     {
       "source_path": "windmill/getting_started/8_triggers/index.mdx",
-      "id": "meta/8_triggers/index",
-      "filename": "meta-8_triggers-index.md",
+      "id": "meta/windmill/index-99",
+      "filename": "meta-windmill-index.md",
       "title": "Triggers",
       "category": "meta",
-      "subcategory": "8_triggers",
+      "subcategory": "windmill",
       "word_count": 1885,
       "tags": [
-        "8_triggers",
+        "windmill",
         "triggers",
         "meta"
       ]
@@ -5109,21 +5089,22 @@
       "subcategory": "windmill",
       "word_count": 578,
       "tags": [
-        "what",
         "windmill",
-        "beginner",
-        "tutorial"
+        "tutorial",
+        "what",
+        "beginner"
       ]
     },
     {
       "source_path": "windmill/openflow/index.mdx",
-      "id": "meta/openflow/index",
-      "filename": "meta-openflow-index.md",
+      "id": "meta/windmill/index-100",
+      "filename": "meta-windmill-index.md",
       "title": "OpenFlow",
       "category": "meta",
-      "subcategory": "openflow",
+      "subcategory": "windmill",
       "word_count": 1357,
       "tags": [
+        "windmill",
         "openflow",
         "advanced",
         "meta"
@@ -5131,147 +5112,147 @@
     },
     {
       "source_path": "windmill/script_editor/concurrency_limit.mdx",
-      "id": "ref/script_editor/concurrency-limit",
-      "filename": "ref-script_editor-concurrency-limit.md",
+      "id": "ref/windmill/concurrency-limit",
+      "filename": "ref-windmill-concurrency-limit.md",
       "title": "Concurrency limits",
       "category": "ref",
-      "subcategory": "script_editor",
+      "subcategory": "windmill",
       "word_count": 208,
       "tags": [
+        "windmill",
         "reference",
         "concurrency",
-        "script_editor",
         "api"
       ]
     },
     {
       "source_path": "windmill/script_editor/custom_environment_variables.mdx",
-      "id": "concept/script_editor/custom-environment-variables",
-      "filename": "concept-script_editor-custom-environment-variables.md",
+      "id": "concept/windmill/custom-environment-variables",
+      "filename": "concept-windmill-custom-environment-variables.md",
       "title": "Custom environment variables",
       "category": "concept",
-      "subcategory": "script_editor",
+      "subcategory": "windmill",
       "word_count": 127,
       "tags": [
-        "concept",
-        "script_editor",
-        "custom"
+        "windmill",
+        "custom",
+        "concept"
       ]
     },
     {
       "source_path": "windmill/script_editor/customize_ui.mdx",
-      "id": "tutorial/script_editor/customize-ui",
-      "filename": "tutorial-script_editor-customize-ui.md",
+      "id": "tutorial/windmill/customize-ui",
+      "filename": "tutorial-windmill-customize-ui.md",
       "title": "Generated UI",
       "category": "tutorial",
-      "subcategory": "script_editor",
+      "subcategory": "windmill",
       "word_count": 387,
       "tags": [
-        "script_editor",
-        "beginner",
+        "windmill",
         "tutorial",
+        "beginner",
         "generated"
       ]
     },
     {
       "source_path": "windmill/script_editor/index.mdx",
-      "id": "meta/script_editor/index",
-      "filename": "meta-script_editor-index.md",
+      "id": "meta/windmill/index-101",
+      "filename": "meta-windmill-index.md",
       "title": "Script editor",
       "category": "meta",
-      "subcategory": "script_editor",
+      "subcategory": "windmill",
       "word_count": 663,
       "tags": [
-        "script_editor",
+        "windmill",
         "script",
-        "advanced",
-        "meta"
+        "meta",
+        "advanced"
       ]
     },
     {
       "source_path": "windmill/script_editor/job_debouncing.mdx",
-      "id": "ref/script_editor/job-debouncing",
-      "filename": "ref-script_editor-job-debouncing.md",
+      "id": "ref/windmill/job-debouncing",
+      "filename": "ref-windmill-job-debouncing.md",
       "title": "Job debouncing",
       "category": "ref",
-      "subcategory": "script_editor",
+      "subcategory": "windmill",
       "word_count": 151,
       "tags": [
+        "windmill",
         "reference",
-        "script_editor",
-        "api",
-        "job"
+        "job",
+        "api"
       ]
     },
     {
       "source_path": "windmill/script_editor/multiplayer.mdx",
-      "id": "ops/script_editor/multiplayer",
-      "filename": "ops-script_editor-multiplayer.md",
+      "id": "ops/windmill/multiplayer",
+      "filename": "ops-windmill-multiplayer.md",
       "title": "Multiplayer",
       "category": "ops",
-      "subcategory": "script_editor",
+      "subcategory": "windmill",
       "word_count": 72,
       "tags": [
+        "windmill",
         "operations",
-        "script_editor",
         "multiplayer"
       ]
     },
     {
       "source_path": "windmill/script_editor/perpetual_scripts.mdx",
-      "id": "ops/script_editor/perpetual-scripts",
-      "filename": "ops-script_editor-perpetual-scripts.md",
+      "id": "ops/windmill/perpetual-scripts",
+      "filename": "ops-windmill-perpetual-scripts.md",
       "title": "Running services with perpetual scripts",
       "category": "ops",
-      "subcategory": "script_editor",
+      "subcategory": "windmill",
       "word_count": 178,
       "tags": [
-        "operations",
+        "windmill",
         "running",
-        "script_editor"
+        "operations"
       ]
     },
     {
       "source_path": "windmill/script_editor/script_kinds.mdx",
-      "id": "tutorial/script_editor/script-kinds",
-      "filename": "tutorial-script_editor-script-kinds.md",
+      "id": "tutorial/windmill/script-kinds",
+      "filename": "tutorial-windmill-script-kinds.md",
       "title": "Script kind",
       "category": "tutorial",
-      "subcategory": "script_editor",
+      "subcategory": "windmill",
       "word_count": 396,
       "tags": [
-        "script_editor",
-        "script",
+        "windmill",
         "tutorial",
+        "script",
         "beginner"
       ]
     },
     {
       "source_path": "windmill/script_editor/settings.mdx",
-      "id": "tutorial/script_editor/settings",
-      "filename": "tutorial-script_editor-settings.md",
+      "id": "tutorial/windmill/settings",
+      "filename": "tutorial-windmill-settings.md",
       "title": "Settings",
       "category": "tutorial",
-      "subcategory": "script_editor",
+      "subcategory": "windmill",
       "word_count": 1463,
       "tags": [
+        "windmill",
+        "tutorial",
         "settings",
-        "script_editor",
-        "beginner",
-        "tutorial"
+        "beginner"
       ]
     },
     {
       "source_path": "windmill/script_editor/vs_code_scripts.mdx",
-      "id": "concept/script_editor/vs-code-scripts",
-      "filename": "concept-script_editor-vs-code-scripts.md",
+      "id": "concept/windmill/vs-code-scripts",
+      "filename": "concept-windmill-vs-code-scripts.md",
       "title": "Run scripts in VS Code",
       "category": "concept",
-      "subcategory": "script_editor",
+      "subcategory": "windmill",
       "word_count": 105,
       "tags": [
+        "windmill",
         "concept",
-        "script_editor",
         "run"
       ]
     }

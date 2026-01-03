@@ -2,7 +2,7 @@
 id: ref/fatsecret/api-natural-language-processing
 title: "Natural Language Processing API v1"
 category: ref
-tags: ["fatsecret", "natural", "reference", "advanced", "api"]
+tags: ["advanced", "api", "reference", "natural", "fatsecret"]
 ---
 
 # Natural Language Processing API v1

@@ -2,7 +2,7 @@
 id: tutorial/windmill/intro
 title: "What is Windmill?"
 category: tutorial
-tags: ["what", "windmill", "beginner", "tutorial"]
+tags: ["windmill", "tutorial", "what", "beginner"]
 ---
 
 import DocCard from '@site/src/components/DocCard';
@@ -15,11 +15,11 @@ import { Book, Pen, Home, Cloud, Terminal, Play, Code, List, LayoutDashboard, Mo
 
 Windmill is a fast, **<a href="https://github.com/windmill-labs/windmill">open-source</a>** workflow engine and developer platform. It's an alternative to the likes of Retool, Superblocks, n8n, Airflow, Prefect, Kestra and Temporal, designed to **build comprehensive internal tools** (endpoints, workflows, UIs). It supports coding in TypeScript, Python, Go, PHP, Bash, C#, SQL and Rust, or any Docker image, alongside intuitive low-code builders, featuring:
 
-- An [execution runtime](./meta-script_editor-index.md) for scalable, low-latency function execution across a worker fleet.
-- An [orchestrator](./tutorial-flows-1-flow-editor.md) for assembling these functions into efficient, low-latency flows, using either a low-code builder or YAML.
+- An [execution runtime](./meta-windmill-index-101.md) for scalable, low-latency function execution across a worker fleet.
+- An [orchestrator](./tutorial-windmill-1-flow-editor.md) for assembling these functions into efficient, low-latency flows, using either a low-code builder or YAML.
 - An [app builder](./apps/0_app_editor/index.mdx) for creating data-centric dashboards, utilizing low-code or JS frameworks like React.
 
-Windmill supports both UI-based operations via its webIDE and low-code builders, as well as [CLI](./meta-3_cli-index.md) deployments [from a Git repository](./meta-11_git_sync-index.md), aligning with your preferred development style.
+Windmill supports both UI-based operations via its webIDE and low-code builders, as well as [CLI](./meta-windmill-index-14.md) deployments [from a Git repository](./meta-windmill-index-2.md), aligning with your preferred development style.
 
 Start your project today with our **<a href="https://app.windmill.dev/" rel="nofollow" >Cloud App</a>** (no credit card needed) or opt for **<a href="/docs/advanced/self_host" >self-hosting</a>**.
 
@@ -29,7 +29,7 @@ Start your project today with our **<a href="https://app.windmill.dev/" rel="nof
 
 Focus on code that matters: your critical business logic, from data transformation to internal API calls, starts as scripts and SQL files. Windmill transforms these into scalable microservices and tools without the usual heavy lifting.
 
-Boilerplate code is eliminated as Windmill takes care of the repetitive work of building UIs, [handling errors](./meta-10_error_handling-index.md), scaling logic, and [managing dependencies](./meta-6_imports-index.md), making these aspects more streamlined.
+Boilerplate code is eliminated as Windmill takes care of the repetitive work of building UIs, [handling errors](./meta-windmill-index-24.md), scaling logic, and [managing dependencies](./meta-windmill-index-17.md), making these aspects more streamlined.
 
 <div className="grid grid-cols-2 gap-6 mb-4">
 	<DocCard
@@ -48,17 +48,17 @@ Boilerplate code is eliminated as Windmill takes care of the repetitive work of 
 
 ## Core features
 
-**An efficient runtime**: execute code [across languages](./meta-0_scripts_quickstart-index.md) with minimal overhead and instant starts.
+**An efficient runtime**: execute code [across languages](./meta-windmill-index-96.md) with minimal overhead and instant starts.
 
-**Smart dependency and input management**: automatically generate lockfiles and input specs from your code, ensuring consistent [dependency versions](./meta-6_imports-index.md) and simplified [input handling](./meta-13_json_schema_and_parsing-index.md).
+**Smart dependency and input management**: automatically generate lockfiles and input specs from your code, ensuring consistent [dependency versions](./meta-windmill-index-17.md) and simplified [input handling](./meta-windmill-index-27.md).
 
-**Dynamic web IDE and low-code builders**: create [scripts](./meta-script_editor-index.md) with advanced editing tools and [auto-generated UIs](./meta-6_auto_generated_uis-index.md), build [flows](./tutorial-flows-1-flow-editor.md) with a drag-and-drop interface, and design [apps](./apps/0_app_editor/index.mdx) without extensive coding.
+**Dynamic web IDE and low-code builders**: create [scripts](./meta-windmill-index-101.md) with advanced editing tools and [auto-generated UIs](./meta-windmill-index-77.md), build [flows](./tutorial-windmill-1-flow-editor.md) with a drag-and-drop interface, and design [apps](./apps/0_app_editor/index.mdx) without extensive coding.
 
-**Enterprise-ready**: Windmill offers robust [permissioning](./meta-16_roles_and_permissions-index.md), [secret management](./meta-2_variables_and_secrets-index.md), OAuth, and more, wrapped in an enterprise-grade platform.
+**Enterprise-ready**: Windmill offers robust [permissioning](./meta-windmill-index-30.md), [secret management](./meta-windmill-index-46.md), OAuth, and more, wrapped in an enterprise-grade platform.
 
-**Integrations and automations**: with [webhooks](./meta-4_webhooks-index.md), an [open API](https://app.windmill.dev/openapi.html), and a [scheduler](./meta-1_scheduling-index.md), Windmill fits seamlessly into your infrastructure, allowing for extensive automation capabilities.
+**Integrations and automations**: with [webhooks](./meta-windmill-index-68.md), an [open API](https://app.windmill.dev/openapi.html), and a [scheduler](./meta-windmill-index-34.md), Windmill fits seamlessly into your infrastructure, allowing for extensive automation capabilities.
 
-**Local development**: develop scripts and flows locally using your favorite IDE with the [VS Code extension](./meta-1_vscode-extension-index.md) and [CLI](./meta-3_cli-index.md), then sync with [Git integration](./meta-11_git_sync-index.md) for version control and deployment workflows.
+**Local development**: develop scripts and flows locally using your favorite IDE with the [VS Code extension](./meta-windmill-index-22.md) and [CLI](./meta-windmill-index-14.md), then sync with [Git integration](./meta-windmill-index-2.md) for version control and deployment workflows.
 
 <div className="grid grid-cols-2 gap-6 mb-4">
 	<DocCard

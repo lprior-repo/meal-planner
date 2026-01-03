@@ -2,7 +2,7 @@
 id: tutorial/general/fatsecret-oauth-setup
 title: "FatSecret OAuth Setup (One-Time)"
 category: tutorial
-tags: ["fatsecret", "oauth", "tutorial", "beginner"]
+tags: ["oauth", "tutorial", "beginner", "fatsecret"]
 ---
 
 # FatSecret OAuth Setup (One-Time)

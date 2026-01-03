@@ -2,7 +2,7 @@
 id: ops/moonrepo/setup-workspace
 title: "Setup workspace"
 category: ops
-tags: ["operations", "setup", "moonrepo"]
+tags: ["moonrepo", "operations", "setup"]
 ---
 
 # Setup workspace

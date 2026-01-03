@@ -2,7 +2,7 @@
 id: ops/fatsecret/impl-scope-food-categories-get
 title: "Implementation Scope: FatSecret food.categories.get.v2"
 category: ops
-tags: ["operations", "fatsecret", "implementation", "advanced", "api"]
+tags: ["implementation", "advanced", "api", "operations", "fatsecret"]
 ---
 
 # Implementation Scope: FatSecret food.categories.get.v2

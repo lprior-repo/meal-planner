@@ -2,7 +2,7 @@
 id: tutorial/fatsecret/guides-welcome
 title: "FatSecret Platform API - Welcome"
 category: tutorial
-tags: ["fatsecret", "beginner", "tutorial", "api"]
+tags: ["tutorial", "beginner", "fatsecret", "api"]
 ---
 
 # FatSecret Platform API - Welcome

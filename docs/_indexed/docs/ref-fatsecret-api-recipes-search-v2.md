@@ -2,7 +2,7 @@
 id: ref/fatsecret/api-recipes-search-v2
 title: "Recipes Search v2"
 category: ref
-tags: ["recipes", "fatsecret", "reference"]
+tags: ["fatsecret", "reference", "recipes"]
 ---
 
 # Recipes Search v2

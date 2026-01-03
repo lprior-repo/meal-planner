@@ -255,10 +255,12 @@ def assign_ids(files: List[Dict]) -> Tuple[List[Dict], Dict[str, str]]:
         path = file_info["source_path"]
         category = file_info["category"]
 
-        # Get subcategory from parent folder
+        # Get subcategory from top-level folder for better organization
+        # This keeps all windmill/, fatsecret/, tandoor/, moonrepo/ docs together
         parts = path.split("/")
         if len(parts) > 1:
-            subcategory = parts[-2].lower()
+            # Use first folder as subcategory (windmill, fatsecret, etc.)
+            subcategory = parts[0].lower()
         else:
             subcategory = "general"
 

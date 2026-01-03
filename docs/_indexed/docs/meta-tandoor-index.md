@@ -2,7 +2,7 @@
 id: meta/tandoor/index
 title: "Index"
 category: meta
-tags: ["tandoor", "index", "meta"]
+tags: ["tandoor", "meta", "index"]
 ---
 
 # Index

@@ -2,7 +2,7 @@
 id: ops/windmill/dag-visualization
 title: "Windmill Documentation DAG Visualization"
 category: ops
-tags: ["operations", "windmill"]
+tags: ["windmill", "operations"]
 ---
 
 # Windmill Documentation DAG Visualization

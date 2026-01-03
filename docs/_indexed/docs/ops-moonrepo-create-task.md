@@ -2,7 +2,7 @@
 id: ops/moonrepo/create-task
 title: "Create a task"
 category: ops
-tags: ["operations", "create", "advanced", "moonrepo"]
+tags: ["create", "moonrepo", "operations", "advanced"]
 ---
 
 # Create a task

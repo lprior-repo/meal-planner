@@ -9,4 +9,4 @@ summary: "Why is Tandoor not working on my Raspberry Pi?"
 
 ## Why is Tandoor not working on my Raspberry Pi?
 
-Please refer to [here](./ops-install-docker.md#setup-issues-on-raspberry-pi).
+Please refer to [here](./ops-tandoor-docker.md#setup-issues-on-raspberry-pi).

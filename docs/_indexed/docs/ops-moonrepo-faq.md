@@ -2,7 +2,7 @@
 id: ops/moonrepo/faq
 title: "FAQ"
 category: ops
-tags: ["operations", "advanced", "faq", "moonrepo"]
+tags: ["moonrepo", "operations", "advanced", "faq"]
 ---
 
 # FAQ

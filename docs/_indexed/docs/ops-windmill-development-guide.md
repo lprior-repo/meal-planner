@@ -2,7 +2,7 @@
 id: ops/windmill/development-guide
 title: "Windmill Development Guide"
 category: ops
-tags: ["operations", "windmill", "advanced"]
+tags: ["windmill", "operations", "advanced"]
 ---
 
 # Windmill Development Guide

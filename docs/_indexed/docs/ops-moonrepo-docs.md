@@ -2,7 +2,7 @@
 id: ops/moonrepo/docs
 title: "Introduction"
 category: ops
-tags: ["introduction", "operations", "moonrepo"]
+tags: ["moonrepo", "operations", "introduction"]
 ---
 
 # Introduction

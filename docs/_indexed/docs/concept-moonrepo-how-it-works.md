@@ -2,7 +2,7 @@
 id: concept/moonrepo/how-it-works
 title: "How it works"
 category: concept
-tags: ["how", "concept", "javascript", "moonrepo"]
+tags: ["how", "moonrepo", "concept", "javascript"]
 ---
 
 # How it works

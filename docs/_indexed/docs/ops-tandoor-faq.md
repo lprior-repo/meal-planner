@@ -2,7 +2,7 @@
 id: ops/tandoor/faq
 title: "Faq"
 category: ops
-tags: ["operations", "tandoor", "faq"]
+tags: ["tandoor", "operations", "faq"]
 ---
 
 # Faq
@@ -43,8 +43,8 @@ If you just set up your Tandoor instance and you're having issues like;
 - CORS errors
 - No recipes are loading
 
-then make sure you have set [all required headers](./ops-install-docker.md#required-headers) in your reverse proxy correctly.
-If that doesn't fix it, you can also refer to the appropriate sub section in the [reverse proxy documentation](./ops-install-docker.md#reverse-proxy) and verify your general webserver configuration.
+then make sure you have set [all required headers](./ops-tandoor-docker.md#required-headers) in your reverse proxy correctly.
+If that doesn't fix it, you can also refer to the appropriate sub section in the [reverse proxy documentation](./ops-tandoor-docker.md#reverse-proxy) and verify your general webserver configuration.
 
 ### Required Headers
 Navigate to `/system/` and review the headers listed in the DEBUG section.  At a minimum, if you are using a reverse proxy the headers must match the below conditions.
@@ -87,7 +87,7 @@ The markdown renderer follows this markdown specification https://daringfireball
 
 ## Why is Tandoor not working on my Raspberry Pi?
 
-Please refer to [here](./ops-install-docker.md#setup-issues-on-raspberry-pi).
+Please refer to [here](./ops-tandoor-docker.md#setup-issues-on-raspberry-pi).
 
 ## How can I create users?
 To create a new user click on your name (top right corner) and select 'space settings'. Click create listed below invites.

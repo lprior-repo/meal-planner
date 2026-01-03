@@ -2,7 +2,7 @@
 id: ops/moonrepo/setup-toolchain
 title: "Setup toolchain"
 category: ops
-tags: ["operations", "setup", "moonrepo"]
+tags: ["moonrepo", "operations", "setup"]
 ---
 
 # Setup toolchain

@@ -1,11 +1,11 @@
 {
-  "run_at": "2026-01-02T19:44:02.665570",
+  "run_at": "2026-01-02T19:47:37.587824",
   "summary": {
     "files_checked": 362,
     "files_passed": 360,
     "files_failed": 2,
     "total_errors": 2,
-    "total_warnings": 102
+    "total_warnings": 80
   },
   "by_rule": {
     "V001": {
@@ -29,8 +29,8 @@
       "failed": 0
     },
     "V006": {
-      "passed": 339,
-      "failed": 23
+      "passed": 356,
+      "failed": 6
     },
     "V007": {
       "passed": 362,
@@ -41,13 +41,13 @@
       "failed": 0
     },
     "V009": {
-      "passed": 283,
-      "failed": 79
+      "passed": 288,
+      "failed": 74
     }
   },
   "failures": [
     {
-      "file": "docs/ops-contribute-installation.md",
+      "file": "docs/ops-tandoor-installation.md",
       "errors": [
         {
           "rule": "V004",
@@ -57,7 +57,7 @@
       "warnings": []
     },
     {
-      "file": "docs/ops-install-homeassistant.md",
+      "file": "docs/ops-tandoor-homeassistant.md",
       "errors": [
         {
           "rule": "V004",

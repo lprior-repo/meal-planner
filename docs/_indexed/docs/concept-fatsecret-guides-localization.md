@@ -2,7 +2,7 @@
 id: concept/fatsecret/guides-localization
 title: "FatSecret Platform API - Localization"
 category: concept
-tags: ["concept", "fatsecret", "advanced", "api"]
+tags: ["fatsecret", "concept", "advanced", "api"]
 ---
 
 # FatSecret Platform API - Localization

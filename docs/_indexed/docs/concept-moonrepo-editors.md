@@ -2,7 +2,7 @@
 id: concept/moonrepo/editors
 title: "Editors"
 category: concept
-tags: ["concept", "editors", "moonrepo"]
+tags: ["moonrepo", "concept", "editors"]
 ---
 
 # Editors

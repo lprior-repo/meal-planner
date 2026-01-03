@@ -2,7 +2,7 @@
 id: concept/general/recipe-import-pipeline
 title: "Recipe Import Pipeline"
 category: concept
-tags: ["recipe", "concept", "tandoor"]
+tags: ["tandoor", "concept", "recipe"]
 ---
 
 # Recipe Import Pipeline

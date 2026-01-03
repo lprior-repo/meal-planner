@@ -2,7 +2,7 @@
 id: tutorial/moonrepo/urls
 title: "Moon Monorepo Documentation URLs"
 category: tutorial
-tags: ["moon", "beginner", "tutorial", "moonrepo"]
+tags: ["moon", "tutorial", "moonrepo", "beginner"]
 ---
 
 # Moon Monorepo Documentation URLs

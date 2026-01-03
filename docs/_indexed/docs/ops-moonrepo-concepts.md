@@ -2,7 +2,7 @@
 id: ops/moonrepo/concepts
 title: "Concepts"
 category: ops
-tags: ["operations", "concepts", "moonrepo"]
+tags: ["moonrepo", "operations", "concepts"]
 ---
 
 # Concepts

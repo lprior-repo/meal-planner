@@ -2,7 +2,7 @@
 id: meta/general/readme
 title: "Documentation"
 category: meta
-tags: ["documentation", "meta"]
+tags: ["meta", "documentation"]
 ---
 
 # Documentation

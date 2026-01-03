@@ -2,7 +2,7 @@
 id: ops/moonrepo/comparison
 title: "Feature comparison"
 category: ops
-tags: ["feature", "operations", "moonrepo"]
+tags: ["moonrepo", "operations", "feature"]
 ---
 
 # Feature comparison

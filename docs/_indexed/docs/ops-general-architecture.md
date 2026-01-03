@@ -2,7 +2,7 @@
 id: ops/general/architecture
 title: "Architecture"
 category: ops
-tags: ["operations", "architecture", "windmill", "rust"]
+tags: ["windmill", "operations", "rust", "architecture"]
 ---
 
 # Architecture

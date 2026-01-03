@@ -2,7 +2,7 @@
 id: ops/fatsecret/impl-scope-food-brands-get
 title: "Implementation Scope: food.brands.get.v2"
 category: ops
-tags: ["operations", "fatsecret", "implementation", "advanced", "api"]
+tags: ["implementation", "advanced", "api", "operations", "fatsecret"]
 ---
 
 # Implementation Scope: food.brands.get.v2

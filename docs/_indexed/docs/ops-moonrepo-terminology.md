@@ -2,7 +2,7 @@
 id: ops/moonrepo/terminology
 title: "Terminology"
 category: ops
-tags: ["operations", "terminology", "moonrepo"]
+tags: ["moonrepo", "operations", "terminology"]
 ---
 
 # Terminology
