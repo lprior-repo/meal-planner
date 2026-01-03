@@ -9,7 +9,6 @@
 
 #![allow(clippy::unwrap_used, clippy::indexing_slicing)]
 
-use serde_json::json;
 use std::path::Path;
 
 const SCRIPT_NAME: &str = "saved_meals_get_items";

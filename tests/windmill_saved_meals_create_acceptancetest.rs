@@ -19,13 +19,21 @@ const BINARY_NAME: &str = "fatsecret_saved_meals_create";
 #[test]
 fn test_script_file_exists() {
     let path = Path::new(SCRIPT_PATH);
-    assert!(path.exists(), "Windmill script must exist at: {}", SCRIPT_PATH);
+    assert!(
+        path.exists(),
+        "Windmill script must exist at: {}",
+        SCRIPT_PATH
+    );
 }
 
 #[test]
 fn test_script_yaml_exists() {
     let path = Path::new(SCRIPT_YAML_PATH);
-    assert!(path.exists(), "Script YAML must exist at: {}", SCRIPT_YAML_PATH);
+    assert!(
+        path.exists(),
+        "Script YAML must exist at: {}",
+        SCRIPT_YAML_PATH
+    );
 }
 
 #[test]
@@ -49,10 +57,22 @@ fn test_script_yaml_has_required_schema() -> Result<(), String> {
     let content = fs::read_to_string(SCRIPT_YAML_PATH).map_err(|e| e.to_string())?;
     let parsed: serde_yaml::Value = serde_yaml::from_str(&content)?;
 
-    assert!(parsed.get("summary").is_some(), "Script YAML must have summary field");
-    assert!(parsed.get("kind").is_some(), "Script YAML must have kind field");
-    assert!(parsed.get("language").is_some(), "Script YAML must have language field");
-    assert!(parsed.get("schema").is_some(), "Script YAML must have schema field");
+    assert!(
+        parsed.get("summary").is_some(),
+        "Script YAML must have summary field"
+    );
+    assert!(
+        parsed.get("kind").is_some(),
+        "Script YAML must have kind field"
+    );
+    assert!(
+        parsed.get("language").is_some(),
+        "Script YAML must have language field"
+    );
+    assert!(
+        parsed.get("schema").is_some(),
+        "Script YAML must have schema field"
+    );
 
     let schema = parsed.get("schema").unwrap();
     assert_eq!(
@@ -73,7 +93,11 @@ fn test_script_yaml_has_required_schema() -> Result<(), String> {
 
     if let Some(props) = properties {
         for field in &required_fields {
-            assert!(props.contains_key(field), "Schema must require field: {}", field);
+            assert!(
+                props.contains_key(field),
+                "Schema must require field: {}",
+                field
+            );
         }
     }
     Ok(())
@@ -85,7 +109,10 @@ fn test_binary_produces_valid_json_output() -> Result<(), String> {
 
     let binary_path = format!("./bin/{}", BINARY_NAME);
     if !Path::new(&binary_path).exists() {
-        println!("SKIP: Binary {} not built (run: cargo build --bin {})", BINARY_NAME, BINARY_NAME);
+        println!(
+            "SKIP: Binary {} not built (run: cargo build --bin {})",
+            BINARY_NAME, BINARY_NAME
+        );
         return Ok(());
     }
 
@@ -117,15 +144,29 @@ fn test_binary_produces_valid_json_output() -> Result<(), String> {
     let stdout = String::from_utf8_lossy(&output.stdout);
     let parse_result: Result<serde_json::Value, _> = serde_json::from_str(&stdout);
 
-    let json = parse_result.map_err(|e| format!("Binary output must be valid JSON: {} (stdout: {})", e, stdout))?;
+    let json = parse_result.map_err(|e| {
+        format!(
+            "Binary output must be valid JSON: {} (stdout: {})",
+            e, stdout
+        )
+    })?;
 
-    assert!(json.get("success").is_some(), "Output must have success field");
+    assert!(
+        json.get("success").is_some(),
+        "Output must have success field"
+    );
     let success = json["success"].as_bool().ok_or("success must be boolean")?;
 
     if success {
-        assert!(json.get("saved_meal_id").is_some(), "On success, output must have saved_meal_id field");
+        assert!(
+            json.get("saved_meal_id").is_some(),
+            "On success, output must have saved_meal_id field"
+        );
     } else {
-        assert!(json.get("error").is_some(), "On failure, output must have error field");
+        assert!(
+            json.get("error").is_some(),
+            "On failure, output must have error field"
+        );
     }
     Ok(())
 }

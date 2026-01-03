@@ -6,10 +6,28 @@
 //!   `{"tandoor": {...}, "mealplan_id": 123, "recipe_id": 456, "servings": 4.0}`
 //!
 //! JSON stdout: `{"success": true, "entries": [...]}`
+//!
+//! # Architecture: Functional Core / Imperative Shell
+//!
+//! ## Functional Core (src/tandoor/shopping/mod.rs)
+//! Pure functions with no I/O:
+//! - `parse_input()` - JSON parsing
+//! - `validate_input()` - Input validation
+//! - `format_success()` - Success output formatting
+//! - `format_error()` - Error output formatting
+//!
+//! ## Imperative Shell (this file)
+//! All I/O operations:
+//! - `read_stdin()` / `read_cli_arg()` - Input reading
+//! - `write_stdout()` - Output writing
+//! - `create_client()` - HTTP client creation
+//! - `call_api()` - API calls
 
 #![allow(clippy::exit, clippy::unwrap_used, clippy::expect_used)]
 
-use meal_planner::tandoor::{ShoppingListRecipe, TandoorClient, TandoorConfig};
+use meal_planner::tandoor::shopping::{
+    format_error, format_success, parse_input, validate_input, AddRecipeInput, AddRecipeOutput,
+};
 use meal_planner::tandoor::{TandoorClient, TandoorConfig};
 use std::io::{self, Read};
 
@@ -74,10 +92,13 @@ fn to_tandoor_config(input: &AddRecipeInput) -> TandoorConfig {
 ///
 /// # Function Size: 15 lines (≤25 ✓)
 fn run() -> AddRecipeOutput {
-    let input_str = read_cli_arg().unwrap_or_else(|| match read_stdin() {
-        Ok(s) => s,
-        Err(e) => return format_error(&e),
-    });
+    let input_str = match read_cli_arg() {
+        Some(arg) => arg,
+        None => match read_stdin() {
+            Ok(s) => s,
+            Err(e) => return format_error(&e),
+        },
+    };
 
     let input = match parse_input(&input_str) {
         Ok(i) => i,

@@ -67,7 +67,7 @@ fn exercise_month_summary_schema_has_required_fields() {
         .expect("Script should have schema");
 
     let required = schema.get("required")
-        .and_then(|v| v.as_array())
+        .and_then(|v| v.as_sequence())
         .expect("Schema should have required array");
 
     let required_fields: Vec<&str> = required.iter()
