@@ -1,4 +1,0 @@
-# file: /home/lewis/.local/share/uv/tools/schemathesis/bin/schemathesis
-# hypothesis_version: 6.148.9
-
-['-script.pyw', '.exe', '__main__']
