@@ -13,7 +13,6 @@
 //! - Support both real binary and mock implementations
 
 use crate::helpers::recipe_selection_dsl::{RecipeSelectionItem, RecipeSelectionResult};
-use std::io::Write;
 use std::process::{Command, Stdio};
 
 #[derive(Debug, Clone)]

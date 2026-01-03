@@ -31,7 +31,7 @@ pub struct RecipeSelectionResult {
 }
 
 impl RecipeSelectionResult {
-    fn new(recipes: Vec<RecipeSelectionItem>, warning: Option<String>) -> Self {
+    pub(crate) fn new(recipes: Vec<RecipeSelectionItem>, warning: Option<String>) -> Self {
         let total_calories = recipes.iter().map(|recipe| recipe.calories).sum();
         Self {
             recipes,
