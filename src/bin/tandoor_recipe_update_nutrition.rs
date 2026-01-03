@@ -140,7 +140,7 @@ mod tests {
     fn test_output_serialize() {
         let output = success_output(
             123,
-            json!({"id": 123, "name": "Test Recipe", "nutrition": {}}),
+            serde_json::json!({"id": 123, "name": "Test Recipe", "nutrition": {}}),
         );
         let json = serde_json::to_string(&output).expect("Failed to serialize output JSON");
         assert!(json.contains("\"success\":true"));

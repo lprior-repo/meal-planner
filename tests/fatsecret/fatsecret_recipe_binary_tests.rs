@@ -6,8 +6,8 @@
 
 use serde_json::json;
 
+use super::support::binary_runner::run_binary;
 use crate::fatsecret::common::{expect_failure, get_fatsecret_credentials};
-use crate::helpers::support::binary_runner::run_binary;
 
 #[test]
 fn test_fatsecret_recipes_search_missing_expression() {
@@ -53,7 +53,7 @@ fn test_fatsecret_recipes_search_response_format() {
         "page_number": 1
     });
 
-    let result = run_binary("fatsecret_recipes_search", &input);
+    let result: Result<serde_json::Value, _> = run_binary("fatsecret_recipes_search", &input);
     if let Ok(value) = result {
         assert!(
             value.get("success").is_some(),
@@ -143,7 +143,7 @@ fn test_fatsecret_recipe_get_response_format() {
         "recipe_id": "1"
     });
 
-    let result = run_binary("fatsecret_recipe_get", &input);
+    let result: Result<serde_json::Value, _> = run_binary("fatsecret_recipe_get", &input);
     if let Ok(value) = result {
         assert!(
             value.get("success").is_some(),

@@ -2,10 +2,10 @@
 //!
 //! Tests for pure functions that compute statistics over recipes.
 
-use meal_planner::tandoor::recipe_selection::{filter_by_calorie_range, random_select, Recipe};
+use meal_planner::tandoor::recipe_selection::{filter_by_calorie_range, random_select, RecipeSummary};
 
-fn make_recipe(id: u32, name: &str, calories: u32) -> Recipe {
-    Recipe {
+fn make_recipe(id: u32, name: &str, calories: u32) -> RecipeSummary {
+    RecipeSummary {
         id,
         name: name.to_string(),
         calories,
@@ -69,7 +69,7 @@ mod filter_by_calorie_range_tests {
 
     #[test]
     fn test_filter_by_calorie_range_empty_input() {
-        let recipes: Vec<Recipe> = vec![];
+        let recipes: Vec<RecipeSummary> = vec![];
         let result = filter_by_calorie_range(&recipes, 0, 1000);
         assert!(result.is_empty());
     }
@@ -155,7 +155,7 @@ mod random_select_tests {
 
     #[test]
     fn test_random_select_returns_empty_when_input_is_empty() {
-        let recipes: Vec<Recipe> = vec![];
+        let recipes: Vec<RecipeSummary> = vec![];
         
         let result = random_select(&recipes, 3, 42);
         

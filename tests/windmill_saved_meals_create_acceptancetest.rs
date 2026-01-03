@@ -55,7 +55,7 @@ fn test_script_yaml_is_valid_yaml() -> Result<(), String> {
 #[test]
 fn test_script_yaml_has_required_schema() -> Result<(), String> {
     let content = fs::read_to_string(SCRIPT_YAML_PATH).map_err(|e| e.to_string())?;
-    let parsed: serde_yaml::Value = serde_yaml::from_str(&content)?;
+    let parsed: serde_yaml::Value = serde_yaml::from_str(&content).map_err(|e| e.to_string())?;
 
     assert!(
         parsed.get("summary").is_some(),

@@ -66,58 +66,6 @@ fn mock_recipe_list_response() -> serde_json::Value {
     })
 }
 
-/// Mock response for successful recipe scrape
-fn mock_successful_scrape_response() -> serde_json::Value {
-    json!({
-        "error": false,
-        "msg": "Recipe scraped successfully",
-        "recipe": {
-            "name": "Chocolate Cake",
-            "description": "Delicious chocolate cake",
-            "source_url": "https://example.com/recipe",
-            "image": "https://example.com/image.jpg",
-            "servings": 8,
-            "servings_text": "8 servings",
-            "working_time": 30,
-            "waiting_time": 45,
-            "internal": false,
-            "steps": [
-                {
-                    "instruction": "Mix ingredients",
-                    "show_ingredients_table": true,
-                    "ingredients": [
-                        {
-                            "amount": 2.0,
-                            "food": {"name": "eggs"},
-                            "unit": null,
-                            "note": "",
-                            "original_text": "2 eggs"
-                        },
-                        {
-                            "amount": 1.0,
-                            "food": {"name": "flour"},
-                            "unit": {"name": "cup"},
-                            "note": "all-purpose",
-                            "original_text": "1 cup all-purpose flour"
-                        }
-                    ]
-                },
-                {
-                    "instruction": "Bake at 350°F",
-                    "show_ingredients_table": true,
-                    "ingredients": []
-                }
-            ],
-            "keywords": [
-                {"id": null, "label": null, "name": "dessert"},
-                {"id": 5, "label": "Sweet", "name": "sweet"}
-            ]
-        },
-        "recipe_tree": null,
-        "images": ["https://example.com/image1.jpg", "https://example.com/image2.jpg"]
-    })
-}
-
 /// Mock response for successful recipe import
 fn mock_successful_import_response() -> serde_json::Value {
     json!({
@@ -171,20 +119,6 @@ async fn setup_mock_server_for_list_recipes() -> MockServer {
     Mock::given(method("GET"))
         .and(path("/api/recipe/"))
         .respond_with(ResponseTemplate::new(200).set_body_json(mock_recipe_list_response()))
-        .mount(&mock_server)
-        .await;
-    mock_server
-}
-
-/// Setup mock server for recipe scrape
-async fn setup_mock_server_for_scrape_recipe() -> MockServer {
-    let mock_server = MockServer::start().await;
-    Mock::given(method("POST"))
-        .and(path("/api/recipe-from-source/"))
-        .and(body_json(json!({
-            "url": "https://example.com/recipe"
-        })))
-        .respond_with(ResponseTemplate::new(200).set_body_json(mock_successful_scrape_response()))
         .mount(&mock_server)
         .await;
     mock_server

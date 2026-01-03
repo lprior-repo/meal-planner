@@ -9,9 +9,6 @@
 //!
 //! Run with: cargo test --test windmill_saved_meals_create_unit_tests
 
-const SCRIPT_PATH: &str = "windmill/f/fatsecret/saved_meals_create.sh";
-const BINARY_NAME: &str = "fatsecret_saved_meals_create";
-
 #[test]
 fn test_input_has_all_required_fields() {
     let input = serde_json::json!({
@@ -152,8 +149,14 @@ fn test_binary_input_deserialization() -> Result<(), String> {
 
     let parsed: TestInput = serde_json::from_value(input).map_err(|e| e.to_string())?;
     assert_eq!(parsed.access_token, "token");
+    assert_eq!(parsed.access_secret, "secret");
     assert_eq!(parsed.saved_meal_name, "Test");
+    assert_eq!(parsed.saved_meal_description, Some("A test".to_string()));
     assert_eq!(parsed.meals, "breakfast");
+    assert!(parsed.fatsecret.is_some());
+    let fatsecret = parsed.fatsecret.unwrap();
+    assert_eq!(fatsecret.consumer_key, "key");
+    assert_eq!(fatsecret.consumer_secret, "secret");
     Ok(())
 }
 
@@ -169,8 +172,8 @@ fn test_resource_optional_in_input() -> Result<(), String> {
 
     #[derive(serde::Deserialize)]
     struct FatSecretResource {
-        consumer_key: String,
-        consumer_secret: String,
+        _consumer_key: String,
+        _consumer_secret: String,
     }
 
     let input = serde_json::json!({
@@ -182,6 +185,8 @@ fn test_resource_optional_in_input() -> Result<(), String> {
     let parsed: TestInput = serde_json::from_value(input).map_err(|e| e.to_string())?;
     assert!(parsed.fatsecret.is_none());
     assert_eq!(parsed.access_token, "token");
+    assert_eq!(parsed.saved_meal_name, "Test");
+    assert_eq!(parsed.meals, "breakfast");
     Ok(())
 }
 

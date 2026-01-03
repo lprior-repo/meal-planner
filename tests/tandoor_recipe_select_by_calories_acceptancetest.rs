@@ -18,7 +18,6 @@ use helpers::recipe_selection_dsl::RecipeSelectionDSL;
 /// THEN system returns exactly 4 recipes within 350-650 calorie range
 /// AND recipes are randomly selected for variety
 #[test]
-#[ignore = "GATE-1: RED - DSL not implemented yet"]
 fn should_select_four_recipes_matching_calorie_target() {
     let mut dsl = RecipeSelectionDSL::new();
     dsl.ensure_recipes_with_calories(vec![
@@ -36,8 +35,6 @@ fn should_select_four_recipes_matching_calorie_target() {
     dsl.verify_recipe_count(&result, 4);
     dsl.verify_all_in_calorie_range(&result, 500, 150);
     dsl.verify_total_calories_close_to(&result, 2000, 200);
-
-    panic!("GATE-1: Test is RED - awaiting binary implementation");
 }
 
 /// Acceptance Test: Handle insufficient matching recipes gracefully
@@ -47,7 +44,6 @@ fn should_select_four_recipes_matching_calorie_target() {
 /// THEN system returns the 2 available recipes
 /// AND indicates fewer than requested were found
 #[test]
-#[ignore = "GATE-1: RED - DSL not implemented yet"]
 fn should_return_available_recipes_when_insufficient_matches() {
     let mut dsl = RecipeSelectionDSL::new();
     dsl.ensure_recipes_with_calories(vec![
@@ -61,8 +57,6 @@ fn should_return_available_recipes_when_insufficient_matches() {
 
     dsl.verify_recipe_count(&result, 2);
     dsl.verify_warning_contains(&result, "only 2 recipes found");
-
-    panic!("GATE-1: Test is RED - awaiting binary implementation");
 }
 
 /// Acceptance Test: Verify random selection provides variety
@@ -71,7 +65,6 @@ fn should_return_available_recipes_when_insufficient_matches() {
 /// WHEN I select 4 recipes multiple times
 /// THEN different combinations are returned (randomness)
 #[test]
-#[ignore = "GATE-1: RED - DSL not implemented yet"]
 fn should_provide_variety_through_random_selection() {
     let mut dsl = RecipeSelectionDSL::new();
     dsl.ensure_recipes_with_calories(vec![
@@ -91,6 +84,4 @@ fn should_provide_variety_through_random_selection() {
     let result2 = dsl.select_recipes_by_calories(500, 150, 4);
 
     dsl.verify_different_selections(&result1, &result2);
-
-    panic!("GATE-1: Test is RED - awaiting binary implementation");
 }

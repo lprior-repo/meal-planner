@@ -13,7 +13,7 @@
 #![allow(clippy::unwrap_used, clippy::indexing_slicing, clippy::panic)]
 
 use super::common::{
-    binary_exists, get_fatsecret_credentials, get_oauth_tokens, run_binary_with_exit_code,
+    binary_exists, get_fatsecret_credentials, get_oauth_tokens, run_with_exit_code,
 };
 use serde_json::json;
 
@@ -33,7 +33,7 @@ fn test_food_get_real_api() {
         "food_id": "35718"
     });
 
-    let (output, exit_code) = run_binary_with_exit_code("fatsecret_food_get", &input).unwrap();
+    let (output, exit_code) = run_with_exit_code("fatsecret_food_get", &input).unwrap();
 
     assert_eq!(exit_code, 0, "Should succeed with valid credentials");
     assert_eq!(output["success"], true);
@@ -57,8 +57,7 @@ fn test_foods_autocomplete_real_api() {
         "max_results": 5
     });
 
-    let (output, exit_code) =
-        run_binary_with_exit_code("fatsecret_foods_autocomplete", &input).unwrap();
+    let (output, exit_code) = run_with_exit_code("fatsecret_foods_autocomplete", &input).unwrap();
 
     if exit_code == 0 {
         assert_eq!(output["success"], true);
@@ -95,7 +94,7 @@ fn test_foods_search_real_api() {
         "max_results": 5
     });
 
-    let (output, exit_code) = run_binary_with_exit_code("fatsecret_foods_search", &input).unwrap();
+    let (output, exit_code) = run_with_exit_code("fatsecret_foods_search", &input).unwrap();
 
     assert_eq!(exit_code, 0, "Should succeed with valid credentials");
     assert_eq!(output["success"], true);
@@ -131,8 +130,7 @@ fn test_food_entries_get_real_api() {
         "date_int": date_int
     });
 
-    let (output, exit_code) =
-        run_binary_with_exit_code("fatsecret_food_entries_get", &input).unwrap();
+    let (output, exit_code) = run_with_exit_code("fatsecret_food_entries_get", &input).unwrap();
 
     if exit_code == 0 {
         assert_eq!(output["success"], true);
@@ -166,8 +164,7 @@ fn test_foods_get_favorites_real_api() {
         "access_secret": access_secret
     });
 
-    let (output, exit_code) =
-        run_binary_with_exit_code("fatsecret_foods_get_favorites", &input).unwrap();
+    let (output, exit_code) = run_with_exit_code("fatsecret_foods_get_favorites", &input).unwrap();
 
     if exit_code == 0 {
         assert_eq!(output["success"], true);
@@ -207,7 +204,7 @@ fn test_food_entries_get_month_real_api() {
     });
 
     let (output, exit_code) =
-        run_binary_with_exit_code("fatsecret_food_entries_get_month", &input).unwrap();
+        run_with_exit_code("fatsecret_food_entries_get_month", &input).unwrap();
 
     if exit_code == 0 {
         assert_eq!(output["success"], true);

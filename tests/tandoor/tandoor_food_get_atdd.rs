@@ -5,7 +5,7 @@
 //! These tests define WHAT the binary should do in domain language.
 //! NO implementation details - just input/output behavior.
 
-use serde_json::json;
+use serde_json::{json, Value};
 use wiremock::{
     matchers::{method, path},
     Mock, MockServer, ResponseTemplate,
@@ -35,7 +35,7 @@ async fn should_return_food_when_id_exists() {
         "food_id": 42
     });
 
-    let result = run_binary("tandoor_food_get", &input).await;
+    let result: Result<Value, BinaryError> = run_binary("tandoor_food_get", &input);
 
     assert!(result.is_ok(), "Binary should succeed for valid food ID");
     let output = result.unwrap();
@@ -70,7 +70,7 @@ async fn should_return_error_when_food_not_found() {
         "food_id": 999
     });
 
-    let result = run_binary("tandoor_food_get", &input).await;
+    let result: Result<Value, BinaryError> = run_binary("tandoor_food_get", &input);
 
     assert!(result.is_ok(), "Binary should complete without panic");
     let output = result.unwrap();
@@ -100,7 +100,7 @@ async fn should_return_error_on_auth_failure() {
         "food_id": 1
     });
 
-    let result = run_binary("tandoor_food_get", &input).await;
+    let result: Result<Value, BinaryError> = run_binary("tandoor_food_get", &input);
 
     assert!(result.is_ok(), "Binary should complete without panic");
     let output = result.unwrap();
@@ -133,7 +133,7 @@ async fn should_handle_minimal_input() {
         "food_id": 1
     });
 
-    let result = run_binary("tandoor_food_get", &input).await;
+    let result: Result<Value, BinaryError> = run_binary("tandoor_food_get", &input);
 
     assert!(result.is_ok(), "Binary should handle minimal input");
     let output = result.unwrap();
