@@ -112,7 +112,8 @@ fn weight_update_schema_is_valid() {
 
     let schema: serde_yaml::Value = serde_yaml::from_str(&content).expect("YAML should be valid");
 
-    let props = schema["properties"]
+    let inner_schema = schema.get("schema").expect("YAML should have schema key");
+    let props = inner_schema["properties"]
         .as_mapping()
         .expect("Schema should have properties");
 
@@ -256,7 +257,20 @@ fn is_valid_date_int(date_int: i64) -> bool {
 fn format_windmill_args(input: &serde_json::Value) -> String {
     let weight = input["current_weight_kg"].as_f64().unwrap_or(0.0);
     let date = input["date_int"].as_i64().unwrap_or(0);
-    format!("weight={} date={}", weight, date)
+    let goal = input["goal_weight_kg"].as_f64();
+    let height = input["height_cm"].as_f64();
+    let comment = input["comment"].as_str();
+    let mut result = format!("weight={} date={}", weight, date);
+    if let Some(g) = goal {
+        result.push_str(&format!(" goal={}", g));
+    }
+    if let Some(h) = height {
+        result.push_str(&format!(" height={}", h));
+    }
+    if let Some(c) = comment {
+        result.push_str(&format!(" comment={}", c));
+    }
+    result
 }
 
 // =============================================================================
