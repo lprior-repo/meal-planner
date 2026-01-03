@@ -233,9 +233,9 @@ fn format_windmill_args_with_optional_fields() {
         "comment": "Morning weigh-in"
     });
     let args = format_windmill_args(&input);
-    assert!(args.contains("70.0"), "Should contain goal weight");
-    assert!(args.contains("180.0"), "Should contain height");
-    assert!(args.contains("Morning"), "Should contain comment");
+    assert!(args.contains("goal=70"), "Should contain goal");
+    assert!(args.contains("height=180"), "Should contain height");
+    assert!(args.contains("comment=Morning weigh-in"), "Should contain comment");
 }
 
 // =============================================================================
