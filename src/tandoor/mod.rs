@@ -70,6 +70,7 @@
 
 mod client;
 pub mod nutrition;
+pub mod shopping;
 mod types;
 
 #[cfg(test)]

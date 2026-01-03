@@ -14,13 +14,11 @@
 
 #![allow(clippy::exit, clippy::unwrap_used, clippy::expect_used)]
 
-use meal_planner::fatsecret::core::config::FatSecretConfig;
 use meal_planner::tandoor::nutrition::core::{
-    calculate_recipe_nutrition, convert_to_grams, create_test_nutrition_db, IngredientNutrition,
+    calculate_recipe_nutrition, create_test_nutrition_db, IngredientNutrition,
 };
 use meal_planner::tandoor::{TandoorClient, TandoorConfig};
 use serde::{Deserialize, Serialize};
-use serde_json::Value;
 use std::collections::HashMap;
 use std::io::{self, Read};
 
@@ -35,6 +33,7 @@ struct Input {
 }
 
 #[derive(Deserialize, Clone)]
+#[allow(dead_code)]
 struct FatSecretInput {
     consumer_key: String,
     consumer_secret: String,
@@ -106,11 +105,11 @@ fn run() -> Result<Output, Box<dyn std::error::Error>> {
 
 fn read_input() -> Result<Input, Box<dyn std::error::Error>> {
     if let Some(arg) = std::env::args().nth(1) {
-        serde_json::from_str(&arg).map_err(|e| Box::new(e) as _)
+        Ok(serde_json::from_str(&arg)?)
     } else {
         let mut input_str = String::new();
         io::stdin().read_to_string(&mut input_str)?;
-        serde_json::from_str(&input_str).map_err(|e| Box::new(e) as _)
+        Ok(serde_json::from_str(&input_str)?)
     }
 }
 

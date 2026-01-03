@@ -77,9 +77,12 @@
 
 pub mod client;
 pub mod types;
+pub mod validation;
+pub mod month_summary_validation;
 
 #[cfg(test)]
 mod tests;
 
 pub use client::*;
 pub use types::*;
+pub use month_summary_validation::*;

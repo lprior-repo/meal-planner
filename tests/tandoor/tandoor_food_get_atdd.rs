@@ -11,8 +11,7 @@ use wiremock::{
     Mock, MockServer, ResponseTemplate,
 };
 
-mod helpers;
-use helpers::support::{run_binary, BinaryError};
+use super::helpers::{run_binary, BinaryError};
 
 #[tokio::test]
 async fn should_return_food_when_id_exists() {

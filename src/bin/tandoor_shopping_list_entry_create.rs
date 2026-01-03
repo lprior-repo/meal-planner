@@ -11,7 +11,7 @@
 #![allow(clippy::exit, clippy::unwrap_used, clippy::expect_used)]
 
 use meal_planner::tandoor::{
-    CreateShoppingListEntryRequest, ShoppingListEntry, TandoorClient, TandoorConfig, TandoorError,
+    CreateShoppingListEntryRequest, ShoppingListEntry, TandoorClient, TandoorConfig,
 };
 use serde::{Deserialize, Serialize};
 use std::io::{self, Read};
@@ -64,17 +64,22 @@ fn run() -> Result<ShoppingListEntry, Box<dyn std::error::Error>> {
 }
 
 fn read_input() -> Result<Input, Box<dyn std::error::Error>> {
-    let input_str = std::env::args().nth(1).map(Ok).unwrap_or_else(|| {
-        let mut s = String::new();
-        io::stdin().read_to_string(&mut s)?;
-        Ok(s)
-    })?;
+    let input_str = std::env::args()
+        .nth(1)
+        .map(Ok::<String, Box<dyn std::error::Error>>)
+        .unwrap_or_else(|| {
+            let mut s = String::new();
+            io::stdin().read_to_string(&mut s)?;
+            Ok(s)
+        })?;
     serde_json::from_str(&input_str).map_err(Into::into)
 }
 
-fn execute_create(input: &Input) -> Result<ShoppingListEntry, TandoorError> {
-    let client = TandoorClient::new(&input.tandoor)?;
-    client.create_shopping_list_entry(input.mealplan_id, &input.entry)
+fn execute_create(input: &Input) -> Result<ShoppingListEntry, String> {
+    let client = TandoorClient::new(&input.tandoor).map_err(|e| e.to_string())?;
+    client
+        .create_shopping_list_entry(input.mealplan_id, &input.entry)
+        .map_err(|e| e.to_string())
 }
 
 #[cfg(test)]
