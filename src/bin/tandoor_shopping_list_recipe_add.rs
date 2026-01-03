@@ -88,16 +88,23 @@ fn to_tandoor_config(input: &AddRecipeInput) -> TandoorConfig {
     }
 }
 
+/// Read input (CLI or stdin)
+///
+/// # Function Size: 7 lines (≤25 ✓)
+fn read_input() -> Result<String, String> {
+    match read_cli_arg() {
+        Some(arg) => Ok(arg),
+        None => read_stdin(),
+    }
+}
+
 /// Main execution flow (imperative shell)
 ///
-/// # Function Size: 15 lines (≤25 ✓)
+/// # Function Size: 18 lines (≤25 ✓)
 fn run() -> AddRecipeOutput {
-    let input_str = match read_cli_arg() {
-        Some(arg) => arg,
-        None => match read_stdin() {
-            Ok(s) => s,
-            Err(e) => return format_error(&e),
-        },
+    let input_str = match read_input() {
+        Ok(s) => s,
+        Err(e) => return format_error(&e),
     };
 
     let input = match parse_input(&input_str) {
