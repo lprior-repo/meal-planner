@@ -1228,6 +1228,141 @@
         "fiber": 0.0,
         "sodium": 580
       }
+    },
+    {
+      "name": "Pork Belly Burnt Ends",
+      "description": "Sweet and sticky pork belly burnt ends - candy-like BBQ perfection.",
+      "source_url": "https://www.meatchurch.com/blogs/recipes/pork-belly-burnt-ends",
+      "servings": 8,
+      "servings_text": "8 servings",
+      "working_time": 30,
+      "waiting_time": 240,
+      "keywords": [{"name": "meat-church"}, {"name": "pork-belly"}, {"name": "burnt-ends"}, {"name": "smoked"}],
+      "steps": [
+        {
+          "name": "Cube and season",
+          "instruction": "Cut pork belly into 1.5 inch cubes. Season generously with Honey Hog Hot.",
+          "ingredients": [
+            {"amount": 1360.0, "unit": {"name": "g"}, "food": {"name": "pork belly, skinless"}, "note": "3 lb, cubed"},
+            {"amount": 30.0, "unit": {"name": "g"}, "food": {"name": "Meat Church Honey Hog Hot rub"}, "note": "3 tbsp"}
+          ]
+        },
+        {
+          "name": "Smoke",
+          "instruction": "Smoke at 275°F for 2 hours until mahogany color develops."
+        },
+        {
+          "name": "Braise and glaze",
+          "instruction": "Transfer to foil pan. Add butter, honey, and brown sugar. Cover and cook 1.5 hours. Uncover and glaze with BBQ sauce for final 30 minutes.",
+          "ingredients": [
+            {"amount": 115.0, "unit": {"name": "g"}, "food": {"name": "butter"}, "note": "0.5 cup, cubed"},
+            {"amount": 120.0, "unit": {"name": "ml"}, "food": {"name": "honey"}, "note": "0.5 cup"},
+            {"amount": 110.0, "unit": {"name": "g"}, "food": {"name": "brown sugar"}, "note": "0.5 cup packed"},
+            {"amount": 120.0, "unit": {"name": "ml"}, "food": {"name": "BBQ sauce"}, "note": "0.5 cup"}
+          ]
+        }
+      ],
+      "nutrition": {
+        "calories": 520,
+        "protein": 18.0,
+        "carbohydrate": 28.0,
+        "fat": 38.0,
+        "saturated_fat": 16.0,
+        "fiber": 0.0,
+        "sodium": 480
+      }
+    },
+    {
+      "name": "Smoked Mac and Cheese",
+      "description": "Creamy, smoky mac and cheese with a crispy top - the ultimate BBQ side dish.",
+      "source_url": "https://www.meatchurch.com/blogs/recipes/smoked-mac-and-cheese",
+      "servings": 10,
+      "servings_text": "10 servings",
+      "working_time": 25,
+      "waiting_time": 90,
+      "keywords": [{"name": "meat-church"}, {"name": "mac-and-cheese"}, {"name": "side-dish"}, {"name": "smoked"}],
+      "steps": [
+        {
+          "name": "Cook pasta",
+          "instruction": "Cook elbow macaroni to al dente. Drain and set aside.",
+          "ingredients": [
+            {"amount": 454.0, "unit": {"name": "g"}, "food": {"name": "elbow macaroni"}, "note": "1 lb"}
+          ]
+        },
+        {
+          "name": "Make cheese sauce",
+          "instruction": "Melt butter, whisk in flour. Add milk and cream, simmer until thickened. Remove from heat, stir in cheeses until melted. Season with Holy Gospel.",
+          "ingredients": [
+            {"amount": 115.0, "unit": {"name": "g"}, "food": {"name": "butter"}, "note": "0.5 cup"},
+            {"amount": 45.0, "unit": {"name": "g"}, "food": {"name": "all-purpose flour"}, "note": "0.33 cup"},
+            {"amount": 480.0, "unit": {"name": "ml"}, "food": {"name": "whole milk"}, "note": "2 cups"},
+            {"amount": 240.0, "unit": {"name": "ml"}, "food": {"name": "heavy cream"}, "note": "1 cup"},
+            {"amount": 225.0, "unit": {"name": "g"}, "food": {"name": "sharp cheddar cheese, shredded"}, "note": "2 cups"},
+            {"amount": 225.0, "unit": {"name": "g"}, "food": {"name": "Velveeta cheese"}, "note": "8 oz, cubed"},
+            {"amount": 10.0, "unit": {"name": "g"}, "food": {"name": "Meat Church Holy Gospel rub"}, "note": "1 tbsp"}
+          ]
+        },
+        {
+          "name": "Smoke",
+          "instruction": "Combine pasta and sauce in cast iron or foil pan. Top with more shredded cheese. Smoke at 275°F for 1 hour until bubbly and top is golden.",
+          "ingredients": [
+            {"amount": 115.0, "unit": {"name": "g"}, "food": {"name": "cheddar cheese, shredded"}, "note": "1 cup, for topping"}
+          ]
+        }
+      ],
+      "nutrition": {
+        "calories": 450,
+        "protein": 16.0,
+        "carbohydrate": 38.0,
+        "fat": 26.0,
+        "saturated_fat": 15.0,
+        "fiber": 1.5,
+        "sodium": 620
+      }
+    },
+    {
+      "name": "Jalapeño Poppers",
+      "description": "Bacon-wrapped jalapeño poppers stuffed with cream cheese - a BBQ party favorite.",
+      "source_url": "https://www.meatchurch.com/blogs/recipes/jalapeno-poppers",
+      "servings": 12,
+      "servings_text": "24 poppers (2 per serving)",
+      "working_time": 30,
+      "waiting_time": 60,
+      "keywords": [{"name": "meat-church"}, {"name": "jalapeno-poppers"}, {"name": "appetizer"}, {"name": "bacon"}],
+      "steps": [
+        {
+          "name": "Prep jalapeños",
+          "instruction": "Halve jalapeños lengthwise, remove seeds and membranes.",
+          "ingredients": [
+            {"amount": 340.0, "unit": {"name": "g"}, "food": {"name": "jalapeño peppers"}, "note": "12 large, halved"}
+          ]
+        },
+        {
+          "name": "Make filling",
+          "instruction": "Mix cream cheese with shredded cheddar and Holy Voodoo. Fill each jalapeño half.",
+          "ingredients": [
+            {"amount": 225.0, "unit": {"name": "g"}, "food": {"name": "cream cheese, softened"}, "note": "8 oz"},
+            {"amount": 115.0, "unit": {"name": "g"}, "food": {"name": "cheddar cheese, shredded"}, "note": "1 cup"},
+            {"amount": 15.0, "unit": {"name": "g"}, "food": {"name": "Meat Church Holy Voodoo rub"}, "note": "1.5 tbsp"}
+          ]
+        },
+        {
+          "name": "Wrap and smoke",
+          "instruction": "Wrap each stuffed jalapeño with half a bacon slice. Smoke at 275°F for 45-60 minutes until bacon is crispy.",
+          "ingredients": [
+            {"amount": 340.0, "unit": {"name": "g"}, "food": {"name": "bacon"}, "note": "12 slices, halved"}
+          ]
+        }
+      ],
+      "nutrition": {
+        "calories": 185,
+        "protein": 8.0,
+        "carbohydrate": 3.0,
+        "fat": 16.0,
+        "saturated_fat": 8.0,
+        "fiber": 0.5,
+        "sodium": 380
+      }
     }
   ]
 }
