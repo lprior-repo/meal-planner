@@ -13,19 +13,17 @@ use serde_json::json;
 
 #[test]
 fn test_fatsecret_weight_update_missing_weight() {
-    let creds = match get_fatsecret_credentials() {
-        Some(c) => c,
-        None => return,
-    };
-
+    // Missing required weight_kg should fail
     let input = json!({
-        "fatsecret": creds.to_json()
+        "access_token": "test",
+        "access_secret": "test"
     });
 
     expect_failure("fatsecret_weight_update", &input);
 }
 
 #[test]
+#[ignore = "integration test - requires real FatSecret OAuth tokens"]
 fn test_fatsecret_weight_update_with_weight() {
     let creds = match get_fatsecret_credentials() {
         Some(c) => c,
@@ -48,19 +46,17 @@ fn test_fatsecret_weight_update_with_weight() {
 
 #[test]
 fn test_fatsecret_weight_month_summary_missing_params() {
-    let creds = match get_fatsecret_credentials() {
-        Some(c) => c,
-        None => return,
-    };
-
+    // Missing required year/month should fail
     let input = json!({
-        "fatsecret": creds.to_json()
+        "access_token": "test",
+        "access_secret": "test"
     });
 
     expect_failure("fatsecret_weight_month_summary", &input);
 }
 
 #[test]
+#[ignore = "integration test - requires real FatSecret OAuth tokens"]
 fn test_fatsecret_weight_month_summary_with_params() {
     let creds = match get_fatsecret_credentials() {
         Some(c) => c,

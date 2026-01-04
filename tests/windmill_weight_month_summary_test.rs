@@ -141,42 +141,17 @@ pub mod core {
         (date_int >= min_date) && (date_int <= max_date)
     }
 
-    /// Parse month and year from date_int
+    /// Parse month and year from date_int using chrono
     pub fn date_int_to_month(date_int: i32) -> Option<(i32, i32)> {
+        use chrono::{Datelike, Duration, NaiveDate};
+
         if !validate_date_int(date_int) {
             return None;
         }
-        let epoch_year = 1970;
-        let days_per_month = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-        let total_days = date_int;
-        let mut remaining_days = total_days;
-
-        let mut year = epoch_year;
-        while remaining_days > 365 {
-            let is_leap = year % 4 == 0 && (year % 100 != 0 || year % 400 == 0);
-            let days_in_year = if is_leap { 366 } else { 365 };
-            if remaining_days < days_in_year {
-                break;
-            }
-            remaining_days -= days_in_year;
-            year += 1;
-        }
-
-        let mut month = 0;
-        for (i, days) in days_per_month.iter().enumerate() {
-            let days_in_month = if i == 1 && year % 4 == 0 && (year % 100 != 0 || year % 400 == 0) {
-                29
-            } else {
-                *days
-            };
-            if remaining_days < days_in_month {
-                month = i + 1;
-                break;
-            }
-            remaining_days -= days_in_month;
-        }
-
-        Some((year, month as i32))
+        // date_int is days since 1970-01-01
+        let epoch = NaiveDate::from_ymd_opt(1970, 1, 1)?;
+        let date = epoch.checked_add_signed(Duration::days(i64::from(date_int)))?;
+        Some((date.year(), date.month() as i32))
     }
 
     /// Validate response has required fields
@@ -223,18 +198,21 @@ mod core_tests {
     #[test]
     fn test_validate_date_int_invalid() {
         assert!(!validate_date_int(-1));
-        assert!(!validate_date_int(47500));
+        // 47500 is max valid (2100-01-19), so 47501 is invalid
+        assert!(!validate_date_int(47501));
     }
 
     #[test]
     fn test_date_int_to_month_2025_january() {
-        let result = date_int_to_month(20088);
+        // 2025-01-01 is 20089 days since epoch (1970-01-01)
+        let result = date_int_to_month(20089);
         assert_eq!(result, Some((2025, 1)));
     }
 
     #[test]
     fn test_date_int_to_month_2024_december() {
-        let result = date_int_to_month(19965);
+        // 2024-12-01 is 20058 days since epoch (1970-01-01)
+        let result = date_int_to_month(20058);
         assert_eq!(result, Some((2024, 12)));
     }
 

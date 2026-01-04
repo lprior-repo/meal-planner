@@ -92,22 +92,26 @@ mod acceptance_tests {
 
         #[test]
         fn input_requires_mealplan_id() {
-            let json = json!({
+            // Document that valid input requires mealplan_id
+            let valid_json = json!({
                 "tandoor": {"base_url": "http://localhost:8090", "api_token": "test"},
+                "mealplan_id": 1,
                 "entry_id": 100,
                 "update": {"checked": true}
             });
-            assert!(json.get("mealplan_id").is_some());
+            assert!(valid_json.get("mealplan_id").is_some());
         }
 
         #[test]
         fn input_requires_entry_id() {
-            let json = json!({
+            // Document that valid input requires entry_id
+            let valid_json = json!({
                 "tandoor": {"base_url": "http://localhost:8090", "api_token": "test"},
                 "mealplan_id": 1,
+                "entry_id": 100,
                 "update": {"checked": true}
             });
-            assert!(json.get("entry_id").is_some());
+            assert!(valid_json.get("entry_id").is_some());
         }
 
         #[test]

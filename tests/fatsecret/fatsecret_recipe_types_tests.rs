@@ -72,12 +72,14 @@ fn get_fatsecret_credentials() -> Option<(String, String)> {
 }
 
 #[test]
+#[ignore = "integration test - makes real FatSecret API call"]
 fn test_fatsecret_recipe_types_get_no_params() {
     let result = run_binary("fatsecret_recipe_types_get", &json!({}));
     assert!(result.is_ok(), "Binary should execute without params");
 }
 
 #[test]
+#[ignore = "integration test - makes real FatSecret API call"]
 fn test_fatsecret_recipe_types_get_with_credentials() {
     let creds = match get_fatsecret_credentials() {
         Some(c) => c,
@@ -94,6 +96,7 @@ fn test_fatsecret_recipe_types_get_with_credentials() {
 }
 
 #[test]
+#[ignore = "integration test - makes real FatSecret API call"]
 fn test_fatsecret_recipe_types_get_response_format() {
     let result = run_binary("fatsecret_recipe_types_get", &json!({}));
     let value = result.expect("Binary should execute");
@@ -108,6 +111,7 @@ fn test_fatsecret_recipe_types_get_response_format() {
 }
 
 #[test]
+#[ignore = "integration test - makes real FatSecret API call"]
 fn test_fatsecret_recipe_types_get_returns_array() {
     let result = run_binary("fatsecret_recipe_types_get", &json!({}));
     let value = result.expect("Binary should execute");
@@ -118,6 +122,7 @@ fn test_fatsecret_recipe_types_get_returns_array() {
 }
 
 #[test]
+#[ignore = "integration test - makes real FatSecret API call"]
 fn test_fatsecret_recipe_types_get_empty_params() {
     let input = json!({});
     let result = run_binary("fatsecret_recipe_types_get", &input);

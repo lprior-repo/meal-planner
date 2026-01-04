@@ -54,6 +54,7 @@ fn run_binary(name: &str, input: &serde_json::Value) -> serde_json::Value {
 }
 
 #[tokio::test]
+#[ignore = "integration test - requires release binaries and mock server"]
 async fn flow_import_recipe_full() {
     println!("\n=== Testing import_recipe.flow End-to-End ===");
 
@@ -125,6 +126,7 @@ async fn flow_import_recipe_full() {
 }
 
 #[tokio::test]
+#[ignore = "integration test - requires release binaries and mock server"]
 async fn flow_batch_import_recipes_full() {
     println!("\n=== Testing batch_import_recipes.flow End-to-End ===");
 
@@ -209,6 +211,7 @@ async fn flow_batch_import_recipes_full() {
 }
 
 #[tokio::test]
+#[ignore = "integration test - requires release binaries and mock server"]
 async fn flow_weekly_meal_plan_full() {
     println!("\n=== Testing weekly_meal_plan.flow End-to-End ===");
 

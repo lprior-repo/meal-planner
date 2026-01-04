@@ -3,7 +3,7 @@
 //! These tests verify that binaries work correctly with real API calls
 //! (when credentials are available)
 //!
-//! Run with: cargo test --test fatsecret_api_validation_tests
+//! Run with: cargo test --test fatsecret_foods_tests -- --ignored
 //!
 //! Credentials are automatically loaded from:
 //! 1. Environment variables (`FATSECRET_CONSUMER_KEY`, etc.)
@@ -18,6 +18,7 @@ use super::common::{
 use serde_json::json;
 
 #[test]
+#[ignore = "integration test - requires real FatSecret API credentials"]
 fn test_food_get_real_api() {
     let Some(credentials) = get_fatsecret_credentials() else {
         println!("Skipping: FATSECRET_CONSUMER_KEY/SECRET not set");
@@ -41,6 +42,7 @@ fn test_food_get_real_api() {
 }
 
 #[test]
+#[ignore = "integration test - requires real FatSecret API credentials"]
 fn test_foods_autocomplete_real_api() {
     let Some(credentials) = get_fatsecret_credentials() else {
         println!("Skipping: credentials not available");
@@ -77,6 +79,7 @@ fn test_foods_autocomplete_real_api() {
 }
 
 #[test]
+#[ignore = "integration test - requires real FatSecret API credentials"]
 fn test_foods_search_real_api() {
     let Some(credentials) = get_fatsecret_credentials() else {
         println!("Skipping: FATSECRET_CONSUMER_KEY/SECRET not set");
@@ -102,6 +105,7 @@ fn test_foods_search_real_api() {
 }
 
 #[test]
+#[ignore = "integration test - requires real FatSecret OAuth tokens"]
 fn test_food_entries_get_real_api() {
     let Some(credentials) = get_fatsecret_credentials() else {
         println!("Skipping: FATSECRET_CONSUMER_KEY/SECRET not set");
@@ -141,6 +145,7 @@ fn test_food_entries_get_real_api() {
 }
 
 #[test]
+#[ignore = "integration test - requires real FatSecret OAuth tokens"]
 fn test_foods_get_favorites_real_api() {
     let Some(credentials) = get_fatsecret_credentials() else {
         println!("Skipping: FATSECRET_CONSUMER_KEY/SECRET not set");
@@ -175,6 +180,7 @@ fn test_foods_get_favorites_real_api() {
 }
 
 #[test]
+#[ignore = "integration test - requires real FatSecret OAuth tokens"]
 fn test_food_entries_get_month_real_api() {
     let Some(credentials) = get_fatsecret_credentials() else {
         println!("Skipping: FATSECRET_CONSUMER_KEY/SECRET not set");

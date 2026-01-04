@@ -46,6 +46,7 @@ fn run_binary(binary_name: &str, input: &str) -> Result<Value, String> {
 }
 
 #[test]
+#[ignore = "integration test - requires real Tandoor server"]
 fn tandoor_shopping_list_entry_list_success() {
     let (url, token) = get_tandoor_creds();
     let input = json!({
@@ -56,6 +57,7 @@ fn tandoor_shopping_list_entry_list_success() {
 }
 
 #[test]
+#[ignore = "integration test - requires real Tandoor server"]
 fn tandoor_shopping_list_entry_create_success() {
     let (url, token) = get_tandoor_creds();
     let input = json!({
@@ -76,6 +78,7 @@ fn tandoor_shopping_list_entry_create_success() {
 }
 
 #[test]
+#[ignore = "integration test - requires real Tandoor server"]
 fn tandoor_shopping_list_entry_update_success() {
     let (url, token) = get_tandoor_creds();
     let input = json!({
@@ -92,6 +95,7 @@ fn tandoor_shopping_list_entry_update_success() {
 }
 
 #[test]
+#[ignore = "integration test - requires real Tandoor server"]
 fn tandoor_shopping_list_entry_delete_success() {
     let (url, token) = get_tandoor_creds();
     let input = json!({
@@ -104,6 +108,7 @@ fn tandoor_shopping_list_entry_delete_success() {
 }
 
 #[test]
+#[ignore = "integration test - requires real Tandoor server"]
 fn tandoor_shopping_list_recipe_add_success() {
     let (url, token) = get_tandoor_creds();
     let input = json!({
@@ -119,6 +124,7 @@ fn tandoor_shopping_list_recipe_add_success() {
 }
 
 #[test]
+#[ignore = "integration test - requires real Tandoor server"]
 fn tandoor_shopping_list_recipe_get_success() {
     let (url, token) = get_tandoor_creds();
     let input = json!({
@@ -133,6 +139,7 @@ fn tandoor_shopping_list_recipe_get_success() {
 }
 
 #[test]
+#[ignore = "integration test - requires real Tandoor server"]
 fn tandoor_shopping_list_recipe_delete_success() {
     let (url, token) = get_tandoor_creds();
     let input = json!({

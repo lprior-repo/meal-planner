@@ -68,6 +68,7 @@ fn expect_success(binary_name: &str, input: &str) -> Value {
 }
 
 #[test]
+#[ignore = "integration test - requires real Tandoor server"]
 fn tandoor_meal_type_list_success() {
     let (url, token) = get_tandoor_creds();
     let input = json!({
@@ -81,6 +82,7 @@ fn tandoor_meal_type_list_success() {
 }
 
 #[test]
+#[ignore = "integration test - requires real Tandoor server"]
 fn tandoor_meal_type_response_format() {
     let (url, token) = get_tandoor_creds();
     let input = json!({
@@ -95,6 +97,7 @@ fn tandoor_meal_type_response_format() {
 }
 
 #[test]
+#[ignore = "integration test - requires real Tandoor server"]
 fn tandoor_meal_plan_crud_cycle() {
     let (url, token) = get_tandoor_creds();
 
@@ -145,6 +148,7 @@ fn tandoor_meal_plan_crud_cycle() {
 }
 
 #[test]
+#[ignore = "integration test - requires real Tandoor server"]
 fn tandoor_meal_type_create_success() {
     let (url, token) = get_tandoor_creds();
     let test_name = format!("Test Meal Type {}", Utc::now().timestamp());
@@ -173,6 +177,7 @@ fn tandoor_meal_type_create_success() {
 }
 
 #[test]
+#[ignore = "integration test - requires real Tandoor server"]
 fn tandoor_meal_type_update_success() {
     let (url, token) = get_tandoor_creds();
     let test_name = format!("Test Meal Type {}", Utc::now().timestamp());
@@ -213,6 +218,7 @@ fn tandoor_meal_type_update_success() {
 }
 
 #[test]
+#[ignore = "integration test - requires real Tandoor server"]
 fn tandoor_meal_type_delete_success() {
     let (url, token) = get_tandoor_creds();
     let test_name = format!("Test Meal Type {}", Utc::now().timestamp());

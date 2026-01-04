@@ -36,9 +36,10 @@ fn script_is_readable() {
 #[test]
 fn script_has_correct_shebang() {
     let content = fs::read_to_string(SCRIPT_PATH).unwrap();
+    // Windmill scripts can start with shebang OR shellcheck directive
     assert!(
-        content.starts_with("#!/"),
-        "Script should start with shebang"
+        content.starts_with("#!/") || content.starts_with("# shellcheck"),
+        "Script should start with shebang or shellcheck directive"
     );
     assert!(content.contains("bash"), "Script should use bash");
 }

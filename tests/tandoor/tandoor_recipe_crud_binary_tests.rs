@@ -67,6 +67,7 @@ fn expect_success(binary_name: &str, input: &str) -> Value {
 }
 
 #[test]
+#[ignore = "integration test - requires real Tandoor server"]
 fn tandoor_recipe_ids_are_consistent() {
     let (url, token) = get_tandoor_creds();
     let input = json!({
@@ -95,6 +96,7 @@ fn tandoor_recipe_ids_are_consistent() {
 }
 
 #[test]
+#[ignore = "integration test - requires real Tandoor server"]
 fn tandoor_recipe_create_success() {
     let (url, token) = get_tandoor_creds();
     let recipe = json!({
@@ -128,6 +130,7 @@ fn tandoor_recipe_create_success() {
 }
 
 #[test]
+#[ignore = "integration test - requires real Tandoor server"]
 fn tandoor_recipe_update_success() {
     let (url, token) = get_tandoor_creds();
     let input = json!({
@@ -147,6 +150,7 @@ fn tandoor_recipe_update_success() {
 }
 
 #[test]
+#[ignore = "integration test - requires real Tandoor server"]
 fn tandoor_recipe_delete_success() {
     let (url, token) = get_tandoor_creds();
     let input = json!({
@@ -159,6 +163,7 @@ fn tandoor_recipe_delete_success() {
 }
 
 #[test]
+#[ignore = "integration test - requires real Tandoor server"]
 fn tandoor_recipe_upload_image_success() {
     let (url, token) = get_tandoor_creds();
     let temp_dir = std::env::temp_dir();
@@ -178,6 +183,7 @@ fn tandoor_recipe_upload_image_success() {
 }
 
 #[test]
+#[ignore = "integration test - requires real Tandoor server"]
 fn tandoor_recipe_get_related_success() {
     let (url, token) = get_tandoor_creds();
     let input = json!({
@@ -195,6 +201,7 @@ fn tandoor_recipe_get_related_success() {
 }
 
 #[test]
+#[ignore = "integration test - requires real Tandoor server"]
 fn tandoor_recipe_batch_update_success() {
     let (url, token) = get_tandoor_creds();
     let updates = json!([

@@ -216,9 +216,10 @@ pub fn expect_success(binary_name: &str, input: &Value) -> Value {
 pub fn expect_failure(binary_name: &str, input: &Value) {
     let result = run_binary(binary_name, input);
     assert!(
-        result.is_ok(),
-        "Binary {} should fail gracefully",
-        binary_name
+        result.is_err(),
+        "Binary {} should fail with invalid input, but succeeded with: {:?}",
+        binary_name,
+        result
     );
 }
 

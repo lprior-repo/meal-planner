@@ -74,10 +74,11 @@ fn get_fatsecret_credentials() -> Option<(String, String)> {
 #[test]
 fn test_fatsecret_foods_recently_eaten_no_params() {
     let result = run_binary("fatsecret_foods_recently_eaten", &json!({}));
-    assert!(result.is_ok(), "Binary should execute without params");
+    assert!(result.is_err(), "Binary should fail without OAuth tokens");
 }
 
 #[test]
+#[ignore = "integration test - requires real FatSecret OAuth tokens"]
 fn test_fatsecret_foods_recently_eaten_with_pagination() {
     let creds = match get_fatsecret_credentials() {
         Some(c) => c,
@@ -96,6 +97,7 @@ fn test_fatsecret_foods_recently_eaten_with_pagination() {
 }
 
 #[test]
+#[ignore = "integration test - requires real FatSecret OAuth tokens"]
 fn test_fatsecret_foods_recently_eaten_response_format() {
     let creds = match get_fatsecret_credentials() {
         Some(c) => c,
@@ -118,6 +120,7 @@ fn test_fatsecret_foods_recently_eaten_response_format() {
 }
 
 #[test]
+#[ignore = "integration test - requires real FatSecret OAuth tokens"]
 fn test_fatsecret_foods_recently_eaten_invalid_page() {
     let creds = match get_fatsecret_credentials() {
         Some(c) => c,

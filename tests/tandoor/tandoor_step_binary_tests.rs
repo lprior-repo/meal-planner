@@ -46,6 +46,7 @@ fn run_binary(binary_name: &str, input: &Value) -> Result<Value, String> {
 }
 
 #[test]
+#[ignore = "integration test - requires real Tandoor server"]
 fn tandoor_step_list_success() {
     let (url, token) = get_tandoor_creds();
     let input = json!({
@@ -61,6 +62,7 @@ fn tandoor_step_list_success() {
 }
 
 #[test]
+#[ignore = "integration test - requires real Tandoor server"]
 fn tandoor_step_list_with_pagination() {
     let (url, token) = get_tandoor_creds();
     let input = json!({
@@ -76,6 +78,7 @@ fn tandoor_step_list_with_pagination() {
 }
 
 #[test]
+#[ignore = "integration test - requires real Tandoor server"]
 fn tandoor_step_get_success() {
     let (url, token) = get_tandoor_creds();
     let input = json!({
@@ -88,6 +91,7 @@ fn tandoor_step_get_success() {
 }
 
 #[test]
+#[ignore = "integration test - requires real Tandoor server"]
 fn tandoor_step_get_missing_id() {
     let (url, token) = get_tandoor_creds();
     let input = json!({
@@ -99,6 +103,7 @@ fn tandoor_step_get_missing_id() {
 }
 
 #[test]
+#[ignore = "integration test - requires real Tandoor server"]
 fn tandoor_step_get_invalid_id() {
     let (url, token) = get_tandoor_creds();
     let input = json!({
@@ -111,6 +116,7 @@ fn tandoor_step_get_invalid_id() {
 }
 
 #[test]
+#[ignore = "integration test - requires real Tandoor server"]
 fn tandoor_step_create_success() {
     let (url, token) = get_tandoor_creds();
     let input = json!({
@@ -134,6 +140,7 @@ fn tandoor_step_create_success() {
 }
 
 #[test]
+#[ignore = "integration test - requires real Tandoor server"]
 fn tandoor_step_create_missing_instruction() {
     let (url, token) = get_tandoor_creds();
     let input = json!({
@@ -145,6 +152,7 @@ fn tandoor_step_create_missing_instruction() {
 }
 
 #[test]
+#[ignore = "integration test - requires real Tandoor server"]
 fn tandoor_step_update_success() {
     let (url, token) = get_tandoor_creds();
     let create_input = json!({
@@ -176,6 +184,7 @@ fn tandoor_step_update_success() {
 }
 
 #[test]
+#[ignore = "integration test - requires real Tandoor server"]
 fn tandoor_step_update_missing_id() {
     let (url, token) = get_tandoor_creds();
     let input = json!({
@@ -188,6 +197,7 @@ fn tandoor_step_update_missing_id() {
 }
 
 #[test]
+#[ignore = "integration test - requires real Tandoor server"]
 fn tandoor_step_delete_success() {
     let (url, token) = get_tandoor_creds();
     let create_input = json!({
@@ -212,6 +222,7 @@ fn tandoor_step_delete_success() {
 }
 
 #[test]
+#[ignore = "integration test - requires real Tandoor server"]
 fn tandoor_step_delete_invalid_id() {
     let (url, token) = get_tandoor_creds();
     let input = json!({
@@ -224,6 +235,7 @@ fn tandoor_step_delete_invalid_id() {
 }
 
 #[test]
+#[ignore = "integration test - requires real Tandoor server"]
 fn tandoor_step_list_response_format() {
     let (url, token) = get_tandoor_creds();
     let input = json!({

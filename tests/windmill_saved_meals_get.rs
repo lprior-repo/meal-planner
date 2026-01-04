@@ -27,6 +27,7 @@ use std::process::{Command, Stdio};
 // ========================================
 
 #[test]
+#[ignore = "integration test - requires real FatSecret API credentials"]
 fn windmill_saved_meals_get_script_exists() {
     let script_path = "windmill/f/fatsecret/saved_meals_get.sh";
     assert!(
@@ -37,6 +38,7 @@ fn windmill_saved_meals_get_script_exists() {
 }
 
 #[test]
+#[ignore = "integration test - requires real FatSecret API credentials"]
 fn windmill_saved_meals_get_script_yaml_exists() {
     let yaml_path = "windmill/f/fatsecret/saved_meals_get.script.yaml";
     assert!(
@@ -47,6 +49,7 @@ fn windmill_saved_meals_get_script_yaml_exists() {
 }
 
 #[test]
+#[ignore = "integration test - requires real FatSecret API credentials"]
 fn windmill_saved_meals_get_script_is_executable() {
     let output = Command::new("bash")
         .args(["-n", "windmill/f/fatsecret/saved_meals_get.sh"])
@@ -61,6 +64,7 @@ fn windmill_saved_meals_get_script_is_executable() {
 }
 
 #[test]
+#[ignore = "integration test - requires real FatSecret API credentials"]
 fn windmill_saved_meals_get_script_yaml_is_valid() {
     let yaml_content = std::fs::read_to_string("windmill/f/fatsecret/saved_meals_get.script.yaml")
         .expect("Should read script YAML");
@@ -78,6 +82,7 @@ fn windmill_saved_meals_get_script_yaml_is_valid() {
 }
 
 #[test]
+#[ignore = "integration test - requires real FatSecret API credentials"]
 fn windmill_saved_meals_get_schema_has_required_fields() {
     let yaml_content = std::fs::read_to_string("windmill/f/fatsecret/saved_meals_get.script.yaml")
         .expect("Should read script YAML");
@@ -150,12 +155,14 @@ fn run_binary(binary_name: &str, input: &serde_json::Value) -> Result<serde_json
 }
 
 #[test]
+#[ignore = "integration test - requires real FatSecret API credentials"]
 fn binary_fatsecret_saved_meals_get_executes() {
     let result = run_binary("fatsecret_saved_meals_get", &json!({}));
     assert!(result.is_ok(), "Binary should execute without params");
 }
 
 #[test]
+#[ignore = "integration test - requires real FatSecret API credentials"]
 fn binary_fatsecret_saved_meals_get_returns_success_field() {
     let result = run_binary("fatsecret_saved_meals_get", &json!({}));
     assert!(result.is_ok(), "Binary should execute");
@@ -168,6 +175,7 @@ fn binary_fatsecret_saved_meals_get_returns_success_field() {
 }
 
 #[test]
+#[ignore = "integration test - requires real FatSecret API credentials"]
 fn binary_fatsecret_saved_meals_get_returns_saved_meals_field() {
     let result = run_binary("fatsecret_saved_meals_get", &json!({}));
     assert!(result.is_ok(), "Binary should execute");
@@ -184,6 +192,7 @@ fn binary_fatsecret_saved_meals_get_returns_saved_meals_field() {
 }
 
 #[test]
+#[ignore = "integration test - requires real FatSecret API credentials"]
 fn binary_fatsecret_saved_meals_get_with_meal_filter() {
     let input = json!({
         "meal": "breakfast"
@@ -193,6 +202,7 @@ fn binary_fatsecret_saved_meals_get_with_meal_filter() {
 }
 
 #[test]
+#[ignore = "integration test - requires real FatSecret API credentials"]
 fn binary_fatsecret_saved_meals_get_with_lunch_filter() {
     let input = json!({
         "meal": "lunch"
@@ -202,6 +212,7 @@ fn binary_fatsecret_saved_meals_get_with_lunch_filter() {
 }
 
 #[test]
+#[ignore = "integration test - requires real FatSecret API credentials"]
 fn binary_fatsecret_saved_meals_get_with_dinner_filter() {
     let input = json!({
         "meal": "dinner"
@@ -211,6 +222,7 @@ fn binary_fatsecret_saved_meals_get_with_dinner_filter() {
 }
 
 #[test]
+#[ignore = "integration test - requires real FatSecret API credentials"]
 fn binary_fatsecret_saved_meals_get_with_other_filter() {
     let input = json!({
         "meal": "other"
@@ -239,6 +251,7 @@ fn validate_saved_meals_response(value: &serde_json::Value) -> bool {
 }
 
 #[test]
+#[ignore = "integration test - requires real FatSecret API credentials"]
 fn validate_meal_type_accepts_valid_meals() {
     assert!(validate_meal_type("breakfast"));
     assert!(validate_meal_type("lunch"));
@@ -248,6 +261,7 @@ fn validate_meal_type_accepts_valid_meals() {
 }
 
 #[test]
+#[ignore = "integration test - requires real FatSecret API credentials"]
 fn validate_meal_type_rejects_invalid_meals() {
     assert!(!validate_meal_type("invalid"));
     assert!(!validate_meal_type(""));
@@ -255,6 +269,7 @@ fn validate_meal_type_rejects_invalid_meals() {
 }
 
 #[test]
+#[ignore = "integration test - requires real FatSecret API credentials"]
 fn has_oauth_credentials_detects_present() {
     let input = json!({
         "access_token": "token",
@@ -264,12 +279,14 @@ fn has_oauth_credentials_detects_present() {
 }
 
 #[test]
+#[ignore = "integration test - requires real FatSecret API credentials"]
 fn has_oauth_credentials_detects_missing() {
     let input = json!({});
     assert!(!has_oauth_credentials(&input));
 }
 
 #[test]
+#[ignore = "integration test - requires real FatSecret API credentials"]
 fn has_oauth_credentials_detects_partial() {
     let input = json!({
         "access_token": "token"
@@ -278,6 +295,7 @@ fn has_oauth_credentials_detects_partial() {
 }
 
 #[test]
+#[ignore = "integration test - requires real FatSecret API credentials"]
 fn validate_saved_meals_response_accepts_valid() {
     let response = json!({
         "success": true,
@@ -287,6 +305,7 @@ fn validate_saved_meals_response_accepts_valid() {
 }
 
 #[test]
+#[ignore = "integration test - requires real FatSecret API credentials"]
 fn validate_saved_meals_response_rejects_missing_fields() {
     let response = json!({
         "success": true
@@ -299,6 +318,7 @@ fn validate_saved_meals_response_rejects_missing_fields() {
 // ========================================
 
 #[test]
+#[ignore = "integration test - requires real FatSecret API credentials"]
 fn print_test_summary() {
     println!();
     println!("========================================");

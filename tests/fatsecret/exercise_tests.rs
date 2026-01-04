@@ -15,13 +15,10 @@ use serde_json::json;
 
 #[test]
 fn test_fatsecret_exercise_entries_get_missing_date() {
-    let creds = match get_fatsecret_credentials() {
-        Some(c) => c,
-        None => return,
-    };
-
+    // Missing required 'date' field should fail
     let input = json!({
-        "fatsecret": creds.to_json()
+        "access_token": "test",
+        "access_secret": "test"
     });
 
     expect_failure("fatsecret_exercise_entries_get", &input);
@@ -50,13 +47,10 @@ fn test_fatsecret_exercise_entries_get_with_date() {
 
 #[test]
 fn test_fatsecret_exercise_entry_create_missing_fields() {
-    let creds = match get_fatsecret_credentials() {
-        Some(c) => c,
-        None => return,
-    };
-
+    // Missing required fields should fail
     let input = json!({
-        "fatsecret": creds.to_json()
+        "access_token": "test",
+        "access_secret": "test"
     });
 
     expect_failure("fatsecret_exercise_entry_create", &input);
@@ -87,13 +81,10 @@ fn test_fatsecret_exercise_entry_create_with_fields() {
 
 #[test]
 fn test_fatsecret_exercise_entry_edit_missing_entry_id() {
-    let creds = match get_fatsecret_credentials() {
-        Some(c) => c,
-        None => return,
-    };
-
+    // Missing required exercise_entry_id should fail
     let input = json!({
-        "fatsecret": creds.to_json()
+        "access_token": "test",
+        "access_secret": "test"
     });
 
     expect_failure("fatsecret_exercise_entry_edit", &input);
@@ -123,13 +114,10 @@ fn test_fatsecret_exercise_entry_edit_with_id() {
 
 #[test]
 fn test_fatsecret_exercise_entry_delete_missing_id() {
-    let creds = match get_fatsecret_credentials() {
-        Some(c) => c,
-        None => return,
-    };
-
+    // Missing required exercise_entry_id should fail
     let input = json!({
-        "fatsecret": creds.to_json()
+        "access_token": "test",
+        "access_secret": "test"
     });
 
     expect_failure("fatsecret_exercise_entry_delete", &input);
@@ -158,13 +146,10 @@ fn test_fatsecret_exercise_entry_delete_with_id() {
 
 #[test]
 fn test_fatsecret_exercise_month_summary_missing_params() {
-    let creds = match get_fatsecret_credentials() {
-        Some(c) => c,
-        None => return,
-    };
-
+    // Missing required year/month fields should fail
     let input = json!({
-        "fatsecret": creds.to_json()
+        "access_token": "test",
+        "access_secret": "test"
     });
 
     expect_failure("fatsecret_exercise_month_summary", &input);
@@ -194,13 +179,10 @@ fn test_fatsecret_exercise_month_summary_with_params() {
 
 #[test]
 fn test_fatsecret_exercise_get_missing_id() {
-    let creds = match get_fatsecret_credentials() {
-        Some(c) => c,
-        None => return,
-    };
-
+    // Missing required exercise_id should fail
     let input = json!({
-        "fatsecret": creds.to_json()
+        "consumer_key": "test",
+        "consumer_secret": "test"
     });
 
     expect_failure("fatsecret_exercise_get", &input);

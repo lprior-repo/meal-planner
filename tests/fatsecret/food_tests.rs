@@ -6,17 +6,8 @@
 
 #![allow(clippy::unwrap_used, clippy::indexing_slicing)]
 
-use super::common::{get_fatsecret_credentials, run_binary};
-use serde_json::{json, Value};
-
-fn expect_failure(binary_name: &str, input: &Value) {
-    let result = run_binary(binary_name, input);
-    assert!(
-        result.is_ok(),
-        "Binary {} should fail gracefully",
-        binary_name
-    );
-}
+use super::common::{expect_failure, get_fatsecret_credentials, run_binary};
+use serde_json::json;
 
 // =============================================================================
 // fatsecret_food_get Tests
@@ -24,17 +15,12 @@ fn expect_failure(binary_name: &str, input: &Value) {
 
 #[test]
 fn test_fatsecret_food_get_missing_id() {
-    let input = json!({});
-    let result = run_binary("fatsecret_food_get", &input);
-    assert!(result.is_ok(), "Binary should execute without panicking");
-    let value = result.unwrap();
-    assert!(!value
-        .get("success")
-        .and_then(|v| v.as_bool())
-        .unwrap_or(true));
+    // Missing required food_id should fail
+    expect_failure("fatsecret_food_get", &json!({}));
 }
 
 #[test]
+#[ignore = "integration test - requires real FatSecret API credentials"]
 fn test_fatsecret_food_get_with_id() {
     let creds = match get_fatsecret_credentials() {
         Some(c) => c,
@@ -55,6 +41,7 @@ fn test_fatsecret_food_get_with_id() {
 // =============================================================================
 
 #[test]
+#[ignore = "integration test - requires real FatSecret API credentials"]
 fn test_fatsecret_foods_search_empty_query() {
     let creds = match get_fatsecret_credentials() {
         Some(c) => c,
@@ -71,6 +58,7 @@ fn test_fatsecret_foods_search_empty_query() {
 }
 
 #[test]
+#[ignore = "integration test - requires real FatSecret API credentials"]
 fn test_fatsecret_foods_search_with_results() {
     let creds = match get_fatsecret_credentials() {
         Some(c) => c,
@@ -96,19 +84,17 @@ fn test_fatsecret_foods_search_with_results() {
 
 #[test]
 fn test_fatsecret_foods_autocomplete_empty_expression() {
-    let creds = match get_fatsecret_credentials() {
-        Some(c) => c,
-        None => return,
-    };
-
+    // Missing required expression should fail
     let input = json!({
-        "fatsecret": creds.to_json()
+        "consumer_key": "test",
+        "consumer_secret": "test"
     });
 
     expect_failure("fatsecret_foods_autocomplete", &input);
 }
 
 #[test]
+#[ignore = "integration test - requires real FatSecret API credentials"]
 fn test_fatsecret_foods_autocomplete_with_expression() {
     let creds = match get_fatsecret_credentials() {
         Some(c) => c,
@@ -130,19 +116,17 @@ fn test_fatsecret_foods_autocomplete_with_expression() {
 
 #[test]
 fn test_fatsecret_food_find_barcode_missing_barcode() {
-    let creds = match get_fatsecret_credentials() {
-        Some(c) => c,
-        None => return,
-    };
-
+    // Missing required barcode should fail
     let input = json!({
-        "fatsecret": creds.to_json()
+        "consumer_key": "test",
+        "consumer_secret": "test"
     });
 
     expect_failure("fatsecret_food_find_barcode", &input);
 }
 
 #[test]
+#[ignore = "integration test - requires real FatSecret API credentials"]
 fn test_fatsecret_food_find_barcode_with_barcode() {
     let creds = match get_fatsecret_credentials() {
         Some(c) => c,
@@ -164,19 +148,17 @@ fn test_fatsecret_food_find_barcode_with_barcode() {
 
 #[test]
 fn test_fatsecret_foods_get_favorites_requires_auth() {
-    let creds = match get_fatsecret_credentials() {
-        Some(c) => c,
-        None => return,
-    };
-
+    // Missing OAuth tokens should fail
     let input = json!({
-        "fatsecret": creds.to_json()
+        "consumer_key": "test",
+        "consumer_secret": "test"
     });
 
     expect_failure("fatsecret_foods_get_favorites", &input);
 }
 
 #[test]
+#[ignore = "integration test - requires real FatSecret OAuth tokens"]
 fn test_fatsecret_foods_get_favorites_with_auth() {
     let creds = match get_fatsecret_credentials() {
         Some(c) => c,
@@ -199,19 +181,17 @@ fn test_fatsecret_foods_get_favorites_with_auth() {
 
 #[test]
 fn test_fatsecret_food_add_favorite_missing_fields() {
-    let creds = match get_fatsecret_credentials() {
-        Some(c) => c,
-        None => return,
-    };
-
+    // Missing required food_id should fail
     let input = json!({
-        "fatsecret": creds.to_json()
+        "access_token": "test",
+        "access_secret": "test"
     });
 
     expect_failure("fatsecret_food_add_favorite", &input);
 }
 
 #[test]
+#[ignore = "integration test - requires real FatSecret OAuth tokens"]
 fn test_fatsecret_food_add_favorite_with_food_id() {
     let creds = match get_fatsecret_credentials() {
         Some(c) => c,
@@ -233,19 +213,17 @@ fn test_fatsecret_food_add_favorite_with_food_id() {
 
 #[test]
 fn test_fatsecret_food_delete_favorite_missing_id() {
-    let creds = match get_fatsecret_credentials() {
-        Some(c) => c,
-        None => return,
-    };
-
+    // Missing required food_id should fail
     let input = json!({
-        "fatsecret": creds.to_json()
+        "access_token": "test",
+        "access_secret": "test"
     });
 
     expect_failure("fatsecret_food_delete_favorite", &input);
 }
 
 #[test]
+#[ignore = "integration test - requires real FatSecret OAuth tokens"]
 fn test_fatsecret_food_delete_favorite_with_id() {
     let creds = match get_fatsecret_credentials() {
         Some(c) => c,

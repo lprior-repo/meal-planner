@@ -46,6 +46,7 @@ fn run_binary(binary_name: &str, input: &Value) -> Result<Value, String> {
 }
 
 #[test]
+#[ignore = "integration test - requires real Tandoor server"]
 fn tandoor_space_list_success() {
     let (url, token) = get_tandoor_creds();
     let input = json!({
@@ -60,6 +61,7 @@ fn tandoor_space_list_success() {
 }
 
 #[test]
+#[ignore = "integration test - requires real Tandoor server"]
 fn tandoor_space_list_response_format() {
     let (url, token) = get_tandoor_creds();
     let input = json!({
@@ -74,6 +76,7 @@ fn tandoor_space_list_response_format() {
 }
 
 #[test]
+#[ignore = "integration test - requires real Tandoor server"]
 fn tandoor_space_get_success() {
     let (url, token) = get_tandoor_creds();
     let list_input = json!({
@@ -102,6 +105,7 @@ fn tandoor_space_get_success() {
 }
 
 #[test]
+#[ignore = "integration test - requires real Tandoor server"]
 fn tandoor_space_get_missing_id() {
     let (url, token) = get_tandoor_creds();
     let input = json!({
@@ -113,6 +117,7 @@ fn tandoor_space_get_missing_id() {
 }
 
 #[test]
+#[ignore = "integration test - requires real Tandoor server"]
 fn tandoor_space_get_invalid_id() {
     let (url, token) = get_tandoor_creds();
     let input = json!({
@@ -125,6 +130,7 @@ fn tandoor_space_get_invalid_id() {
 }
 
 #[test]
+#[ignore = "integration test - requires real Tandoor server"]
 fn tandoor_space_list_returns_spaces() {
     let (url, token) = get_tandoor_creds();
     let input = json!({
@@ -144,6 +150,7 @@ fn tandoor_space_list_returns_spaces() {
 }
 
 #[test]
+#[ignore = "integration test - requires real Tandoor server"]
 fn tandoor_space_get_by_id() {
     let (url, token) = get_tandoor_creds();
     let list_input = json!({

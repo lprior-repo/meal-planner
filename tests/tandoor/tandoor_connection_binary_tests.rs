@@ -10,7 +10,7 @@ use crate::fatsecret::common::run_binary;
 fn expect_failure(binary_name: &str, input: &str) {
     let input_value: serde_json::Value = serde_json::from_str(input).unwrap();
     let result = run_binary(binary_name, &input_value);
-    assert!(result.is_ok(), "Binary {} should fail gracefully", binary_name);
+    assert!(result.is_err(), "Binary {} should fail with invalid input, but succeeded", binary_name);
 }
 
 fn get_tandoor_creds() -> (String, String) {
@@ -44,6 +44,7 @@ fn get_pass_value(path: &str) -> String {
 }
 
 #[test]
+#[ignore = "integration test - requires real Tandoor server"]
 fn tandoor_test_connection_success() {
     let (url, token) = get_tandoor_creds();
     let input = json!({

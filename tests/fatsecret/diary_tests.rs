@@ -14,13 +14,8 @@ use serde_json::json;
 
 #[test]
 fn test_fatsecret_food_entries_get_missing_date() {
-    let creds = match get_fatsecret_credentials() {
-        Some(c) => c,
-        None => return,
-    };
-
+    // Missing required 'date' field should fail
     let input = json!({
-        "fatsecret": creds.to_json(),
         "access_token": "test",
         "access_secret": "test"
     });
@@ -51,13 +46,10 @@ fn test_fatsecret_food_entries_get_with_date() {
 
 #[test]
 fn test_fatsecret_food_entries_get_month_missing_params() {
-    let creds = match get_fatsecret_credentials() {
-        Some(c) => c,
-        None => return,
-    };
-
+    // Missing required year/month fields should fail
     let input = json!({
-        "fatsecret": creds.to_json()
+        "access_token": "test",
+        "access_secret": "test"
     });
 
     expect_failure("fatsecret_food_entries_get_month", &input);
@@ -87,13 +79,8 @@ fn test_fatsecret_food_entries_get_month_with_params() {
 
 #[test]
 fn test_fatsecret_food_entry_create_missing_fields() {
-    let creds = match get_fatsecret_credentials() {
-        Some(c) => c,
-        None => return,
-    };
-
+    // Missing required fields (food_id, serving_id, etc.) should fail
     let input = json!({
-        "fatsecret": creds.to_json(),
         "access_token": "test",
         "access_secret": "test"
     });
@@ -129,13 +116,8 @@ fn test_fatsecret_food_entry_create_with_fields() {
 
 #[test]
 fn test_fatsecret_food_entry_edit_missing_entry_id() {
-    let creds = match get_fatsecret_credentials() {
-        Some(c) => c,
-        None => return,
-    };
-
+    // Missing required food_entry_id should fail
     let input = json!({
-        "fatsecret": creds.to_json(),
         "access_token": "test",
         "access_secret": "test"
     });
@@ -167,13 +149,10 @@ fn test_fatsecret_food_entry_edit_with_id() {
 
 #[test]
 fn test_fatsecret_food_entry_delete_missing_entry_id() {
-    let creds = match get_fatsecret_credentials() {
-        Some(c) => c,
-        None => return,
-    };
-
+    // Missing required food_entry_id should fail
     let input = json!({
-        "fatsecret": creds.to_json()
+        "access_token": "test",
+        "access_secret": "test"
     });
 
     expect_failure("fatsecret_food_entry_delete", &input);

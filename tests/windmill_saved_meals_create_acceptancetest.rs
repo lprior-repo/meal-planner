@@ -104,6 +104,7 @@ fn test_script_yaml_has_required_schema() -> Result<(), String> {
 }
 
 #[test]
+#[ignore = "integration test - requires real FatSecret API credentials"]
 fn test_binary_produces_valid_json_output() -> Result<(), String> {
     use std::process::{Command, Stdio};
 
