@@ -4,6 +4,228 @@
 package mealplanner
 
 // =============================================================================
+// f/tandoor/weekly_grocery_list_builder
+// Build weekly grocery list: select recipes, create meal plans, populate shopping list
+// =============================================================================
+
+#WeeklyGroceryListBuilderFlowInput: {
+	keyword?:       string    // recipe filter keyword, default "meat-church"
+	cooking_dates:  [...string] & [_, ...string]  // at least 1 date, YYYY-MM-DD format
+	meal_type_id?:  int       // meal type ID, default 3 (dinner)
+	servings?:      number    // override servings, uses recipe default if not set
+}
+
+#WeeklyGroceryListBuilderFlowOutput: {
+	summary: {
+		recipes_selected:    int
+		meal_plans_created:  int
+		shopping_items:      int
+	}
+	recipes: [...{
+		id:   int
+		name: string
+	}]
+	meal_plans: [...{
+		id:     int
+		date:   string
+		recipe: string
+	}]
+	shopping_list: [...{
+		food:    string
+		amount:  number
+		unit:    string
+		checked: bool
+	}]
+}
+
+#WeeklyGroceryListBuilderFlow: {
+	summary:     "Build weekly grocery list from meal plan"
+	description: string
+	value: {
+		modules: [
+			// Step 1: Select random recipes by keyword
+			{
+				id: "select_recipes"
+				value: {
+					type: "script"
+					path: "f/tandoor/recipe_random_select"
+					input_transforms: {
+						tandoor: {
+							type:  "static"
+							value: "$res:u/admin/tandoor_api"
+						}
+						keyword: {
+							type: "javascript"
+							expr: "flow_input.keyword || 'meat-church'"
+						}
+						count: {
+							type: "javascript"
+							expr: "flow_input.cooking_dates.length"
+						}
+					}
+				}
+			},
+			// Step 2: Create meal plans for each date
+			{
+				id: "create_meal_plans"
+				value: {
+					type: "forloopflow"
+					iterator: {
+						type: "javascript"
+						expr: string  // maps dates to recipes
+					}
+					parallel:      false
+					skip_failures: false
+					modules: [
+						{
+							id: "create_plan"
+							value: {
+								type: "script"
+								path: "f/tandoor/meal_plan_create"
+								input_transforms: {
+									tandoor: {
+										type:  "static"
+										value: "$res:u/admin/tandoor_api"
+									}
+									recipe: {
+										type: "javascript"
+										expr: "iter.value.recipe.id"
+									}
+									meal_type: {
+										type: "javascript"
+										expr: "flow_input.meal_type_id || 1"
+									}
+									from_date: {
+										type: "javascript"
+										expr: "iter.value.date"
+									}
+									servings: {
+										type: "javascript"
+										expr: "flow_input.servings || iter.value.recipe.servings || 4"
+									}
+								}
+							}
+						},
+					]
+				}
+			},
+			// Step 3: Add recipes to shopping list
+			{
+				id: "add_to_shopping_list"
+				value: {
+					type: "forloopflow"
+					iterator: {
+						type: "javascript"
+						expr: "results.create_meal_plans"
+					}
+					parallel:      true
+					skip_failures: false
+					modules: [
+						{
+							id: "add_recipe"
+							value: {
+								type: "script"
+								path: "f/tandoor/shopping_list_recipe_add"
+								input_transforms: {
+									tandoor: {
+										type:  "static"
+										value: "$res:u/admin/tandoor_api"
+									}
+									mealplan_id: {
+										type: "javascript"
+										expr: "iter.value.meal_plan.id"
+									}
+									recipe_id: {
+										type: "javascript"
+										expr: "iter.value.meal_plan.recipe"
+									}
+									servings: {
+										type: "javascript"
+										expr: "iter.value.meal_plan.servings"
+									}
+								}
+							}
+						},
+					]
+				}
+			},
+			// Step 4: Get final shopping list
+			{
+				id: "get_shopping_list"
+				value: {
+					type: "script"
+					path: "f/tandoor/shopping_list_entry_list"
+					input_transforms: {
+						tandoor: {
+							type:  "static"
+							value: "$res:u/admin/tandoor_api"
+						}
+						checked: {
+							type:  "static"
+							value: false
+						}
+					}
+				}
+			},
+			// Step 5: Format output
+			{
+				id: "format_output"
+				value: {
+					type:     "rawscript"
+					language: "nushell"
+					content:  string  // formats results for output
+					input_transforms: {
+						recipes: {
+							type: "javascript"
+							expr: "JSON.stringify(results.select_recipes.recipes)"
+						}
+						meal_plans: {
+							type: "javascript"
+							expr: "JSON.stringify(results.create_meal_plans)"
+						}
+						shopping_list: {
+							type: "javascript"
+							expr: "JSON.stringify(results.get_shopping_list)"
+						}
+					}
+				}
+			},
+		]
+	}
+	schema: {
+		"$schema": "https://json-schema.org/draft/2020-12/schema"
+		type:      "object"
+		properties: {
+			keyword: {
+				type:        "string"
+				description: "Keyword to filter recipes by"
+				default:     "meat-church"
+			}
+			cooking_dates: {
+				type: "array"
+				items: {
+					type:   "string"
+					format: "date"
+				}
+				description: "List of cooking dates (YYYY-MM-DD)"
+				minItems:    1
+				maxItems:    7
+			}
+			meal_type_id: {
+				type:        "integer"
+				description: "Meal type ID (1=Breakfast, 2=Lunch, 3=Dinner)"
+				default:     3
+			}
+			servings: {
+				type:        "number"
+				description: "Override servings per recipe"
+			}
+		}
+		required: ["cooking_dates"]
+	}
+}
+
+// =============================================================================
 // f/fatsecret/oauth_setup
 // Complete OAuth flow: get auth URL → user authorizes → exchange for token
 // =============================================================================

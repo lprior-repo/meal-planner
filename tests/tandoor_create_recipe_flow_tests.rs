@@ -119,7 +119,9 @@ fn test_tandoor_create_recipe_script_accepts_three_args() {
     let content = std::fs::read_to_string(script_path).expect("Script should be readable");
     // Script uses $1, $2, and ${3:-...} for default value
     assert!(
-        content.contains("$1") && content.contains("$2") && (content.contains("$3") || content.contains("${3")),
+        content.contains("$1")
+            && content.contains("$2")
+            && (content.contains("$3") || content.contains("${3")),
         "Script should accept 3 positional arguments"
     );
 }

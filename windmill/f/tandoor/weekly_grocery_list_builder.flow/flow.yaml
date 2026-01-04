@@ -1,0 +1,168 @@
+summary: Build weekly grocery list from meal plan
+description: |
+  Automates weekly meal prep:
+  1. Randomly selects recipes by keyword (e.g., "meat-church")
+  2. Creates meal plan entries for specified cooking dates
+  3. Adds all ingredients from recipes to shopping list
+
+  The shopping list aggregates ingredients from all meal plan recipes,
+  ready for grocery shopping.
+
+value:
+  modules:
+    - id: select_recipes
+      value:
+        type: script
+        path: f/tandoor/recipe_random_select
+        input_transforms:
+          tandoor:
+            type: static
+            value: $res:u/admin/tandoor_api
+          keyword:
+            type: javascript
+            expr: flow_input.keyword || "meat-church"
+          count:
+            type: javascript
+            expr: flow_input.cooking_dates.length
+
+    - id: create_meal_plans
+      value:
+        type: forloopflow
+        iterator:
+          type: javascript
+          expr: |
+            flow_input.cooking_dates.map((date, i) => ({
+              date: date,
+              recipe: results.select_recipes.recipes[i]
+            }))
+        parallel: false
+        skip_failures: false
+        modules:
+          - id: create_plan
+            value:
+              type: script
+              path: f/tandoor/meal_plan_create
+              input_transforms:
+                tandoor:
+                  type: static
+                  value: $res:u/admin/tandoor_api
+                recipe:
+                  type: javascript
+                  expr: iter.value.recipe.id
+                meal_type:
+                  type: javascript
+                  expr: flow_input.meal_type_id || 1
+                from_date:
+                  type: javascript
+                  expr: iter.value.date
+                servings:
+                  type: javascript
+                  expr: flow_input.servings || iter.value.recipe.servings || 4
+
+    - id: add_to_shopping_list
+      value:
+        type: forloopflow
+        iterator:
+          type: javascript
+          expr: results.create_meal_plans
+        parallel: true
+        skip_failures: false
+        modules:
+          - id: add_recipe
+            value:
+              type: script
+              path: f/tandoor/shopping_list_recipe_add
+              input_transforms:
+                tandoor:
+                  type: static
+                  value: $res:u/admin/tandoor_api
+                mealplan_id:
+                  type: javascript
+                  expr: iter.value.meal_plan.id
+                recipe_id:
+                  type: javascript
+                  expr: iter.value.meal_plan.recipe
+                servings:
+                  type: javascript
+                  expr: iter.value.meal_plan.servings
+
+    - id: get_shopping_list
+      value:
+        type: script
+        path: f/tandoor/shopping_list_entry_list
+        input_transforms:
+          tandoor:
+            type: static
+            value: $res:u/admin/tandoor_api
+          checked:
+            type: static
+            value: false
+
+    - id: format_output
+      value:
+        type: rawscript
+        language: nushell
+        content: |
+          # Format the weekly grocery list output
+          let recipes = $env.recipes | from json
+          let meal_plans = $env.meal_plans | from json
+          let shopping_list = $env.shopping_list | from json
+
+          # Group shopping list by food
+          let grouped = $shopping_list.entries | group-by { |e| $e.food.name }
+
+          {
+            summary: {
+              recipes_selected: ($recipes | length),
+              meal_plans_created: ($meal_plans | length),
+              shopping_items: ($shopping_list.entries | length)
+            },
+            recipes: ($recipes | each { |r| { id: $r.id, name: $r.name } }),
+            meal_plans: ($meal_plans | each { |mp| {
+              id: $mp.meal_plan.id,
+              date: $mp.meal_plan.from_date,
+              recipe: $mp.meal_plan.recipe_name
+            }}),
+            shopping_list: ($shopping_list.entries | each { |e| {
+              food: $e.food.name,
+              amount: $e.amount,
+              unit: ($e.unit.name? | default ""),
+              checked: $e.checked
+            }})
+          } | to json
+        input_transforms:
+          recipes:
+            type: javascript
+            expr: JSON.stringify(results.select_recipes.recipes)
+          meal_plans:
+            type: javascript
+            expr: JSON.stringify(results.create_meal_plans)
+          shopping_list:
+            type: javascript
+            expr: JSON.stringify(results.get_shopping_list)
+
+schema:
+  $schema: 'https://json-schema.org/draft-2020-12/schema'
+  type: object
+  properties:
+    keyword:
+      type: string
+      description: Keyword to filter recipes by (e.g., "meat-church", "quick", "healthy")
+      default: meat-church
+    cooking_dates:
+      type: array
+      items:
+        type: string
+        format: date
+      description: List of cooking dates (YYYY-MM-DD format)
+      minItems: 1
+      maxItems: 7
+    meal_type_id:
+      type: integer
+      description: Meal type ID (1=Breakfast, 2=Lunch, 3=Dinner, etc.)
+      default: 3
+    servings:
+      type: number
+      description: Override servings per recipe (uses recipe default if not specified)
+  required:
+    - cooking_dates
