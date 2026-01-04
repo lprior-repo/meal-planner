@@ -1,0 +1,610 @@
+{
+  "metadata": {
+    "name": "Vertical Diet Recipe Collection - Extended",
+    "description": "Additional Stan Efferding Vertical Diet recipes for muscle gain and athletic performance",
+    "source": "Compiled from multiple sources for Tandoor import",
+    "created_at": "2026-01-04",
+    "format_version": "1.1",
+    "compatibility": ["tandoor", "fatsecret"]
+  },
+  "recipes": [
+    {
+      "name": "Lamb Monster Mash",
+      "description": "Ground lamb variation of Monster Mash. Lamb is rich in iron, B vitamins, and zinc - approved red meat on the Vertical Diet.",
+      "source_url": "https://lindyhealth.com/vertical-diet-meals/",
+      "reference_urls": ["https://fitnessvolt.com/vertical-diet-ultimate-guide/"],
+      "servings": 4,
+      "servings_text": "4 servings",
+      "working_time": 15,
+      "waiting_time": 25,
+      "keywords": [{"name": "vertical-diet"}, {"name": "lamb"}, {"name": "monster-mash"}, {"name": "high-protein"}],
+      "steps": [
+        {
+          "name": "Cook rice",
+          "instruction": "Combine bone broth and rice in saucepan. Bring to boil, reduce heat, cover and simmer 18-20 minutes.",
+          "ingredients": [
+            {"amount": 185.0, "unit": {"name": "g"}, "food": {"name": "white rice, uncooked"}, "note": "1 cup"},
+            {"amount": 360.0, "unit": {"name": "ml"}, "food": {"name": "beef bone broth"}, "note": "1.5 cups"}
+          ]
+        },
+        {
+          "name": "Cook lamb and vegetables",
+          "instruction": "Heat ghee in large skillet over medium-high heat. Add ground lamb and cook until browned, breaking into pieces. Season with salt and cumin. Add bell peppers and cook 3 minutes. Add spinach and stir until wilted.",
+          "ingredients": [
+            {"amount": 454.0, "unit": {"name": "g"}, "food": {"name": "ground lamb"}, "note": "1 lb"},
+            {"amount": 14.0, "unit": {"name": "g"}, "food": {"name": "ghee"}, "note": "1 tbsp"},
+            {"amount": 200.0, "unit": {"name": "g"}, "food": {"name": "bell pepper, diced"}, "note": "2 medium"},
+            {"amount": 60.0, "unit": {"name": "g"}, "food": {"name": "spinach, fresh"}, "note": "2 cups"},
+            {"amount": 3.0, "unit": {"name": "g"}, "food": {"name": "salt"}, "note": "0.5 tsp"},
+            {"amount": 2.0, "unit": {"name": "g"}, "food": {"name": "ground cumin"}, "note": "0.5 tsp"}
+          ]
+        },
+        {
+          "name": "Combine and serve",
+          "instruction": "Fold in cooked rice. Divide into meal prep containers.",
+          "ingredients": []
+        }
+      ],
+      "nutrition": {
+        "calories": 465,
+        "protein": 28.0,
+        "carbohydrate": 42.0,
+        "fat": 20.0,
+        "saturated_fat": 9.0,
+        "fiber": 2.0,
+        "sodium": 380
+      }
+    },
+    {
+      "name": "Venison Steak with Rice",
+      "description": "Lean venison steak with white rice and sautéed vegetables. Venison is extremely lean and nutrient-dense.",
+      "source_url": "https://www.athleticinsight.com/diet/vertical",
+      "reference_urls": ["https://www.missallieskitchen.com/20-healthy-venison-recipes/"],
+      "servings": 1,
+      "servings_text": "1 serving",
+      "working_time": 10,
+      "waiting_time": 20,
+      "keywords": [{"name": "vertical-diet"}, {"name": "venison"}, {"name": "game-meat"}, {"name": "lean-protein"}],
+      "steps": [
+        {
+          "name": "Cook rice",
+          "instruction": "Cook rice in chicken broth according to package directions.",
+          "ingredients": [
+            {"amount": 185.0, "unit": {"name": "g"}, "food": {"name": "white rice, cooked"}, "note": "1 cup cooked"},
+            {"amount": 180.0, "unit": {"name": "ml"}, "food": {"name": "chicken broth"}, "note": "0.75 cup"}
+          ]
+        },
+        {
+          "name": "Cook venison",
+          "instruction": "Season venison steak with salt and pepper. Heat cast iron skillet over high heat with butter. Sear steak 3 minutes per side for medium-rare. Rest 5 minutes.",
+          "ingredients": [
+            {"amount": 170.0, "unit": {"name": "g"}, "food": {"name": "venison steak"}, "note": "6 oz"},
+            {"amount": 14.0, "unit": {"name": "g"}, "food": {"name": "butter, unsalted"}, "note": "1 tbsp"},
+            {"amount": 3.0, "unit": {"name": "g"}, "food": {"name": "salt"}, "note": "0.5 tsp"},
+            {"amount": 0.5, "unit": {"name": "g"}, "food": {"name": "black pepper, ground"}, "note": "0.25 tsp"}
+          ]
+        },
+        {
+          "name": "Cook vegetables and serve",
+          "instruction": "Sauté spinach in remaining pan juices. Plate rice with sliced venison and spinach.",
+          "ingredients": [
+            {"amount": 60.0, "unit": {"name": "g"}, "food": {"name": "spinach, fresh"}, "note": "2 cups"}
+          ]
+        }
+      ],
+      "nutrition": {
+        "calories": 520,
+        "protein": 45.0,
+        "carbohydrate": 48.0,
+        "fat": 16.0,
+        "saturated_fat": 8.0,
+        "fiber": 2.0,
+        "sodium": 400
+      }
+    },
+    {
+      "name": "Baked Cod with Rice and Vegetables",
+      "description": "Mild white fish that's easy to digest. Cod is high in protein, low in fat, and pairs perfectly with white rice.",
+      "source_url": "https://thefoodiephysician.com/dining-with-doc-olive-and-sundried/",
+      "reference_urls": ["https://cookinginthekeys.com/high-protein-fish-recipes/"],
+      "servings": 1,
+      "servings_text": "1 serving",
+      "working_time": 10,
+      "waiting_time": 20,
+      "keywords": [{"name": "vertical-diet"}, {"name": "cod"}, {"name": "white-fish"}, {"name": "easy-digest"}],
+      "steps": [
+        {
+          "name": "Prep and bake cod",
+          "instruction": "Preheat oven to 400°F. Place cod on baking sheet. Drizzle with olive oil, season with salt and lemon juice. Bake 12-15 minutes until flaky.",
+          "ingredients": [
+            {"amount": 170.0, "unit": {"name": "g"}, "food": {"name": "cod fillet"}, "note": "6 oz"},
+            {"amount": 15.0, "unit": {"name": "ml"}, "food": {"name": "extra virgin olive oil"}, "note": "1 tbsp"},
+            {"amount": 3.0, "unit": {"name": "g"}, "food": {"name": "salt"}, "note": "0.5 tsp"},
+            {"amount": 10.0, "unit": {"name": "ml"}, "food": {"name": "lemon juice, fresh"}, "note": "2 tsp"}
+          ]
+        },
+        {
+          "name": "Prepare rice and vegetables",
+          "instruction": "Serve cod over rice cooked in broth. Add sautéed zucchini and carrots on the side.",
+          "ingredients": [
+            {"amount": 185.0, "unit": {"name": "g"}, "food": {"name": "white rice, cooked"}, "note": "1 cup cooked"},
+            {"amount": 100.0, "unit": {"name": "g"}, "food": {"name": "zucchini, sliced"}, "note": "0.75 cup"},
+            {"amount": 80.0, "unit": {"name": "g"}, "food": {"name": "carrots, sliced"}, "note": "0.5 cup"}
+          ]
+        }
+      ],
+      "nutrition": {
+        "calories": 480,
+        "protein": 38.0,
+        "carbohydrate": 52.0,
+        "fat": 12.0,
+        "saturated_fat": 2.0,
+        "fiber": 3.0,
+        "sodium": 420
+      }
+    },
+    {
+      "name": "Garlic Shrimp with White Rice",
+      "description": "Quick, high-protein shrimp stir-fry. Shrimp is lean, easy to digest, and cooks in minutes.",
+      "source_url": "https://www.sizzlefish.com/blogs/any-fish/10-high-protein-seafood-recipes",
+      "reference_urls": ["https://dishonfish.com/protein-packed-seafood-recipes/"],
+      "servings": 1,
+      "servings_text": "1 serving",
+      "working_time": 10,
+      "waiting_time": 5,
+      "keywords": [{"name": "vertical-diet"}, {"name": "shrimp"}, {"name": "seafood"}, {"name": "quick-meal"}],
+      "steps": [
+        {
+          "name": "Cook shrimp",
+          "instruction": "Heat butter in skillet over medium-high heat. Add garlic and cook 30 seconds. Add shrimp and cook 2-3 minutes per side until pink. Season with salt.",
+          "ingredients": [
+            {"amount": 170.0, "unit": {"name": "g"}, "food": {"name": "shrimp, peeled and deveined"}, "note": "6 oz"},
+            {"amount": 14.0, "unit": {"name": "g"}, "food": {"name": "butter, unsalted"}, "note": "1 tbsp"},
+            {"amount": 6.0, "unit": {"name": "g"}, "food": {"name": "garlic, minced"}, "note": "2 cloves"},
+            {"amount": 2.0, "unit": {"name": "g"}, "food": {"name": "salt"}, "note": "0.25 tsp"}
+          ]
+        },
+        {
+          "name": "Serve",
+          "instruction": "Serve shrimp over white rice with sautéed spinach.",
+          "ingredients": [
+            {"amount": 185.0, "unit": {"name": "g"}, "food": {"name": "white rice, cooked"}, "note": "1 cup cooked"},
+            {"amount": 60.0, "unit": {"name": "g"}, "food": {"name": "spinach, fresh"}, "note": "2 cups"}
+          ]
+        }
+      ],
+      "nutrition": {
+        "calories": 420,
+        "protein": 32.0,
+        "carbohydrate": 48.0,
+        "fat": 10.0,
+        "saturated_fat": 5.0,
+        "fiber": 2.0,
+        "sodium": 520
+      }
+    },
+    {
+      "name": "Elk Burger Patties with Rice",
+      "description": "Lean elk meat formed into patties. Elk is one of the leanest red meats available with excellent protein content.",
+      "source_url": "https://lindyhealth.com/what-is-the-vertical-diet/",
+      "reference_urls": ["https://essentialsportsnutrition.com/blogs/news/the-vertical-diet-breakdown-foods-that-will-transform-your-nutrition"],
+      "servings": 2,
+      "servings_text": "2 servings",
+      "working_time": 15,
+      "waiting_time": 10,
+      "keywords": [{"name": "vertical-diet"}, {"name": "elk"}, {"name": "game-meat"}, {"name": "lean-protein"}],
+      "steps": [
+        {
+          "name": "Form and cook patties",
+          "instruction": "Season ground elk with salt and pepper. Form into 2 patties. Heat skillet over medium-high heat with butter. Cook patties 4-5 minutes per side.",
+          "ingredients": [
+            {"amount": 340.0, "unit": {"name": "g"}, "food": {"name": "ground elk"}, "note": "12 oz, 2 patties"},
+            {"amount": 14.0, "unit": {"name": "g"}, "food": {"name": "butter, unsalted"}, "note": "1 tbsp"},
+            {"amount": 3.0, "unit": {"name": "g"}, "food": {"name": "salt"}, "note": "0.5 tsp"},
+            {"amount": 1.0, "unit": {"name": "g"}, "food": {"name": "black pepper, ground"}, "note": "0.25 tsp"}
+          ]
+        },
+        {
+          "name": "Serve",
+          "instruction": "Serve patties with rice cooked in bone broth and sautéed bell peppers.",
+          "ingredients": [
+            {"amount": 370.0, "unit": {"name": "g"}, "food": {"name": "white rice, cooked"}, "note": "2 cups cooked"},
+            {"amount": 150.0, "unit": {"name": "g"}, "food": {"name": "bell pepper, sliced"}, "note": "1 large"}
+          ]
+        }
+      ],
+      "nutrition": {
+        "calories": 450,
+        "protein": 42.0,
+        "carbohydrate": 44.0,
+        "fat": 10.0,
+        "saturated_fat": 5.0,
+        "fiber": 2.0,
+        "sodium": 380
+      }
+    },
+    {
+      "name": "Bone Broth Beef Soup",
+      "description": "Simple, nutrient-dense soup using beef bone broth as the base. Loaded with collagen and amino acids.",
+      "source_url": "https://blog.kettleandfire.com/bone-broth-soup-recipes/",
+      "reference_urls": ["https://calmeats.com/bone-broth-vegetable-soup/"],
+      "servings": 2,
+      "servings_text": "2 servings",
+      "working_time": 10,
+      "waiting_time": 20,
+      "keywords": [{"name": "vertical-diet"}, {"name": "bone-broth"}, {"name": "soup"}, {"name": "easy-digest"}],
+      "steps": [
+        {
+          "name": "Make soup",
+          "instruction": "Bring bone broth to simmer in large pot. Add cooked beef, carrots, and zucchini. Simmer 15 minutes. Season with salt. Add spinach in last 2 minutes.",
+          "ingredients": [
+            {"amount": 960.0, "unit": {"name": "ml"}, "food": {"name": "beef bone broth"}, "note": "4 cups"},
+            {"amount": 225.0, "unit": {"name": "g"}, "food": {"name": "beef stew meat, cooked"}, "note": "8 oz, cubed"},
+            {"amount": 130.0, "unit": {"name": "g"}, "food": {"name": "carrots, sliced"}, "note": "1 cup"},
+            {"amount": 130.0, "unit": {"name": "g"}, "food": {"name": "zucchini, cubed"}, "note": "1 cup"},
+            {"amount": 60.0, "unit": {"name": "g"}, "food": {"name": "spinach, fresh"}, "note": "2 cups"},
+            {"amount": 3.0, "unit": {"name": "g"}, "food": {"name": "salt"}, "note": "0.5 tsp"}
+          ]
+        }
+      ],
+      "nutrition": {
+        "calories": 280,
+        "protein": 32.0,
+        "carbohydrate": 12.0,
+        "fat": 12.0,
+        "saturated_fat": 5.0,
+        "fiber": 3.0,
+        "sodium": 680
+      }
+    },
+    {
+      "name": "Scrambled Eggs with White Rice",
+      "description": "Simple breakfast combining protein-rich eggs with easily digestible white rice.",
+      "source_url": "https://www.athleticinsight.com/diet/vertical",
+      "reference_urls": ["https://bonytobeastly.com/vertical-diet-review/"],
+      "servings": 1,
+      "servings_text": "1 serving",
+      "working_time": 10,
+      "waiting_time": 0,
+      "keywords": [{"name": "vertical-diet"}, {"name": "breakfast"}, {"name": "eggs"}, {"name": "simple"}],
+      "steps": [
+        {
+          "name": "Cook eggs and serve",
+          "instruction": "Melt butter in skillet over medium heat. Beat eggs with salt and scramble until just set. Serve over leftover white rice with orange juice.",
+          "ingredients": [
+            {"amount": 150.0, "unit": {"name": "g"}, "food": {"name": "eggs, whole"}, "note": "3 large"},
+            {"amount": 14.0, "unit": {"name": "g"}, "food": {"name": "butter, unsalted"}, "note": "1 tbsp"},
+            {"amount": 185.0, "unit": {"name": "g"}, "food": {"name": "white rice, cooked"}, "note": "1 cup cooked"},
+            {"amount": 1.5, "unit": {"name": "g"}, "food": {"name": "salt"}, "note": "0.25 tsp"},
+            {"amount": 120.0, "unit": {"name": "ml"}, "food": {"name": "orange juice"}, "note": "4 oz"}
+          ]
+        }
+      ],
+      "nutrition": {
+        "calories": 520,
+        "protein": 22.0,
+        "carbohydrate": 58.0,
+        "fat": 22.0,
+        "saturated_fat": 10.0,
+        "fiber": 1.0,
+        "sodium": 380
+      }
+    },
+    {
+      "name": "Grilled Pork Tenderloin with Potatoes",
+      "description": "Lean pork tenderloin grilled and served with Yukon Gold potatoes. Pork is a versatile Vertical Diet protein.",
+      "source_url": "https://krillarcticfoods.com/blog/vertical-diet/",
+      "reference_urls": ["https://www.garagegymreviews.com/vertical-diet"],
+      "servings": 2,
+      "servings_text": "2 servings",
+      "working_time": 15,
+      "waiting_time": 25,
+      "keywords": [{"name": "vertical-diet"}, {"name": "pork"}, {"name": "tenderloin"}, {"name": "lean-protein"}],
+      "steps": [
+        {
+          "name": "Cook potatoes",
+          "instruction": "Boil diced potatoes in salted water until fork tender, about 12 minutes. Drain and toss with butter.",
+          "ingredients": [
+            {"amount": 400.0, "unit": {"name": "g"}, "food": {"name": "Yukon Gold potatoes, diced"}, "note": "2 medium"},
+            {"amount": 14.0, "unit": {"name": "g"}, "food": {"name": "butter, unsalted"}, "note": "1 tbsp"}
+          ]
+        },
+        {
+          "name": "Grill pork",
+          "instruction": "Season pork tenderloin with salt and pepper. Grill over medium-high heat, turning occasionally, until internal temp reaches 145°F, about 15-20 minutes. Rest 5 minutes before slicing.",
+          "ingredients": [
+            {"amount": 450.0, "unit": {"name": "g"}, "food": {"name": "pork tenderloin"}, "note": "1 lb"},
+            {"amount": 3.0, "unit": {"name": "g"}, "food": {"name": "salt"}, "note": "0.5 tsp"},
+            {"amount": 1.0, "unit": {"name": "g"}, "food": {"name": "black pepper, ground"}, "note": "0.25 tsp"}
+          ]
+        },
+        {
+          "name": "Serve",
+          "instruction": "Slice pork and serve with potatoes and sautéed spinach.",
+          "ingredients": [
+            {"amount": 60.0, "unit": {"name": "g"}, "food": {"name": "spinach, fresh"}, "note": "2 cups"}
+          ]
+        }
+      ],
+      "nutrition": {
+        "calories": 420,
+        "protein": 38.0,
+        "carbohydrate": 32.0,
+        "fat": 14.0,
+        "saturated_fat": 6.0,
+        "fiber": 3.0,
+        "sodium": 400
+      }
+    },
+    {
+      "name": "Simple Beef Patties",
+      "description": "Basic seasoned beef patties. Simple preparation lets the quality of the beef shine through.",
+      "source_url": "https://www.healthline.com/nutrition/vertical-diet-review",
+      "reference_urls": ["https://barbend.com/vertical-diet/"],
+      "servings": 4,
+      "servings_text": "4 patties",
+      "working_time": 10,
+      "waiting_time": 10,
+      "keywords": [{"name": "vertical-diet"}, {"name": "beef"}, {"name": "patties"}, {"name": "simple"}],
+      "steps": [
+        {
+          "name": "Form and cook patties",
+          "instruction": "Mix ground beef with salt and pepper. Form into 4 patties. Cook in cast iron skillet over medium-high heat, 4-5 minutes per side for medium.",
+          "ingredients": [
+            {"amount": 680.0, "unit": {"name": "g"}, "food": {"name": "ground beef, 90% lean"}, "note": "1.5 lb"},
+            {"amount": 5.0, "unit": {"name": "g"}, "food": {"name": "salt"}, "note": "1 tsp"},
+            {"amount": 1.0, "unit": {"name": "g"}, "food": {"name": "black pepper, ground"}, "note": "0.5 tsp"}
+          ]
+        }
+      ],
+      "nutrition": {
+        "calories": 280,
+        "protein": 32.0,
+        "carbohydrate": 0.0,
+        "fat": 16.0,
+        "saturated_fat": 6.0,
+        "fiber": 0.0,
+        "sodium": 320
+      }
+    },
+    {
+      "name": "Pan-Seared Salmon with Sweet Potato",
+      "description": "Omega-3 rich salmon with roasted sweet potato. Great for recovery and inflammation reduction.",
+      "source_url": "https://www.healthline.com/nutrition/vertical-diet-review",
+      "reference_urls": ["https://nordiccatch.com/blogs/news/highest-protein-seafoods"],
+      "servings": 1,
+      "servings_text": "1 serving",
+      "working_time": 10,
+      "waiting_time": 25,
+      "keywords": [{"name": "vertical-diet"}, {"name": "salmon"}, {"name": "sweet-potato"}, {"name": "omega-3"}],
+      "steps": [
+        {
+          "name": "Roast sweet potato",
+          "instruction": "Preheat oven to 400°F. Cube sweet potato, toss with olive oil and salt. Roast 20-25 minutes until tender.",
+          "ingredients": [
+            {"amount": 200.0, "unit": {"name": "g"}, "food": {"name": "sweet potato, cubed"}, "note": "1 medium"},
+            {"amount": 10.0, "unit": {"name": "ml"}, "food": {"name": "extra virgin olive oil"}, "note": "2 tsp"},
+            {"amount": 2.0, "unit": {"name": "g"}, "food": {"name": "salt"}, "note": "0.25 tsp"}
+          ]
+        },
+        {
+          "name": "Cook salmon",
+          "instruction": "Season salmon with salt. Heat butter in skillet over medium-high. Cook salmon skin-side up 4 minutes, flip and cook 3 more minutes.",
+          "ingredients": [
+            {"amount": 170.0, "unit": {"name": "g"}, "food": {"name": "salmon fillet"}, "note": "6 oz"},
+            {"amount": 14.0, "unit": {"name": "g"}, "food": {"name": "butter, unsalted"}, "note": "1 tbsp"},
+            {"amount": 2.0, "unit": {"name": "g"}, "food": {"name": "salt"}, "note": "0.25 tsp"}
+          ]
+        }
+      ],
+      "nutrition": {
+        "calories": 520,
+        "protein": 38.0,
+        "carbohydrate": 32.0,
+        "fat": 26.0,
+        "saturated_fat": 8.0,
+        "fiber": 4.0,
+        "sodium": 420
+      }
+    },
+    {
+      "name": "Chicken Thighs with Rice",
+      "description": "Juicy chicken thighs are more flavorful and forgiving than breast. Great for meal prep.",
+      "source_url": "https://www.idealnutrition.com.au/the-vertical-diet-a-dietitians-review/",
+      "reference_urls": ["https://squatwolf.com/blogs/nutrition/the-vertical-diet"],
+      "servings": 2,
+      "servings_text": "2 servings",
+      "working_time": 10,
+      "waiting_time": 25,
+      "keywords": [{"name": "vertical-diet"}, {"name": "chicken"}, {"name": "thighs"}, {"name": "meal-prep"}],
+      "steps": [
+        {
+          "name": "Cook chicken",
+          "instruction": "Season chicken thighs with salt and pepper. Heat skillet over medium-high. Cook skin-side down 6-7 minutes until crispy. Flip and cook 5-6 minutes until internal temp 165°F.",
+          "ingredients": [
+            {"amount": 400.0, "unit": {"name": "g"}, "food": {"name": "chicken thighs, bone-in skin-on"}, "note": "2 thighs"},
+            {"amount": 3.0, "unit": {"name": "g"}, "food": {"name": "salt"}, "note": "0.5 tsp"},
+            {"amount": 1.0, "unit": {"name": "g"}, "food": {"name": "black pepper, ground"}, "note": "0.25 tsp"}
+          ]
+        },
+        {
+          "name": "Serve",
+          "instruction": "Serve chicken over rice cooked in chicken broth with sautéed carrots.",
+          "ingredients": [
+            {"amount": 370.0, "unit": {"name": "g"}, "food": {"name": "white rice, cooked"}, "note": "2 cups cooked"},
+            {"amount": 130.0, "unit": {"name": "g"}, "food": {"name": "carrots, sliced"}, "note": "1 cup"}
+          ]
+        }
+      ],
+      "nutrition": {
+        "calories": 480,
+        "protein": 35.0,
+        "carbohydrate": 48.0,
+        "fat": 16.0,
+        "saturated_fat": 4.0,
+        "fiber": 2.0,
+        "sodium": 420
+      }
+    },
+    {
+      "name": "High-Protein Cottage Cheese Bowl",
+      "description": "Quick protein-packed snack with cottage cheese and fruit. Dairy is encouraged on the Vertical Diet.",
+      "source_url": "https://www.athleticinsight.com/diet/vertical",
+      "reference_urls": ["https://bonytobeastly.com/vertical-diet-review/"],
+      "servings": 1,
+      "servings_text": "1 serving",
+      "working_time": 5,
+      "waiting_time": 0,
+      "keywords": [{"name": "vertical-diet"}, {"name": "cottage-cheese"}, {"name": "snack"}, {"name": "high-protein"}],
+      "steps": [
+        {
+          "name": "Assemble bowl",
+          "instruction": "Place cottage cheese in bowl. Top with berries and drizzle with honey. Sprinkle with salt for enhanced flavor.",
+          "ingredients": [
+            {"amount": 225.0, "unit": {"name": "g"}, "food": {"name": "cottage cheese, full-fat"}, "note": "1 cup"},
+            {"amount": 75.0, "unit": {"name": "g"}, "food": {"name": "mixed berries"}, "note": "0.5 cup"},
+            {"amount": 15.0, "unit": {"name": "g"}, "food": {"name": "honey, raw"}, "note": "1 tbsp"},
+            {"amount": 0.5, "unit": {"name": "g"}, "food": {"name": "salt"}, "note": "pinch"}
+          ]
+        }
+      ],
+      "nutrition": {
+        "calories": 280,
+        "protein": 28.0,
+        "carbohydrate": 28.0,
+        "fat": 6.0,
+        "saturated_fat": 3.0,
+        "fiber": 2.0,
+        "sodium": 480
+      }
+    },
+    {
+      "name": "Beef and Vegetable Stir-Fry",
+      "description": "Quick stir-fry with sliced beef and low-FODMAP vegetables over white rice.",
+      "source_url": "https://fitnessvolt.com/vertical-diet-ultimate-guide/",
+      "reference_urls": ["https://www.healthline.com/nutrition/vertical-diet-review"],
+      "servings": 2,
+      "servings_text": "2 servings",
+      "working_time": 15,
+      "waiting_time": 10,
+      "keywords": [{"name": "vertical-diet"}, {"name": "stir-fry"}, {"name": "beef"}, {"name": "quick-meal"}],
+      "steps": [
+        {
+          "name": "Stir-fry beef and vegetables",
+          "instruction": "Heat sesame oil in wok over high heat. Add sliced beef and cook 2-3 minutes. Add bell peppers, carrots, and zucchini. Stir-fry 3-4 minutes. Season with soy sauce and salt.",
+          "ingredients": [
+            {"amount": 340.0, "unit": {"name": "g"}, "food": {"name": "beef sirloin, sliced thin"}, "note": "12 oz"},
+            {"amount": 15.0, "unit": {"name": "ml"}, "food": {"name": "sesame oil"}, "note": "1 tbsp"},
+            {"amount": 150.0, "unit": {"name": "g"}, "food": {"name": "bell pepper, sliced"}, "note": "1 large"},
+            {"amount": 100.0, "unit": {"name": "g"}, "food": {"name": "carrots, julienned"}, "note": "0.75 cup"},
+            {"amount": 100.0, "unit": {"name": "g"}, "food": {"name": "zucchini, sliced"}, "note": "0.75 cup"},
+            {"amount": 30.0, "unit": {"name": "ml"}, "food": {"name": "soy sauce"}, "note": "2 tbsp"},
+            {"amount": 2.0, "unit": {"name": "g"}, "food": {"name": "salt"}, "note": "0.25 tsp"}
+          ]
+        },
+        {
+          "name": "Serve",
+          "instruction": "Serve stir-fry over white rice.",
+          "ingredients": [
+            {"amount": 370.0, "unit": {"name": "g"}, "food": {"name": "white rice, cooked"}, "note": "2 cups cooked"}
+          ]
+        }
+      ],
+      "nutrition": {
+        "calories": 520,
+        "protein": 38.0,
+        "carbohydrate": 52.0,
+        "fat": 16.0,
+        "saturated_fat": 4.0,
+        "fiber": 3.0,
+        "sodium": 680
+      }
+    },
+    {
+      "name": "Simple Cheese Omelet",
+      "description": "Classic omelet with cheese. Quick breakfast that's high in protein and satisfying.",
+      "source_url": "https://www.athleticinsight.com/diet/vertical",
+      "reference_urls": ["https://www.stylecraze.com/articles/vertical-diet-plan/"],
+      "servings": 1,
+      "servings_text": "1 serving",
+      "working_time": 10,
+      "waiting_time": 0,
+      "keywords": [{"name": "vertical-diet"}, {"name": "breakfast"}, {"name": "omelet"}, {"name": "eggs"}],
+      "steps": [
+        {
+          "name": "Make omelet",
+          "instruction": "Beat eggs with salt. Melt butter in non-stick pan over medium heat. Pour in eggs, let set slightly, then add cheese. Fold omelet in half when bottom is set but top is still slightly wet. Slide onto plate.",
+          "ingredients": [
+            {"amount": 150.0, "unit": {"name": "g"}, "food": {"name": "eggs, whole"}, "note": "3 large"},
+            {"amount": 14.0, "unit": {"name": "g"}, "food": {"name": "butter, unsalted"}, "note": "1 tbsp"},
+            {"amount": 40.0, "unit": {"name": "g"}, "food": {"name": "cheddar cheese, shredded"}, "note": "0.33 cup"},
+            {"amount": 1.5, "unit": {"name": "g"}, "food": {"name": "salt"}, "note": "0.25 tsp"}
+          ]
+        },
+        {
+          "name": "Serve",
+          "instruction": "Serve with orange juice and optional fruit.",
+          "ingredients": [
+            {"amount": 120.0, "unit": {"name": "ml"}, "food": {"name": "orange juice"}, "note": "4 oz"}
+          ]
+        }
+      ],
+      "nutrition": {
+        "calories": 450,
+        "protein": 26.0,
+        "carbohydrate": 14.0,
+        "fat": 32.0,
+        "saturated_fat": 16.0,
+        "fiber": 0.0,
+        "sodium": 520
+      }
+    },
+    {
+      "name": "Ground Pork Rice Bowl",
+      "description": "Seasoned ground pork over rice with vegetables. Budget-friendly protein option.",
+      "source_url": "https://lindyhealth.com/vertical-diet-meals/",
+      "reference_urls": ["https://www.garagegymreviews.com/vertical-diet"],
+      "servings": 4,
+      "servings_text": "4 servings",
+      "working_time": 15,
+      "waiting_time": 20,
+      "keywords": [{"name": "vertical-diet"}, {"name": "pork"}, {"name": "rice-bowl"}, {"name": "meal-prep"}],
+      "steps": [
+        {
+          "name": "Cook rice",
+          "instruction": "Cook rice in chicken broth according to package directions.",
+          "ingredients": [
+            {"amount": 370.0, "unit": {"name": "g"}, "food": {"name": "white rice, uncooked"}, "note": "2 cups"},
+            {"amount": 720.0, "unit": {"name": "ml"}, "food": {"name": "chicken broth"}, "note": "3 cups"}
+          ]
+        },
+        {
+          "name": "Cook pork and vegetables",
+          "instruction": "Brown ground pork in skillet over medium-high heat. Season with salt and ginger. Add bell peppers and carrots. Cook 4-5 minutes. Add spinach and stir until wilted.",
+          "ingredients": [
+            {"amount": 454.0, "unit": {"name": "g"}, "food": {"name": "ground pork"}, "note": "1 lb"},
+            {"amount": 3.0, "unit": {"name": "g"}, "food": {"name": "salt"}, "note": "0.5 tsp"},
+            {"amount": 2.0, "unit": {"name": "g"}, "food": {"name": "ground ginger"}, "note": "0.5 tsp"},
+            {"amount": 200.0, "unit": {"name": "g"}, "food": {"name": "bell pepper, diced"}, "note": "2 medium"},
+            {"amount": 130.0, "unit": {"name": "g"}, "food": {"name": "carrots, diced"}, "note": "1 cup"},
+            {"amount": 60.0, "unit": {"name": "g"}, "food": {"name": "spinach, fresh"}, "note": "2 cups"}
+          ]
+        },
+        {
+          "name": "Combine",
+          "instruction": "Combine pork mixture with rice and divide into containers.",
+          "ingredients": []
+        }
+      ],
+      "nutrition": {
+        "calories": 480,
+        "protein": 26.0,
+        "carbohydrate": 48.0,
+        "fat": 20.0,
+        "saturated_fat": 7.0,
+        "fiber": 3.0,
+        "sodium": 420
+      }
+    }
+  ]
+}
