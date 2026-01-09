@@ -1,0 +1,285 @@
+summary: Advanced weekly meal planner by calories
+description: |
+  Intelligently plan weekly meals based on total calorie budget:
+  1. Distributes weekly calorie budget across specified days
+  2. Intelligently adjusts daily targets based on meal count
+  3. Fetches recipes matching calorie constraints
+  4. Creates meal plans for each day
+  5. Compiles shopping list with aggregated ingredients
+  6. Returns detailed nutrition summary
+
+  Features:
+  - Total weekly calorie budget (automatically distributed)
+  - Minimum/maximum per-meal calorie constraints
+  - Variable number of meals per day
+  - Multiple meal types support
+  - Nutritional summary with calories per day
+
+value:
+  modules:
+    - id: fetch_all_recipes
+      value:
+        type: script
+        path: f/tandoor/recipe_list_flat
+        input_transforms:
+          tandoor:
+            type: static
+            value: $res:u/admin/tandoor_api
+
+    - id: extract_recipes_data
+      value:
+        type: rawscript
+        language: javascript
+        content: |
+          return results.fetch_all_recipes
+            .map(r => ({
+              id: r.id,
+              name: r.name,
+              calories: r.nutrition?.calories || 0
+            }))
+            .filter(r => r.calories > 0)
+
+    - id: calculate_daily_targets
+      value:
+        type: rawscript
+        language: javascript
+        content: |
+          const cooking_dates = flow_input.cooking_dates;
+          const weekly_calories = flow_input.weekly_calories || 14000;
+          const meals_per_day = flow_input.meals_per_day || 1;
+
+          const num_days = cooking_dates.length;
+          const calories_per_day = Math.floor(weekly_calories / num_days);
+          const calories_per_meal = Math.floor(calories_per_day / meals_per_day);
+
+          return {
+            num_days: num_days,
+            calories_per_day: calories_per_day,
+            calories_per_meal: calories_per_meal,
+            weekly_total: weekly_calories
+          };
+
+    - id: create_meal_plans
+      value:
+        type: forloopflow
+        iterator:
+          type: javascript
+          expr: flow_input.cooking_dates
+        parallel: false
+        skip_failures: false
+        modules:
+          - id: select_recipes_for_day
+            value:
+              type: script
+              path: f/tandoor/recipe_select_by_calories
+              input_transforms:
+                recipes:
+                  type: javascript
+                  expr: JSON.stringify(results.extract_recipes_data)
+                target_calories:
+                  type: javascript
+                  expr: results.calculate_daily_targets.calories_per_day
+                min_calories:
+                  type: javascript
+                  expr: flow_input.min_calories || Math.max(200, results.calculate_daily_targets.calories_per_meal - 150)
+                max_calories:
+                  type: javascript
+                  expr: flow_input.max_calories || Math.min(1500, results.calculate_daily_targets.calories_per_meal + 150)
+                count:
+                  type: javascript
+                  expr: flow_input.meals_per_day || 1
+
+          - id: create_plans
+            value:
+              type: forloopflow
+              iterator:
+                type: javascript
+                expr: |
+                  results.select_recipes_for_day.selected_recipes.map((recipe, idx) => ({
+                    recipe: recipe,
+                    date: iter.value,
+                    sequence: idx
+                  }))
+              parallel: true
+              skip_failures: false
+              modules:
+                - id: create_plan
+                  value:
+                    type: script
+                    path: f/tandoor/meal_plan_create
+                    input_transforms:
+                      tandoor:
+                        type: static
+                        value: $res:u/admin/tandoor_api
+                      recipe:
+                        type: javascript
+                        expr: iter.value.recipe.id
+                      meal_type:
+                        type: javascript
+                        expr: flow_input.meal_type_id || 3
+                      from_date:
+                        type: javascript
+                        expr: iter.value.date
+                      servings:
+                        type: javascript
+                        expr: flow_input.servings || 1
+
+    - id: add_to_shopping_list
+      value:
+        type: forloopflow
+        iterator:
+          type: javascript
+          expr: |
+            results.create_meal_plans.flatMap(day_result =>
+              day_result.map(recipe_result => recipe_result.meal_plan)
+            )
+        parallel: true
+        skip_failures: false
+        modules:
+          - id: add_recipe_to_list
+            value:
+              type: script
+              path: f/tandoor/shopping_list_recipe_add
+              input_transforms:
+                tandoor:
+                  type: static
+                  value: $res:u/admin/tandoor_api
+                mealplan_id:
+                  type: javascript
+                  expr: iter.value.id
+                recipe_id:
+                  type: javascript
+                  expr: iter.value.recipe
+                servings:
+                  type: javascript
+                  expr: iter.value.servings
+
+    - id: get_shopping_list
+      value:
+        type: script
+        path: f/tandoor/shopping_list_entry_list
+        input_transforms:
+          tandoor:
+            type: static
+            value: $res:u/admin/tandoor_api
+          checked:
+            type: static
+            value: false
+
+    - id: format_output
+      value:
+        type: rawscript
+        language: nushell
+        content: |
+          # Format the advanced weekly meal plan output
+          let recipes = $env.recipes | from json
+          let meal_plans = $env.meal_plans | from json
+          let shopping_list = $env.shopping_list | from json
+          let targets = $env.targets | from json
+
+          # Calculate totals and per-day breakdown
+          let total_calories = ($recipes | map(.calories | tonumber) | add) | default 0
+          let avg_per_meal = if ($recipes | length) > 0 { ($total_calories / ($recipes | length)) | round } else { 0 }
+
+          # Group shopping list by food
+          let grouped = $shopping_list.entries | group-by { |e| $e.food.name }
+
+          {
+            nutrition_targets: {
+              weekly_budget: ($targets.weekly_total | tonumber),
+              days_planned: $targets.num_days,
+              meals_per_day: ($recipes | length / $targets.num_days | round),
+              daily_target: ($targets.calories_per_day | tonumber),
+              per_meal_target: ($targets.calories_per_meal | tonumber)
+            },
+            summary: {
+              total_recipes: ($recipes | length),
+              total_meal_plans: ($meal_plans | length),
+              total_shopping_items: ($shopping_list.entries | length),
+              total_calories: $total_calories,
+              average_calories_per_meal: $avg_per_meal
+            },
+            recipes: ($recipes | each { |r| {
+              id: $r.id,
+              name: $r.name,
+              calories: ($r.calories | tonumber)
+            }}),
+            meal_plans: ($meal_plans | sort-by { |mp| $mp.meal_plan.from_date } | each { |mp| {
+              id: $mp.meal_plan.id,
+              date: $mp.meal_plan.from_date,
+              recipe: $mp.meal_plan.recipe_name,
+              calories: ($mp.meal_plan.calories? | default 0 | tonumber),
+              servings: $mp.meal_plan.servings
+            }}),
+            shopping_list_by_food: ($grouped | map({
+              food: .[0].food.name,
+              total_amount: ([.[] | .amount | tonumber] | add | round | tonumber),
+              unit: (.[0].unit.name? | default ""),
+              frequency: (.length)
+            }) | sort-by { |s| $s.food }),
+            detailed_shopping: ($shopping_list.entries | each { |e| {
+              food: $e.food.name,
+              amount: ($e.amount | tonumber | round),
+              unit: ($e.unit.name? | default ""),
+              checked: $e.checked
+            }})
+          } | to json
+        input_transforms:
+          recipes:
+            type: javascript
+            expr: JSON.stringify(results.extract_recipes_data.filter(r => results.create_meal_plans.flat().some(mp => mp.some(sp => sp.meal_plan.recipe === r.id))))
+          meal_plans:
+            type: javascript
+            expr: JSON.stringify(results.create_meal_plans.flat())
+          shopping_list:
+            type: javascript
+            expr: JSON.stringify(results.get_shopping_list)
+          targets:
+            type: javascript
+            expr: JSON.stringify(results.calculate_daily_targets)
+
+schema:
+  $schema: 'https://json-schema.org/draft-2020-12/schema'
+  type: object
+  properties:
+    weekly_calories:
+      type: integer
+      description: Total calorie budget for the week (auto-distributed across days)
+      default: 14000
+      minimum: 3500
+      maximum: 35000
+    cooking_dates:
+      type: array
+      items:
+        type: string
+        format: date
+      description: List of cooking dates (YYYY-MM-DD format)
+      minItems: 1
+      maxItems: 30
+    meals_per_day:
+      type: integer
+      description: Number of meals/recipes per day
+      default: 1
+      minimum: 1
+      maximum: 6
+    min_calories:
+      type: integer
+      description: Minimum calories per recipe
+      default: null
+    max_calories:
+      type: integer
+      description: Maximum calories per recipe
+      default: null
+    meal_type_id:
+      type: integer
+      description: Meal type ID (1=Breakfast, 2=Lunch, 3=Dinner, 4=Snack, etc.)
+      default: 3
+    servings:
+      type: number
+      description: Servings per recipe
+      default: 1
+      minimum: 0.25
+      maximum: 10
+  required:
+    - cooking_dates
+    - weekly_calories

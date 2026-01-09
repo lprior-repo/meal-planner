@@ -1,0 +1,255 @@
+summary: Build grocery list with calorie goals
+description: |
+  Automates weekly meal prep based on calorie targets:
+  1. Fetches all recipes from Tandoor with calorie data
+  2. For each day, selects recipes that fit within calorie range
+  3. Creates meal plan entries for specified cooking dates
+  4. Adds selected recipes to shopping list
+  5. Returns aggregated shopping list ready for grocery shopping
+
+  Supports fine-tuned calorie control with min/max per-meal bounds.
+
+value:
+  modules:
+    - id: fetch_all_recipes
+      value:
+        type: script
+        path: f/tandoor/recipe_list_flat
+        input_transforms:
+          tandoor:
+            type: static
+            value: $res:u/admin/tandoor_api
+
+    - id: extract_recipes_data
+      value:
+        type: rawscript
+        language: javascript
+        content: |
+          return results.fetch_all_recipes
+            .map(r => ({
+              id: r.id,
+              name: r.name,
+              calories: r.nutrition?.calories || 0
+            }))
+            .filter(r => r.calories > 0)
+
+    - id: create_meal_plans
+      value:
+        type: forloopflow
+        iterator:
+          type: javascript
+          expr: |
+            flow_input.cooking_dates.map((date, index) => ({
+              date: date,
+              day_number: index
+            }))
+        parallel: false
+        skip_failures: false
+        modules:
+          - id: select_recipes_for_day
+            value:
+              type: script
+              path: f/tandoor/recipe_select_by_calories
+              input_transforms:
+                recipes:
+                  type: javascript
+                  expr: JSON.stringify(results.extract_recipes_data)
+                target_calories:
+                  type: javascript
+                  expr: flow_input.daily_calories
+                min_calories:
+                  type: javascript
+                  expr: flow_input.min_calories || 300
+                max_calories:
+                  type: javascript
+                  expr: flow_input.max_calories || 800
+                count:
+                  type: javascript
+                  expr: flow_input.meals_per_day || 1
+
+          - id: create_plans
+            value:
+              type: forloopflow
+              iterator:
+                type: javascript
+                expr: |
+                  results.select_recipes_for_day.selected_recipes.map((recipe, idx) => ({
+                    recipe: recipe,
+                    date: iter.value.date,
+                    sequence: idx
+                  }))
+              parallel: true
+              skip_failures: false
+              modules:
+                - id: create_plan
+                  value:
+                    type: script
+                    path: f/tandoor/meal_plan_create
+                    input_transforms:
+                      tandoor:
+                        type: static
+                        value: $res:u/admin/tandoor_api
+                      recipe:
+                        type: javascript
+                        expr: iter.value.recipe.id
+                      meal_type:
+                        type: javascript
+                        expr: flow_input.meal_type_id || 3
+                      from_date:
+                        type: javascript
+                        expr: iter.value.date
+                      servings:
+                        type: javascript
+                        expr: flow_input.servings || 1
+
+    - id: add_to_shopping_list
+      value:
+        type: forloopflow
+        iterator:
+          type: javascript
+          expr: |
+            results.create_meal_plans.flatMap(day_result =>
+              day_result.map(recipe_result => recipe_result.meal_plan)
+            )
+        parallel: true
+        skip_failures: false
+        modules:
+          - id: add_recipe_to_list
+            value:
+              type: script
+              path: f/tandoor/shopping_list_recipe_add
+              input_transforms:
+                tandoor:
+                  type: static
+                  value: $res:u/admin/tandoor_api
+                mealplan_id:
+                  type: javascript
+                  expr: iter.value.id
+                recipe_id:
+                  type: javascript
+                  expr: iter.value.recipe
+                servings:
+                  type: javascript
+                  expr: iter.value.servings
+
+    - id: get_shopping_list
+      value:
+        type: script
+        path: f/tandoor/shopping_list_entry_list
+        input_transforms:
+          tandoor:
+            type: static
+            value: $res:u/admin/tandoor_api
+          checked:
+            type: static
+            value: false
+
+    - id: format_output
+      value:
+        type: rawscript
+        language: nushell
+        content: |
+          # Format the calorie-based grocery list output
+          let recipes = $env.recipes | from json
+          let meal_plans = $env.meal_plans | from json
+          let shopping_list = $env.shopping_list | from json
+
+          # Calculate totals
+          let total_calories = ($recipes | map(.calories | tonumber) | add) | default 0
+          let avg_calories = if ($recipes | length) > 0 { $total_calories / ($recipes | length) } else { 0 }
+
+          # Group shopping list by food
+          let grouped = $shopping_list.entries | group-by { |e| $e.food.name }
+
+          {
+            summary: {
+              recipes_selected: ($recipes | length),
+              meal_plans_created: ($meal_plans | length),
+              shopping_items: ($shopping_list.entries | length),
+              total_calories: $total_calories,
+              average_calories_per_meal: ($avg_calories | round | tonumber)
+            },
+            recipes: ($recipes | each { |r| {
+              id: $r.id,
+              name: $r.name,
+              calories: ($r.calories | tonumber)
+            }}),
+            meal_plans: ($meal_plans | each { |mp| {
+              id: $mp.meal_plan.id,
+              date: $mp.meal_plan.from_date,
+              recipe: $mp.meal_plan.recipe_name,
+              servings: $mp.meal_plan.servings
+            }}),
+            shopping_list: ($shopping_list.entries | each { |e| {
+              food: $e.food.name,
+              amount: ($e.amount | tonumber | round),
+              unit: ($e.unit.name? | default ""),
+              checked: $e.checked
+            }}),
+            grouped_shopping: ($grouped | map({
+              food: .[0].food.name,
+              total_amount: ([.[] | .amount | tonumber] | add | round | tonumber),
+              unit: (.[0].unit.name? | default ""),
+              items: (.length)
+            }))
+          } | to json
+        input_transforms:
+          recipes:
+            type: javascript
+            expr: JSON.stringify(results.extract_recipes_data.filter(r => results.create_meal_plans.flat().some(mp => mp.some(sp => sp.meal_plan.recipe_id === r.id))))
+          meal_plans:
+            type: javascript
+            expr: JSON.stringify(results.create_meal_plans.flat())
+          shopping_list:
+            type: javascript
+            expr: JSON.stringify(results.get_shopping_list)
+
+schema:
+  $schema: 'https://json-schema.org/draft-2020-12/schema'
+  type: object
+  properties:
+    daily_calories:
+      type: integer
+      description: Target calories per meal (used for recipe selection and deterministic seeding)
+      default: 2000
+      minimum: 500
+      maximum: 5000
+    cooking_dates:
+      type: array
+      items:
+        type: string
+        format: date
+      description: List of cooking dates (YYYY-MM-DD format)
+      minItems: 1
+      maxItems: 30
+    min_calories:
+      type: integer
+      description: Minimum calories per recipe to consider
+      default: 300
+      minimum: 100
+      maximum: 2000
+    max_calories:
+      type: integer
+      description: Maximum calories per recipe to consider
+      default: 800
+      minimum: 100
+      maximum: 3000
+    meals_per_day:
+      type: integer
+      description: Number of recipes to select per day
+      default: 1
+      minimum: 1
+      maximum: 5
+    meal_type_id:
+      type: integer
+      description: Meal type ID (1=Breakfast, 2=Lunch, 3=Dinner, etc.)
+      default: 3
+    servings:
+      type: number
+      description: Servings per recipe
+      default: 1
+      minimum: 0.25
+      maximum: 10
+  required:
+    - cooking_dates
+    - daily_calories

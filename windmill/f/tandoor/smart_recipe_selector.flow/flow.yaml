@@ -1,0 +1,200 @@
+summary: Smart recipe selector with keyword + calorie filtering
+description: |
+  Intelligently select recipes with combined keyword and calorie constraints:
+  1. Fetches all recipes with calorie data
+  2. Optionally filters by keyword (e.g., "chicken", "quick", "vegetarian")
+  3. Further filters by calorie range (min/max per recipe)
+  4. Randomly selects N recipes using deterministic seeding
+  5. Returns detailed recipe list with nutrition data
+
+  Use this flow to find specific recipes that match your preferences and goals:
+  - Find "quick recipes" between 300-500 calories
+  - Find "vegetarian" recipes around 400 calories
+  - Find "dinner" recipes between 600-900 calories
+
+  Perfect for ad-hoc meal planning or recipe discovery.
+
+value:
+  modules:
+    - id: fetch_all_recipes
+      value:
+        type: script
+        path: f/tandoor/recipe_list_flat
+        input_transforms:
+          tandoor:
+            type: static
+            value: $res:u/admin/tandoor_api
+
+    - id: filter_by_keyword
+      value:
+        type: rawscript
+        language: javascript
+        content: |
+          const keyword = flow_input.keyword?.toLowerCase() || "";
+          const recipes = results.fetch_all_recipes;
+
+          if (!keyword) {
+            // No keyword filter, return all recipes
+            return recipes
+              .map(r => ({
+                id: r.id,
+                name: r.name,
+                calories: r.nutrition?.calories || 0
+              }))
+              .filter(r => r.calories > 0);
+          }
+
+          // Filter by keyword in recipe name or description
+          return recipes
+            .filter(r =>
+              r.name?.toLowerCase().includes(keyword) ||
+              r.description?.toLowerCase().includes(keyword)
+            )
+            .map(r => ({
+              id: r.id,
+              name: r.name,
+              calories: r.nutrition?.calories || 0
+            }))
+            .filter(r => r.calories > 0);
+
+    - id: select_matching_recipes
+      value:
+        type: script
+        path: f/tandoor/recipe_select_by_calories
+        input_transforms:
+          recipes:
+            type: javascript
+            expr: JSON.stringify(results.filter_by_keyword)
+          target_calories:
+            type: javascript
+            expr: flow_input.target_calories || 500
+          min_calories:
+            type: javascript
+            expr: flow_input.min_calories || 200
+          max_calories:
+            type: javascript
+            expr: flow_input.max_calories || 900
+          count:
+            type: javascript
+            expr: flow_input.count || 3
+
+    - id: enrich_recipe_details
+      value:
+        type: forloopflow
+        iterator:
+          type: javascript
+          expr: results.select_matching_recipes.selected_recipes
+        parallel: true
+        skip_failures: false
+        modules:
+          - id: get_recipe_details
+            value:
+              type: script
+              path: f/tandoor/recipe_get
+              input_transforms:
+                tandoor:
+                  type: static
+                  value: $res:u/admin/tandoor_api
+                recipe_id:
+                  type: javascript
+                  expr: iter.value.id
+
+    - id: format_output
+      value:
+        type: rawscript
+        language: nushell
+        content: |
+          # Format the smart recipe selector output
+          let selected = $env.selected | from json
+          let detailed = $env.detailed | from json
+          let keyword = $env.keyword
+          let stats = $env.stats | from json
+
+          # Calculate nutrition stats
+          let total_cal = ($selected | map(.calories | tonumber) | add) | default 0
+          let avg_cal = if ($selected | length) > 0 { ($total_cal / ($selected | length)) | round } else { 0 }
+
+          {
+            search_criteria: {
+              keyword: $keyword,
+              count_requested: ($selected | length),
+              min_calories: $stats.min,
+              max_calories: $stats.max,
+              average_calories: $stats.average,
+              total_calories: $stats.total
+            },
+            summary: {
+              recipes_found: ($selected | length),
+              keyword_filter: (if $keyword { "yes" } else { "no" }),
+              avg_calories_per_recipe: $avg_cal,
+              warning: ($env.warning | values)
+            },
+            recipes: ($selected | map-indexed { |recipe, idx|
+              {
+                index: ($idx + 1),
+                id: $recipe.id,
+                name: $recipe.name,
+                calories: ($recipe.calories | tonumber),
+                description: ($detailed[$idx]?.description? | default ""),
+                prep_time_min: ($detailed[$idx]?.preparation_time_min? | default null),
+                cook_time_min: ($detailed[$idx]?.cooking_time_min? | default null),
+                servings: ($detailed[$idx]?.number_of_servings? | default 1),
+                ingredients_count: (($detailed[$idx]?.ingredients?.ingredients? | length) | default 0)
+              }
+            }),
+            nutrition_breakdown: {
+              total_recipes: ($selected | length),
+              total_calories: $total_cal,
+              avg_per_recipe: $avg_cal,
+              min_recipe_calories: ($selected | map(.calories | tonumber) | min | default 0),
+              max_recipe_calories: ($selected | map(.calories | tonumber) | max | default 0)
+            }
+          } | to json
+        input_transforms:
+          selected:
+            type: javascript
+            expr: JSON.stringify(results.select_matching_recipes.selected_recipes)
+          detailed:
+            type: javascript
+            expr: JSON.stringify(results.enrich_recipe_details.map(r => r.recipe || {}))
+          keyword:
+            type: javascript
+            expr: flow_input.keyword || ""
+          stats:
+            type: javascript
+            expr: JSON.stringify(results.select_matching_recipes.stats)
+
+schema:
+  $schema: 'https://json-schema.org/draft-2020-12/schema'
+  type: object
+  properties:
+    keyword:
+      type: string
+      description: Optional keyword filter (searches recipe name and description)
+      examples: ["chicken", "quick", "vegetarian", "dinner"]
+    target_calories:
+      type: integer
+      description: Target calories per recipe (used for deterministic recipe selection)
+      default: 500
+      minimum: 100
+      maximum: 2000
+    min_calories:
+      type: integer
+      description: Minimum calories per recipe
+      default: 200
+      minimum: 50
+      maximum: 2000
+    max_calories:
+      type: integer
+      description: Maximum calories per recipe
+      default: 900
+      minimum: 100
+      maximum: 3000
+    count:
+      type: integer
+      description: Number of recipes to select
+      default: 3
+      minimum: 1
+      maximum: 20
+  required:
+    - count

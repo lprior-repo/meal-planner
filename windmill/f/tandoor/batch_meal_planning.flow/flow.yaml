@@ -1,0 +1,218 @@
+summary: Batch meal planning for multiple recipes and dates
+description: |
+  Plans multiple meals across multiple dates:
+  1. Takes a list of recipe IDs and cooking dates
+  2. Cycles recipes through dates (or uses explicit mapping)
+  3. Creates meal plan entries for each recipe-date pair
+  4. Aggregates all ingredients into a single shopping list
+  5. Returns complete shopping list ready for grocery shopping
+
+  Perfect for:
+  - Planning a week with your favorite recipes
+  - Rotating recipes across days
+  - Batch creating meal plans
+
+value:
+  modules:
+    - id: create_meal_plans
+      value:
+        type: forloopflow
+        iterator:
+          type: javascript
+          expr: |
+            const dates = flow_input.cooking_dates;
+            const recipes = flow_input.recipe_ids;
+            const cooking_pattern = flow_input.cooking_pattern || "cycle";
+
+            return dates.map((date, idx) => ({
+              date: date,
+              recipe_id: cooking_pattern === "cycle"
+                ? recipes[idx % recipes.length]
+                : recipes[idx] || recipes[recipes.length - 1]
+            }));
+        parallel: false
+        skip_failures: false
+        modules:
+          - id: create_plan
+            value:
+              type: script
+              path: f/tandoor/meal_plan_create
+              input_transforms:
+                tandoor:
+                  type: static
+                  value: $res:u/admin/tandoor_api
+                recipe:
+                  type: javascript
+                  expr: iter.value.recipe_id
+                meal_type:
+                  type: javascript
+                  expr: flow_input.meal_type_id || 3
+                from_date:
+                  type: javascript
+                  expr: iter.value.date
+                servings:
+                  type: javascript
+                  expr: flow_input.servings || 1
+
+    - id: add_to_shopping_list
+      value:
+        type: forloopflow
+        iterator:
+          type: javascript
+          expr: results.create_meal_plans
+        parallel: true
+        skip_failures: false
+        modules:
+          - id: add_recipe_to_list
+            value:
+              type: script
+              path: f/tandoor/shopping_list_recipe_add
+              input_transforms:
+                tandoor:
+                  type: static
+                  value: $res:u/admin/tandoor_api
+                mealplan_id:
+                  type: javascript
+                  expr: iter.value.meal_plan.id
+                recipe_id:
+                  type: javascript
+                  expr: iter.value.meal_plan.recipe
+                servings:
+                  type: javascript
+                  expr: iter.value.meal_plan.servings
+
+    - id: get_shopping_list
+      value:
+        type: script
+        path: f/tandoor/shopping_list_entry_list
+        input_transforms:
+          tandoor:
+            type: static
+            value: $res:u/admin/tandoor_api
+          checked:
+            type: static
+            value: false
+
+    - id: get_recipe_details
+      value:
+        type: forloopflow
+        iterator:
+          type: javascript
+          expr: flow_input.recipe_ids
+        parallel: true
+        skip_failures: false
+        modules:
+          - id: fetch_recipe
+            value:
+              type: script
+              path: f/tandoor/recipe_get
+              input_transforms:
+                tandoor:
+                  type: static
+                  value: $res:u/admin/tandoor_api
+                recipe_id:
+                  type: javascript
+                  expr: iter.value
+
+    - id: format_output
+      value:
+        type: rawscript
+        language: nushell
+        content: |
+          # Format batch meal planning output
+          let meal_plans = $env.meal_plans | from json
+          let shopping_list = $env.shopping_list | from json
+          let recipes = $env.recipes | from json
+
+          # Group shopping list by food
+          let grouped = $shopping_list.entries | group-by { |e| $e.food.name }
+
+          # Calculate nutrition totals
+          let total_calories = ($recipes | map(.calories? | values | tonumber) | add) | default 0
+
+          {
+            summary: {
+              meals_planned: ($meal_plans | length),
+              unique_recipes: ($recipes | length),
+              shopping_items: ($shopping_list.entries | length),
+              dates_covered: ($meal_plans | map(.meal_plan.from_date) | unique | length),
+              total_recipe_calories: $total_calories
+            },
+            meal_plans: ($meal_plans | sort-by { |mp| $mp.meal_plan.from_date } | each { |mp| {
+              id: $mp.meal_plan.id,
+              date: $mp.meal_plan.from_date,
+              recipe: $mp.meal_plan.recipe_name,
+              calories: ($mp.meal_plan.calories? | default 0 | tonumber),
+              servings: $mp.meal_plan.servings
+            }}),
+            recipes_used: ($recipes | each { |r| {
+              id: $r.recipe_id,
+              name: $r.recipe_name,
+              servings: $r.number_of_servings,
+              calories: ($r.calories? | default 0 | tonumber),
+              prep_time: ($r.preparation_time_min? | default null),
+              cook_time: ($r.cooking_time_min? | default null)
+            }}),
+            shopping_list: ($shopping_list.entries | each { |e| {
+              food: $e.food.name,
+              amount: ($e.amount | tonumber | round),
+              unit: ($e.unit.name? | default ""),
+              checked: $e.checked
+            }}),
+            grouped_shopping: ($grouped | map({
+              food: .[0].food.name,
+              total_amount: ([.[] | .amount | tonumber] | add | round | tonumber),
+              unit: (.[0].unit.name? | default ""),
+              frequency: (.length)
+            }) | sort-by { |s| $s.food })
+          } | to json
+        input_transforms:
+          meal_plans:
+            type: javascript
+            expr: JSON.stringify(results.create_meal_plans)
+          shopping_list:
+            type: javascript
+            expr: JSON.stringify(results.get_shopping_list)
+          recipes:
+            type: javascript
+            expr: JSON.stringify(results.get_recipe_details.map(r => r.recipe || {}))
+
+schema:
+  $schema: 'https://json-schema.org/draft-2020-12/schema'
+  type: object
+  properties:
+    recipe_ids:
+      type: array
+      items:
+        type: integer
+      description: List of recipe IDs to plan
+      minItems: 1
+      maxItems: 30
+    cooking_dates:
+      type: array
+      items:
+        type: string
+        format: date
+      description: List of cooking dates (YYYY-MM-DD format)
+      minItems: 1
+      maxItems: 30
+    cooking_pattern:
+      type: string
+      enum: ["cycle", "sequential"]
+      description: |
+        - "cycle": repeats recipe list if more dates than recipes
+        - "sequential": uses last recipe for remaining dates if recipes run out
+      default: cycle
+    meal_type_id:
+      type: integer
+      description: Meal type ID (1=Breakfast, 2=Lunch, 3=Dinner, 4=Snack, etc.)
+      default: 3
+    servings:
+      type: number
+      description: Servings per recipe
+      default: 1
+      minimum: 0.25
+      maximum: 10
+  required:
+    - recipe_ids
+    - cooking_dates

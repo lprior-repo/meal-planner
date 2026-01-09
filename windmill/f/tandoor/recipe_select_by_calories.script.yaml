@@ -1,0 +1,35 @@
+summary: Select recipes by calorie range
+description: Selects N recipes from a list that fall within specified calorie range
+lock: ''
+kind: script
+language: bash
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    recipes:
+      type: string
+      description: JSON array of recipes with id, name, and calories fields
+      originalType: string
+    target_calories:
+      type: integer
+      description: Target total calories (used as seed for deterministic selection)
+      default: 2000
+      originalType: integer
+    min_calories:
+      type: integer
+      description: Minimum calories per recipe
+      default: 300
+      originalType: integer
+    max_calories:
+      type: integer
+      description: Maximum calories per recipe
+      default: 800
+      originalType: integer
+    count:
+      type: integer
+      description: Number of recipes to select
+      default: 1
+      originalType: integer
+  required:
+    - recipes
