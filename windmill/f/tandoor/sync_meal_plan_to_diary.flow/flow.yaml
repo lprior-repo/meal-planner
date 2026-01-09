@@ -1,0 +1,178 @@
+summary: Sync Tandoor meal plan to FatSecret diary
+description: |
+  Syncs all meal plan entries within a date range to your FatSecret food diary.
+  Each recipe is logged as a custom food entry with its nutrition data.
+
+  Requirements:
+  - Recipes must have nutrition data (run add_calories_to_recipes flow first)
+  - FatSecret OAuth must be connected (run oauth_setup flow first)
+
+  This enables automatic calorie tracking for your planned meals.
+
+value:
+  modules:
+    - id: get_token
+      summary: Get FatSecret OAuth token
+      value:
+        type: script
+        path: f/fatsecret/get_token
+        input_transforms:
+          check_only:
+            type: static
+            value: false
+
+    - id: check_token
+      summary: Verify token is valid
+      value:
+        type: rawscript
+        language: bun
+        content: |
+          export async function main(token_result: any) {
+            if (token_result.status === "not_found") {
+              throw new Error("FatSecret not connected. Run the OAuth setup flow first.");
+            }
+            return {
+              oauth_token: token_result.oauth_token,
+              oauth_token_secret: token_result.oauth_token_secret
+            };
+          }
+        input_transforms:
+          token_result:
+            type: javascript
+            expr: results.get_token
+
+    - id: list_meal_plans
+      summary: Get meal plan entries for date range
+      value:
+        type: script
+        path: f/tandoor/meal_plan_list
+        input_transforms:
+          tandoor:
+            type: static
+            value: '$res:u/admin/tandoor_api'
+          from_date:
+            type: javascript
+            expr: flow_input.from_date
+          to_date:
+            type: javascript
+            expr: flow_input.to_date || flow_input.from_date
+
+    - id: sync_entries
+      summary: Log each meal plan entry to FatSecret
+      value:
+        type: forloopflow
+        iterator:
+          type: javascript
+          expr: results.list_meal_plans.results || []
+        skip_failures: true
+        modules:
+          - id: map_meal_type
+            summary: Map Tandoor meal type to FatSecret
+            value:
+              type: rawscript
+              language: bun
+              content: |
+                export async function main(entry: any) {
+                  // Map Tandoor meal type names to FatSecret meal types
+                  const mealTypeMap: Record<string, string> = {
+                    "breakfast": "breakfast",
+                    "lunch": "lunch",
+                    "dinner": "dinner",
+                    "snack": "other",
+                    "other": "other"
+                  };
+
+                  const mealTypeName = (entry.meal_type?.name || "dinner").toLowerCase();
+                  const fsMealType = mealTypeMap[mealTypeName] || "other";
+
+                  return {
+                    recipe_id: entry.recipe?.id,
+                    recipe_name: entry.recipe?.name || "Unknown Recipe",
+                    servings: entry.servings || 1,
+                    meal: fsMealType,
+                    date: entry.from_date || entry.date
+                  };
+                }
+              input_transforms:
+                entry:
+                  type: javascript
+                  expr: flow_input.iter.value
+
+          - id: log_entry
+            summary: Log recipe to FatSecret
+            value:
+              type: script
+              path: f/tandoor/log_recipe_to_fatsecret
+              input_transforms:
+                tandoor:
+                  type: static
+                  value: '$res:u/admin/tandoor_api'
+                fatsecret:
+                  type: static
+                  value: '$res:u/admin/fatsecret_api'
+                access_token:
+                  type: javascript
+                  expr: results.check_token.oauth_token
+                access_secret:
+                  type: javascript
+                  expr: results.check_token.oauth_token_secret
+                recipe_id:
+                  type: javascript
+                  expr: results.map_meal_type.recipe_id
+                servings:
+                  type: javascript
+                  expr: results.map_meal_type.servings
+                meal:
+                  type: javascript
+                  expr: results.map_meal_type.meal
+                date:
+                  type: javascript
+                  expr: results.map_meal_type.date
+
+    - id: summary
+      summary: Generate sync summary
+      value:
+        type: rawscript
+        language: bun
+        content: |
+          export async function main(meal_plans: any, sync_results: any) {
+            const entries = meal_plans.results || [];
+            const synced = (sync_results || []).filter((r: any) => r && r.success);
+            const failed = entries.length - synced.length;
+
+            return {
+              success: true,
+              message: `Synced ${synced.length} of ${entries.length} meal plan entries to FatSecret`,
+              total_entries: entries.length,
+              synced_count: synced.length,
+              failed_count: failed,
+              entries: synced.map((r: any) => ({
+                recipe: r.recipe_name,
+                calories: r.calories
+              }))
+            };
+          }
+        input_transforms:
+          meal_plans:
+            type: javascript
+            expr: results.list_meal_plans
+          sync_results:
+            type: javascript
+            expr: results.sync_entries
+
+  same_worker: false
+
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    from_date:
+      type: string
+      description: Start date in YYYY-MM-DD format
+      format: date
+    to_date:
+      type: string
+      description: End date in YYYY-MM-DD format (optional, defaults to from_date)
+      format: date
+  required:
+    - from_date
