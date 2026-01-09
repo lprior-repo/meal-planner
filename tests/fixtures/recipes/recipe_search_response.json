@@ -7,19 +7,18 @@
         "recipe_description": "A healthy and delicious grilled chicken salad with mixed greens",
         "recipe_url": "https://www.fatsecret.com/recipes/grilled-chicken-salad/Default.aspx",
         "recipe_image": "https://www.fatsecret.com/recipes/grilled-chicken-salad/image.jpg",
-        "recipe_categories": {
-          "recipe_category": [
-            {"recipe_category_name": "Salads"},
-            {"recipe_category_name": "Chicken"}
-          ]
+        "recipe_types": {
+          "recipe_type": ["Salads", "Chicken"]
         },
-        "number_of_servings": "4",
-        "preparation_time_min": "20",
-        "cooking_time_min": "15",
-        "calories": "320",
-        "carbohydrate": "12.00",
-        "protein": "42.00",
-        "fat": "12.00"
+        "recipe_ingredients": {
+          "ingredient": ["2 cups mixed greens", "1 grilled chicken breast"]
+        },
+        "recipe_nutrition": {
+          "calories": "320",
+          "carbohydrate": "12.00",
+          "protein": "42.00",
+          "fat": "12.00"
+        }
       }
     ],
     "max_results": "20",

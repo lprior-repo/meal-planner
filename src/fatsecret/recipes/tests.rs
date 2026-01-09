@@ -66,25 +66,23 @@ fn test_recipe_id_equality() {
 #[test]
 fn test_recipe_search_response() {
     let json = r#"{
-        "recipes": {
-            "recipe": [
-                {
-                    "recipe_id": "123",
-                    "recipe_name": "Chicken Salad",
-                    "recipe_description": "Healthy lunch option",
-                    "recipe_url": "https://example.com/123"
-                },
-                {
-                    "recipe_id": "456",
-                    "recipe_name": "Banana Smoothie",
-                    "recipe_description": "Quick breakfast",
-                    "recipe_url": "https://example.com/456"
-                }
-            ],
-            "max_results": "20",
-            "total_results": "50",
-            "page_number": "0"
-        }
+        "recipe": [
+            {
+                "recipe_id": "123",
+                "recipe_name": "Chicken Salad",
+                "recipe_description": "Healthy lunch option",
+                "recipe_url": "https://example.com/123"
+            },
+            {
+                "recipe_id": "456",
+                "recipe_name": "Banana Smoothie",
+                "recipe_description": "Quick breakfast",
+                "recipe_url": "https://example.com/456"
+            }
+        ],
+        "max_results": "20",
+        "total_results": "50",
+        "page_number": "0"
     }"#;
     let response: RecipeSearchResponse = serde_json::from_str(json).expect("should deserialize");
     assert_eq!(response.recipes.len(), 2);
@@ -95,17 +93,15 @@ fn test_recipe_search_response() {
 #[test]
 fn test_recipe_search_response_single() {
     let json = r#"{
-        "recipes": {
-            "recipe": {
-                "recipe_id": "123",
-                "recipe_name": "Single Recipe",
-                "recipe_description": "Only one",
-                "recipe_url": "https://example.com/123"
-            },
-            "max_results": 20,
-            "total_results": 1,
-            "page_number": 0
-        }
+        "recipe": {
+            "recipe_id": "123",
+            "recipe_name": "Single Recipe",
+            "recipe_description": "Only one",
+            "recipe_url": "https://example.com/123"
+        },
+        "max_results": 20,
+        "total_results": 1,
+        "page_number": 0
     }"#;
     let response: RecipeSearchResponse = serde_json::from_str(json).expect("should deserialize");
     assert_eq!(response.recipes.len(), 1);
@@ -115,17 +111,15 @@ fn test_recipe_search_response_single() {
 #[test]
 fn test_recipe_search_result_fields() {
     let json = r#"{
-        "recipes": {
-            "recipe": {
-                "recipe_id": "999",
-                "recipe_name": "Test Recipe",
-                "recipe_description": "A test recipe",
-                "recipe_url": "https://test.com"
-            },
-            "max_results": 10,
-            "total_results": 1,
-            "page_number": 0
-        }
+        "recipe": {
+            "recipe_id": "999",
+            "recipe_name": "Test Recipe",
+            "recipe_description": "A test recipe",
+            "recipe_url": "https://test.com"
+        },
+        "max_results": 10,
+        "total_results": 1,
+        "page_number": 0
     }"#;
     let response: RecipeSearchResponse = serde_json::from_str(json).expect("should deserialize");
     let result = &response.recipes[0];
@@ -140,38 +134,36 @@ fn test_recipe_search_result_fields() {
 #[test]
 fn test_recipe_types_single() {
     let json = r#"{
-        "recipe_types": {
-            "recipe_type": {
-                "recipe_type_code": "vegetarian",
-                "recipe_type_name": "Vegetarian"
-            }
+        "recipe_type": {
+            "recipe_type_code": "vegetarian",
+            "recipe_type_name": "Vegetarian"
         }
     }"#;
     let response: RecipeTypesResponse = serde_json::from_str(json).expect("should deserialize");
-    assert_eq!(response.types.len(), 1);
-    assert_eq!(response.types[0].recipe_type_code, "vegetarian");
-    assert_eq!(response.types[0].recipe_type_name, "Vegetarian");
+    assert_eq!(response.recipe_types.len(), 1);
+    assert_eq!(response.recipe_types[0].code, "vegetarian");
+    assert_eq!(response.recipe_types[0].name, "Vegetarian");
 }
 
 #[test]
 fn test_recipe_types_array() {
     let json = r#"{
-        "recipe_types": {
-            "recipe_type": [
-                {"recipe_type_code": "vegetarian", "recipe_type_name": "Vegetarian"},
-                {"recipe_type_code": "main_dish", "recipe_type_name": "Main Dish"}
-            ]
-        }
+        "recipe_type": [
+            {"recipe_type_code": "vegetarian", "recipe_type_name": "Vegetarian"},
+            {"recipe_type_code": "main_dish", "recipe_type_name": "Main Dish"}
+        ]
     }"#;
     let response: RecipeTypesResponse = serde_json::from_str(json).expect("should deserialize");
-    assert_eq!(response.types.len(), 2);
+    assert_eq!(response.recipe_types.len(), 2);
 }
 
 #[test]
-fn test_recipe_type_from_api_string() {
-    assert_eq!(RecipeType::from_api_string("vegetarian"), Some(RecipeType::Vegetarian));
-    assert_eq!(RecipeType::from_api_string("main_dish"), Some(RecipeType::MainDish));
-    assert_eq!(RecipeType::from_api_string("invalid"), None);
+fn test_recipe_type_deserialization() {
+    // Test that RecipeType can be deserialized from string format
+    let json = r#""Vegetarian""#;
+    let rt: RecipeType = serde_json::from_str(json).expect("should deserialize");
+    assert_eq!(rt.name, "Vegetarian");
+    assert_eq!(rt.code, "vegetarian");
 }
 
 // =============================================================================
@@ -181,12 +173,10 @@ fn test_recipe_type_from_api_string() {
 #[test]
 fn test_recipe_autocomplete_multiple() {
     let json = r#"{
-        "suggestions": {
-            "suggestion": [
-                {"recipe_id": "1", "recipe_name": "Chicken Soup"},
-                {"recipe_id": "2", "recipe_name": "Chicken Curry"}
-            ]
-        }
+        "suggestion": [
+            {"recipe_id": "1", "recipe_name": "Chicken Soup"},
+            {"recipe_id": "2", "recipe_name": "Chicken Curry"}
+        ]
     }"#;
     let response: RecipeAutocompleteResponse = serde_json::from_str(json).expect("should deserialize");
     assert_eq!(response.suggestions.len(), 2);
@@ -196,9 +186,7 @@ fn test_recipe_autocomplete_multiple() {
 #[test]
 fn test_recipe_autocomplete_single() {
     let json = r#"{
-        "suggestions": {
-            "suggestion": {"recipe_id": "1", "recipe_name": "Pasta"}
-        }
+        "suggestion": {"recipe_id": "1", "recipe_name": "Pasta"}
     }"#;
     let response: RecipeAutocompleteResponse = serde_json::from_str(json).expect("should deserialize");
     assert_eq!(response.suggestions.len(), 1);
@@ -280,12 +268,10 @@ fn test_recipe_id_clone() {
 #[test]
 fn test_recipe_search_result_clone() {
     let json = r#"{
-        "recipes": {
-            "recipe": {"recipe_id": "123", "recipe_name": "Test", "recipe_description": "", "recipe_url": "https://test.com"},
-            "max_results": 10,
-            "total_results": 1,
-            "page_number": 0
-        }
+        "recipe": {"recipe_id": "123", "recipe_name": "Test", "recipe_description": "", "recipe_url": "https://test.com"},
+        "max_results": 10,
+        "total_results": 1,
+        "page_number": 0
     }"#;
     let response: RecipeSearchResponse = serde_json::from_str(json).expect("should deserialize");
     let cloned = response.recipes[0].clone();
@@ -306,12 +292,10 @@ fn test_recipe_id_debug_format() {
 #[test]
 fn test_recipe_search_empty() {
     let json = r#"{
-        "recipes": {
-            "recipe": [],
-            "max_results": "20",
-            "total_results": "0",
-            "page_number": "0"
-        }
+        "recipe": [],
+        "max_results": "20",
+        "total_results": "0",
+        "page_number": "0"
     }"#;
     let response: RecipeSearchResponse = serde_json::from_str(json).expect("should deserialize");
     assert!(response.recipes.is_empty());
@@ -319,7 +303,7 @@ fn test_recipe_search_empty() {
 
 #[test]
 fn test_recipe_autocomplete_empty() {
-    let json = r#"{"suggestions": {}}"#;
+    let json = r#"{}"#;
     let response: RecipeAutocompleteResponse = serde_json::from_str(json).expect("should deserialize");
     assert!(response.suggestions.is_empty());
 }
@@ -336,9 +320,9 @@ fn test_recipe_direction_large_number() {
 
 #[test]
 fn test_recipe_types_empty() {
-    let json = r#"{"recipe_types": {}}"#;
+    let json = r#"{}"#;
     let response: RecipeTypesResponse = serde_json::from_str(json).expect("should deserialize");
-    assert!(response.types.is_empty());
+    assert!(response.recipe_types.is_empty());
 }
 
 #[test]
