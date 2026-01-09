@@ -1,0 +1,10 @@
+name = "meal_planner_automation"
+version = "0.1.0"
+description = "Gleam automation framework for meal-planner"
+
+[dependencies]
+gleam_stdlib = ">= 0.34.0"
+gleam_http = ">= 4.0.0"
+
+[dev-dependencies]
+gleeunit = ">= 1.0.0"

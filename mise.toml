@@ -3,6 +3,7 @@
 
 [tools]
 rust = "nightly"
+gleam = "latest"
 mold = "latest"
 sccache = "latest"
 cargo-binstall = "latest"
@@ -51,3 +52,15 @@ echo "{\"base_url\": \"$TANDOOR_BASE_URL\", \"api_token\": \"$TANDOOR_API_TOKEN\
 [tasks.check]
 description = "Run cargo check and clippy"
 run = "cargo check && cargo clippy"
+
+[tasks.gleam-build]
+description = "Build Gleam project"
+run = "gleam build"
+
+[tasks.gleam-test]
+description = "Test Gleam project"
+run = "gleam test"
+
+[tasks.gleam-format]
+description = "Format Gleam code"
+run = "gleam format src tests"

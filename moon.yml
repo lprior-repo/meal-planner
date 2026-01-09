@@ -287,13 +287,54 @@ tasks:
       cache: true
 
   # ============================================
+  # Gleam Automation Layer
+  # ============================================
+  gleam-fmt:
+    description: 'Format Gleam code'
+    command: 'cd gleam && gleam format src tests'
+    inputs:
+      - 'gleam/src/**/*.gleam'
+      - 'gleam/tests/**/*.gleam'
+    options:
+      cache: true
+    env:
+      GLEAM_WARNINGS_AS_ERRORS: 'true'
+
+  gleam-build:
+    description: 'Build Gleam automation project'
+    command: 'cd gleam && gleam build'
+    inputs:
+      - 'gleam/src/**/*.gleam'
+      - 'gleam/gleam.toml'
+      - 'gleam/manifest.toml'
+    options:
+      cache: true
+    deps:
+      - '~:gleam-fmt'
+
+  gleam-test:
+    description: 'Run Gleam tests'
+    command: 'cd gleam && gleam test'
+    inputs:
+      - 'gleam/src/**/*.gleam'
+      - 'gleam/tests/**/*.gleam'
+      - 'gleam/gleam.toml'
+    options:
+      cache: false  # Always run tests fresh
+    deps:
+      - '~:gleam-build'
+
+  # ============================================
   # Aggregate Tasks
   # ============================================
   ci:
-    description: 'Full CI pipeline - lint, test, build, validate'
+    description: 'Full CI pipeline - lint, test, build, validate (Rust + Gleam)'
     deps:
       - '~:fmt'
       - '~:clippy'
+      - '~:gleam-fmt'
+      - '~:gleam-build'
+      - '~:gleam-test'
       - '~:validate-yaml'
       - '~:validate-cue'
       - '~:test'
@@ -302,10 +343,12 @@ tasks:
       - '~:validate-windmill'
 
   quick:
-    description: 'Fast lint checks for pre-commit'
+    description: 'Fast lint checks for pre-commit (Rust + Gleam)'
     deps:
       - '~:fmt'
       - '~:clippy'
+      - '~:gleam-fmt'
+      - '~:gleam-build'
       - '~:validate-yaml'
       - '~:validate-cue'
 
