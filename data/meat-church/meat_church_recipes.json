@@ -1,0 +1,1368 @@
+{
+  "metadata": {
+    "name": "Meat Church BBQ Recipe Collection",
+    "description": "BBQ recipes from Meat Church featuring their award-winning rubs and seasonings",
+    "source": "https://www.meatchurch.com/blogs/recipes",
+    "created_at": "2026-01-04",
+    "format_version": "1.1",
+    "compatibility": ["tandoor", "fatsecret"]
+  },
+  "recipes": [
+    {
+      "name": "Texas Style Brisket",
+      "description": "Classic Texas style brisket smoked low and slow. The cornerstone of Meat Church BBQ.",
+      "source_url": "https://www.meatchurch.com/blogs/recipes/12989861-brisket-texas-style",
+      "servings": 12,
+      "servings_text": "12 servings",
+      "working_time": 30,
+      "waiting_time": 720,
+      "keywords": [{"name": "meat-church"}, {"name": "brisket"}, {"name": "smoked"}, {"name": "texas-bbq"}, {"name": "beef"}],
+      "steps": [
+        {
+          "name": "Trim brisket",
+          "instruction": "Trim excess fat and silver skin off the top. Remove any hard pieces of fat that won't render. Trim fat on bottom leaving only 1/4 inch.",
+          "ingredients": [
+            {"amount": 5400.0, "unit": {"name": "g"}, "food": {"name": "whole packer brisket"}, "note": "12 lb USDA Choice or Prime"}
+          ]
+        },
+        {
+          "name": "Season",
+          "instruction": "Apply Holy Cow rub to meat side, then come back with Holy Gospel in a 70/30 ratio. Let seasoning adhere 30 minutes.",
+          "ingredients": [
+            {"amount": 45.0, "unit": {"name": "g"}, "food": {"name": "Meat Church Holy Cow rub"}, "note": "3 tbsp"},
+            {"amount": 20.0, "unit": {"name": "g"}, "food": {"name": "Meat Church Holy Gospel rub"}, "note": "1.5 tbsp"}
+          ]
+        },
+        {
+          "name": "Smoke",
+          "instruction": "Prepare smoker at 250°F using post oak or hickory. Place brisket fat side down. Smoke until internal temp reaches 165°F, about 6-8 hours. Wrap in butcher paper. Continue cooking until probe tender at 200-205°F. Rest 1-2 hours before slicing.",
+          "ingredients": []
+        }
+      ],
+      "nutrition": {
+        "calories": 380,
+        "protein": 42.0,
+        "carbohydrate": 1.0,
+        "fat": 22.0,
+        "saturated_fat": 9.0,
+        "fiber": 0.0,
+        "sodium": 580
+      }
+    },
+    {
+      "name": "Mexican Brisket",
+      "description": "Beef version of the wildly popular Mexican Pulled Pork. Marinated in pickled jalapeño juice for amazing flavor.",
+      "source_url": "https://www.meatchurch.com/blogs/recipes/mexican-brisket",
+      "servings": 10,
+      "servings_text": "10 servings",
+      "working_time": 30,
+      "waiting_time": 600,
+      "keywords": [{"name": "meat-church"}, {"name": "brisket"}, {"name": "mexican"}, {"name": "smoked"}, {"name": "spicy"}],
+      "steps": [
+        {
+          "name": "Marinate",
+          "instruction": "Place trimmed brisket in container. Pour pickled jalapeño juice over brisket. Marinate overnight in refrigerator.",
+          "ingredients": [
+            {"amount": 4500.0, "unit": {"name": "g"}, "food": {"name": "beef brisket, trimmed"}, "note": "10 lb"},
+            {"amount": 480.0, "unit": {"name": "ml"}, "food": {"name": "pickled jalapeño juice"}, "note": "2 cups, from jar"}
+          ]
+        },
+        {
+          "name": "Season and smoke",
+          "instruction": "Remove from marinade and pat dry. Season liberally with Dia de la Fajita. Smoke at 250°F until probe tender at 200-205°F.",
+          "ingredients": [
+            {"amount": 60.0, "unit": {"name": "g"}, "food": {"name": "Meat Church Dia de la Fajita rub"}, "note": "4 tbsp"}
+          ]
+        }
+      ],
+      "nutrition": {
+        "calories": 360,
+        "protein": 40.0,
+        "carbohydrate": 2.0,
+        "fat": 20.0,
+        "saturated_fat": 8.0,
+        "fiber": 0.0,
+        "sodium": 620
+      }
+    },
+    {
+      "name": "Pulled Pork",
+      "description": "Sweet pulled pork - the BBQ Matt grew up on. Simple, easy, and fantastic.",
+      "source_url": "https://www.meatchurch.com/blogs/recipes/pulled-pork",
+      "servings": 12,
+      "servings_text": "12 servings",
+      "working_time": 20,
+      "waiting_time": 480,
+      "keywords": [{"name": "meat-church"}, {"name": "pulled-pork"}, {"name": "smoked"}, {"name": "pork-butt"}],
+      "steps": [
+        {
+          "name": "Prep and season",
+          "instruction": "Trim excess fat from pork butt. Apply yellow mustard as binder. Season liberally with Honey Hog rub on all sides.",
+          "ingredients": [
+            {"amount": 4500.0, "unit": {"name": "g"}, "food": {"name": "pork butt (Boston butt)"}, "note": "10 lb, bone-in"},
+            {"amount": 30.0, "unit": {"name": "ml"}, "food": {"name": "yellow mustard"}, "note": "2 tbsp, as binder"},
+            {"amount": 60.0, "unit": {"name": "g"}, "food": {"name": "Meat Church Honey Hog rub"}, "note": "4 tbsp"}
+          ]
+        },
+        {
+          "name": "Smoke",
+          "instruction": "Prepare smoker at 275°F with hickory or pecan. Smoke until internal temp reaches 205°F and probe slides in like butter, about 8 hours. Rest 30 minutes, then pull with forks or meat claws.",
+          "ingredients": []
+        }
+      ],
+      "nutrition": {
+        "calories": 320,
+        "protein": 35.0,
+        "carbohydrate": 2.0,
+        "fat": 18.0,
+        "saturated_fat": 7.0,
+        "fiber": 0.0,
+        "sodium": 480
+      }
+    },
+    {
+      "name": "Hickory Pulled Pork",
+      "description": "Pulled pork using Hickory AP seasoning for a savory flavor profile.",
+      "source_url": "https://www.meatchurch.com/blogs/recipes/hickory-pulled-pork",
+      "servings": 12,
+      "servings_text": "12 servings",
+      "working_time": 20,
+      "waiting_time": 480,
+      "keywords": [{"name": "meat-church"}, {"name": "pulled-pork"}, {"name": "hickory"}, {"name": "savory"}],
+      "steps": [
+        {
+          "name": "Prep and season",
+          "instruction": "Trim pork butt. Season liberally with Hickory AP on all sides. Let sit 30 minutes.",
+          "ingredients": [
+            {"amount": 4500.0, "unit": {"name": "g"}, "food": {"name": "pork butt (Boston butt)"}, "note": "10 lb"},
+            {"amount": 60.0, "unit": {"name": "g"}, "food": {"name": "Meat Church Hickory AP rub"}, "note": "4 tbsp"}
+          ]
+        },
+        {
+          "name": "Smoke",
+          "instruction": "Prepare smoker at 250°F with hickory. Smoke until probe tender above 200°F. Pull and serve.",
+          "ingredients": []
+        }
+      ],
+      "nutrition": {
+        "calories": 310,
+        "protein": 35.0,
+        "carbohydrate": 1.0,
+        "fat": 18.0,
+        "saturated_fat": 7.0,
+        "fiber": 0.0,
+        "sodium": 460
+      }
+    },
+    {
+      "name": "No Wrap Pork Butt",
+      "description": "Low and slow method for insane bark without wrapping. Perfect for pellet grills.",
+      "source_url": "https://www.meatchurch.com/blogs/recipes/no-wrap-pork-butt-pulled-pork",
+      "servings": 12,
+      "servings_text": "12 servings",
+      "working_time": 15,
+      "waiting_time": 720,
+      "keywords": [{"name": "meat-church"}, {"name": "pulled-pork"}, {"name": "no-wrap"}, {"name": "bark"}],
+      "steps": [
+        {
+          "name": "Season",
+          "instruction": "Season pork butt with Holy Gospel or your preferred rub.",
+          "ingredients": [
+            {"amount": 4500.0, "unit": {"name": "g"}, "food": {"name": "pork butt"}, "note": "10 lb"},
+            {"amount": 60.0, "unit": {"name": "g"}, "food": {"name": "Meat Church Holy Gospel rub"}, "note": "4 tbsp"}
+          ]
+        },
+        {
+          "name": "Smoke low and slow",
+          "instruction": "Prepare smoker at 200°F. Smoke for approximately 12 hours until probe tender. The lower temp elongates cook time building incredible bark.",
+          "ingredients": []
+        }
+      ],
+      "nutrition": {
+        "calories": 310,
+        "protein": 35.0,
+        "carbohydrate": 1.0,
+        "fat": 18.0,
+        "saturated_fat": 7.0,
+        "fiber": 0.0,
+        "sodium": 450
+      }
+    },
+    {
+      "name": "North Carolina Style Pulled Pork",
+      "description": "Classic southern BBQ with Cheerwine BBQ sauce and sweet coleslaw.",
+      "source_url": "https://www.meatchurch.com/blogs/recipes/north-carolina-style-pulled-pork",
+      "servings": 12,
+      "servings_text": "12 servings",
+      "working_time": 30,
+      "waiting_time": 540,
+      "keywords": [{"name": "meat-church"}, {"name": "pulled-pork"}, {"name": "north-carolina"}, {"name": "cheerwine"}],
+      "steps": [
+        {
+          "name": "Brine and season",
+          "instruction": "Brine pork butt overnight in Meat Church brine. Pat dry and season with Honey Hog.",
+          "ingredients": [
+            {"amount": 4500.0, "unit": {"name": "g"}, "food": {"name": "pork butt"}, "note": "10 lb"},
+            {"amount": 60.0, "unit": {"name": "g"}, "food": {"name": "Meat Church Honey Hog rub"}, "note": "4 tbsp"}
+          ]
+        },
+        {
+          "name": "Smoke and sauce",
+          "instruction": "Smoke at 250°F with hickory, pecan, or cherry until probe tender. Serve with Cheerwine BBQ sauce.",
+          "ingredients": [
+            {"amount": 240.0, "unit": {"name": "ml"}, "food": {"name": "Cheerwine BBQ sauce"}, "note": "1 cup"}
+          ]
+        }
+      ],
+      "nutrition": {
+        "calories": 340,
+        "protein": 34.0,
+        "carbohydrate": 8.0,
+        "fat": 18.0,
+        "saturated_fat": 7.0,
+        "fiber": 0.0,
+        "sodium": 520
+      }
+    },
+    {
+      "name": "Sweet Honey Baby Back Ribs",
+      "description": "Fall-off-the-bone baby back ribs with sweet honey glaze.",
+      "source_url": "https://www.meatchurch.com/blogs/recipes/tagged/ribs",
+      "servings": 4,
+      "servings_text": "4 servings",
+      "working_time": 20,
+      "waiting_time": 300,
+      "keywords": [{"name": "meat-church"}, {"name": "ribs"}, {"name": "baby-back"}, {"name": "honey"}],
+      "steps": [
+        {
+          "name": "Prep ribs",
+          "instruction": "Remove membrane from back of ribs. Apply mustard as binder and season liberally with Honey Hog.",
+          "ingredients": [
+            {"amount": 1800.0, "unit": {"name": "g"}, "food": {"name": "baby back ribs"}, "note": "2 racks"},
+            {"amount": 30.0, "unit": {"name": "ml"}, "food": {"name": "yellow mustard"}, "note": "2 tbsp"},
+            {"amount": 45.0, "unit": {"name": "g"}, "food": {"name": "Meat Church Honey Hog rub"}, "note": "3 tbsp"}
+          ]
+        },
+        {
+          "name": "Smoke",
+          "instruction": "Smoke at 250°F for 3 hours. Wrap in foil with honey and butter. Cook 1.5 hours more. Unwrap and glaze with BBQ sauce. Cook 30 more minutes.",
+          "ingredients": [
+            {"amount": 60.0, "unit": {"name": "ml"}, "food": {"name": "honey"}, "note": "4 tbsp"},
+            {"amount": 56.0, "unit": {"name": "g"}, "food": {"name": "butter, unsalted"}, "note": "4 tbsp"},
+            {"amount": 120.0, "unit": {"name": "ml"}, "food": {"name": "BBQ sauce"}, "note": "0.5 cup"}
+          ]
+        }
+      ],
+      "nutrition": {
+        "calories": 580,
+        "protein": 38.0,
+        "carbohydrate": 18.0,
+        "fat": 40.0,
+        "saturated_fat": 16.0,
+        "fiber": 0.0,
+        "sodium": 680
+      }
+    },
+    {
+      "name": "Memphis Style Dry Rub Ribs",
+      "description": "Super simple cook that lets the rub shine. No sauce needed.",
+      "source_url": "https://www.meatchurch.com/blogs/recipes/tagged/ribs",
+      "servings": 4,
+      "servings_text": "4 servings",
+      "working_time": 15,
+      "waiting_time": 300,
+      "keywords": [{"name": "meat-church"}, {"name": "ribs"}, {"name": "memphis"}, {"name": "dry-rub"}],
+      "steps": [
+        {
+          "name": "Season",
+          "instruction": "Remove membrane. Season heavily with Holy Gospel on both sides.",
+          "ingredients": [
+            {"amount": 1800.0, "unit": {"name": "g"}, "food": {"name": "spare ribs"}, "note": "2 racks"},
+            {"amount": 60.0, "unit": {"name": "g"}, "food": {"name": "Meat Church Holy Gospel rub"}, "note": "4 tbsp"}
+          ]
+        },
+        {
+          "name": "Smoke",
+          "instruction": "Smoke at 275°F for 4-5 hours until meat pulls back from bones. No wrap, no sauce - just dry rub perfection.",
+          "ingredients": []
+        }
+      ],
+      "nutrition": {
+        "calories": 520,
+        "protein": 36.0,
+        "carbohydrate": 2.0,
+        "fat": 40.0,
+        "saturated_fat": 15.0,
+        "fiber": 0.0,
+        "sodium": 620
+      }
+    },
+    {
+      "name": "Texas Style Spare Ribs",
+      "description": "Central Texas style spare ribs with bold pepper flavor.",
+      "source_url": "https://www.meatchurch.com/blogs/recipes/texas-style-spare-ribs",
+      "servings": 4,
+      "servings_text": "4 servings",
+      "working_time": 20,
+      "waiting_time": 360,
+      "keywords": [{"name": "meat-church"}, {"name": "ribs"}, {"name": "spare-ribs"}, {"name": "texas"}],
+      "steps": [
+        {
+          "name": "Prep and season",
+          "instruction": "Trim spare ribs St. Louis style. Season with Holy Cow for pepper-forward Texas flavor.",
+          "ingredients": [
+            {"amount": 2250.0, "unit": {"name": "g"}, "food": {"name": "spare ribs"}, "note": "2 racks, St. Louis cut"},
+            {"amount": 60.0, "unit": {"name": "g"}, "food": {"name": "Meat Church Holy Cow rub"}, "note": "4 tbsp"}
+          ]
+        },
+        {
+          "name": "Smoke",
+          "instruction": "Smoke at 275°F with post oak for 5-6 hours until bark is set and meat is tender.",
+          "ingredients": []
+        }
+      ],
+      "nutrition": {
+        "calories": 540,
+        "protein": 35.0,
+        "carbohydrate": 2.0,
+        "fat": 42.0,
+        "saturated_fat": 16.0,
+        "fiber": 0.0,
+        "sodium": 640
+      }
+    },
+    {
+      "name": "Beef Party Ribs",
+      "description": "Beef chuck ribs, aka 'Brisket on a stick'. Rich, beefy, and impressive.",
+      "source_url": "https://www.meatchurch.com/blogs/recipes/beef-party-ribs",
+      "servings": 6,
+      "servings_text": "6 servings",
+      "working_time": 15,
+      "waiting_time": 360,
+      "keywords": [{"name": "meat-church"}, {"name": "beef-ribs"}, {"name": "chuck-ribs"}, {"name": "party"}],
+      "steps": [
+        {
+          "name": "Season",
+          "instruction": "Season beef chuck ribs on all sides with Holy Gospel. Let adhere 15 minutes to 1 hour.",
+          "ingredients": [
+            {"amount": 2700.0, "unit": {"name": "g"}, "food": {"name": "beef chuck ribs"}, "note": "6 lb, 4-bone plate"},
+            {"amount": 45.0, "unit": {"name": "g"}, "food": {"name": "Meat Church Holy Gospel rub"}, "note": "3 tbsp"}
+          ]
+        },
+        {
+          "name": "Smoke",
+          "instruction": "Prepare smoker at 250°F with post oak, mesquite, hickory, or pecan. Smoke until probe tender, about 6 hours.",
+          "ingredients": []
+        },
+        {
+          "name": "Glaze",
+          "instruction": "Glaze with Bourbon BBQ sauce in final 30 minutes if desired.",
+          "ingredients": [
+            {"amount": 120.0, "unit": {"name": "ml"}, "food": {"name": "Bourbon BBQ sauce"}, "note": "0.5 cup, optional"}
+          ]
+        }
+      ],
+      "nutrition": {
+        "calories": 620,
+        "protein": 48.0,
+        "carbohydrate": 4.0,
+        "fat": 46.0,
+        "saturated_fat": 20.0,
+        "fiber": 0.0,
+        "sodium": 580
+      }
+    },
+    {
+      "name": "Beef Back Ribs",
+      "description": "Tender beef back ribs with simple seasoning.",
+      "source_url": "https://www.meatchurch.com/blogs/recipes/beef-back-ribs",
+      "servings": 4,
+      "servings_text": "4 servings",
+      "working_time": 15,
+      "waiting_time": 240,
+      "keywords": [{"name": "meat-church"}, {"name": "beef-ribs"}, {"name": "back-ribs"}, {"name": "smoked"}],
+      "steps": [
+        {
+          "name": "Season",
+          "instruction": "Remove membrane from back of ribs. Season with Holy Cow.",
+          "ingredients": [
+            {"amount": 1800.0, "unit": {"name": "g"}, "food": {"name": "beef back ribs"}, "note": "2 racks"},
+            {"amount": 45.0, "unit": {"name": "g"}, "food": {"name": "Meat Church Holy Cow rub"}, "note": "3 tbsp"}
+          ]
+        },
+        {
+          "name": "Smoke",
+          "instruction": "Smoke at 275°F for 3-4 hours until meat pulls back from bones and is probe tender.",
+          "ingredients": []
+        }
+      ],
+      "nutrition": {
+        "calories": 480,
+        "protein": 38.0,
+        "carbohydrate": 1.0,
+        "fat": 35.0,
+        "saturated_fat": 15.0,
+        "fiber": 0.0,
+        "sodium": 520
+      }
+    },
+    {
+      "name": "Smashburger",
+      "description": "Simple technique that lets beef and crust shine. Favorite burger style.",
+      "source_url": "https://www.meatchurch.com/blogs/recipes/smashburger",
+      "servings": 4,
+      "servings_text": "4 burgers",
+      "working_time": 15,
+      "waiting_time": 10,
+      "keywords": [{"name": "meat-church"}, {"name": "burger"}, {"name": "smashburger"}, {"name": "griddle"}],
+      "steps": [
+        {
+          "name": "Form balls",
+          "instruction": "Divide ground beef into 4 portions. Form into loose balls. Season with Holy Cow.",
+          "ingredients": [
+            {"amount": 680.0, "unit": {"name": "g"}, "food": {"name": "ground beef, 80/20"}, "note": "1.5 lb"},
+            {"amount": 15.0, "unit": {"name": "g"}, "food": {"name": "Meat Church Holy Cow rub"}, "note": "1 tbsp"}
+          ]
+        },
+        {
+          "name": "Smash and cook",
+          "instruction": "Heat griddle or cast iron over high heat. Place ball on griddle, smash flat with spatula. Cook 2-3 minutes until crispy edges. Flip, add cheese, cook 1 more minute.",
+          "ingredients": [
+            {"amount": 112.0, "unit": {"name": "g"}, "food": {"name": "American cheese"}, "note": "4 slices"}
+          ]
+        },
+        {
+          "name": "Serve",
+          "instruction": "Serve on toasted buns with desired toppings.",
+          "ingredients": [
+            {"amount": 4.0, "unit": {"name": "each"}, "food": {"name": "hamburger buns"}, "note": "4 buns"}
+          ]
+        }
+      ],
+      "nutrition": {
+        "calories": 520,
+        "protein": 32.0,
+        "carbohydrate": 24.0,
+        "fat": 34.0,
+        "saturated_fat": 14.0,
+        "fiber": 1.0,
+        "sodium": 680
+      }
+    },
+    {
+      "name": "Crack Burgers",
+      "description": "Mount Rushmore worthy burgers with ranch and bacon. Made with NFL QB Jarrett Stidham.",
+      "source_url": "https://www.meatchurch.com/blogs/recipes/crack-burgers",
+      "servings": 6,
+      "servings_text": "6 burgers",
+      "working_time": 20,
+      "waiting_time": 15,
+      "keywords": [{"name": "meat-church"}, {"name": "burger"}, {"name": "crack-burger"}, {"name": "bacon"}],
+      "steps": [
+        {
+          "name": "Mix meat",
+          "instruction": "Combine ground beef with sour cream, ranch mix, and Blanco seasoning. Mix gently and form into 6 patties.",
+          "ingredients": [
+            {"amount": 900.0, "unit": {"name": "g"}, "food": {"name": "ground beef, 80/20"}, "note": "2 lb"},
+            {"amount": 60.0, "unit": {"name": "g"}, "food": {"name": "sour cream"}, "note": "4 tbsp"},
+            {"amount": 28.0, "unit": {"name": "g"}, "food": {"name": "ranch dressing mix"}, "note": "1 packet"},
+            {"amount": 15.0, "unit": {"name": "g"}, "food": {"name": "Meat Church Blanco rub"}, "note": "1 tbsp"}
+          ]
+        },
+        {
+          "name": "Cook",
+          "instruction": "Cook on griddle over medium-high heat 4-5 minutes per side. Top with cheese and bacon.",
+          "ingredients": [
+            {"amount": 170.0, "unit": {"name": "g"}, "food": {"name": "cheddar cheese, sliced"}, "note": "6 slices"},
+            {"amount": 170.0, "unit": {"name": "g"}, "food": {"name": "bacon, cooked"}, "note": "12 strips"}
+          ]
+        }
+      ],
+      "nutrition": {
+        "calories": 620,
+        "protein": 42.0,
+        "carbohydrate": 4.0,
+        "fat": 48.0,
+        "saturated_fat": 20.0,
+        "fiber": 0.0,
+        "sodium": 920
+      }
+    },
+    {
+      "name": "Butter Burgers",
+      "description": "The juiciest cheeseburger you will ever eat. Butter mixed right into the meat.",
+      "source_url": "https://www.meatchurch.com/blogs/recipes/butter-burgers-the-juiciest-cheeseburger-ever",
+      "servings": 4,
+      "servings_text": "4 burgers",
+      "working_time": 15,
+      "waiting_time": 10,
+      "keywords": [{"name": "meat-church"}, {"name": "burger"}, {"name": "butter-burger"}, {"name": "juicy"}],
+      "steps": [
+        {
+          "name": "Mix meat",
+          "instruction": "Combine ground chuck with softened butter and Holy Cow. Mix and form into four 1/3 lb patties.",
+          "ingredients": [
+            {"amount": 680.0, "unit": {"name": "g"}, "food": {"name": "ground chuck"}, "note": "1.5 lb"},
+            {"amount": 56.0, "unit": {"name": "g"}, "food": {"name": "butter, softened"}, "note": "4 tbsp"},
+            {"amount": 15.0, "unit": {"name": "g"}, "food": {"name": "Meat Church Holy Cow rub"}, "note": "1 tbsp"}
+          ]
+        },
+        {
+          "name": "Cook",
+          "instruction": "Cook on hot griddle 4-5 minutes per side. Add cheese in final minute.",
+          "ingredients": [
+            {"amount": 112.0, "unit": {"name": "g"}, "food": {"name": "cheese, sliced"}, "note": "4 slices"}
+          ]
+        }
+      ],
+      "nutrition": {
+        "calories": 580,
+        "protein": 34.0,
+        "carbohydrate": 1.0,
+        "fat": 48.0,
+        "saturated_fat": 22.0,
+        "fiber": 0.0,
+        "sodium": 580
+      }
+    },
+    {
+      "name": "0-400 Chicken Wings",
+      "description": "Simple method for smoky yet crispy wings. Start cold, end hot.",
+      "source_url": "https://www.meatchurch.com/blogs/recipes/0-400-chicken-wings",
+      "servings": 4,
+      "servings_text": "4 servings",
+      "working_time": 10,
+      "waiting_time": 60,
+      "keywords": [{"name": "meat-church"}, {"name": "wings"}, {"name": "chicken"}, {"name": "crispy"}],
+      "steps": [
+        {
+          "name": "Season",
+          "instruction": "Pat wings dry. Season with your choice of Meat Church rub.",
+          "ingredients": [
+            {"amount": 900.0, "unit": {"name": "g"}, "food": {"name": "chicken wings"}, "note": "2 lb"},
+            {"amount": 30.0, "unit": {"name": "g"}, "food": {"name": "Meat Church rub of choice"}, "note": "2 tbsp"}
+          ]
+        },
+        {
+          "name": "Cook",
+          "instruction": "Place wings on pellet grill while OFF. Turn on grill and set to 400°F. Cook until internal temp reaches 175°F with crispy skin, about 45-60 minutes.",
+          "ingredients": []
+        }
+      ],
+      "nutrition": {
+        "calories": 380,
+        "protein": 32.0,
+        "carbohydrate": 2.0,
+        "fat": 26.0,
+        "saturated_fat": 8.0,
+        "fiber": 0.0,
+        "sodium": 520
+      }
+    },
+    {
+      "name": "Mexican Chicken Wings",
+      "description": "Tailgate favorite using the Mexican technique with pickled jalapeño marinade.",
+      "source_url": "https://www.meatchurch.com/blogs/recipes/mexican-chicken-wings",
+      "servings": 4,
+      "servings_text": "4 servings",
+      "working_time": 15,
+      "waiting_time": 300,
+      "keywords": [{"name": "meat-church"}, {"name": "wings"}, {"name": "mexican"}, {"name": "spicy"}],
+      "steps": [
+        {
+          "name": "Marinate",
+          "instruction": "Place wings in container. Cover with pickled jalapeño juice. Marinate at least 4 hours, preferably overnight.",
+          "ingredients": [
+            {"amount": 900.0, "unit": {"name": "g"}, "food": {"name": "chicken wings"}, "note": "2 lb"},
+            {"amount": 240.0, "unit": {"name": "ml"}, "food": {"name": "pickled jalapeño juice"}, "note": "1 cup"}
+          ]
+        },
+        {
+          "name": "Season and cook",
+          "instruction": "Remove from marinade, pat dry. Season with Dia de la Fajita. Smoke at 350°F until internal temp 175°F.",
+          "ingredients": [
+            {"amount": 30.0, "unit": {"name": "g"}, "food": {"name": "Meat Church Dia de la Fajita rub"}, "note": "2 tbsp"}
+          ]
+        }
+      ],
+      "nutrition": {
+        "calories": 360,
+        "protein": 32.0,
+        "carbohydrate": 3.0,
+        "fat": 24.0,
+        "saturated_fat": 7.0,
+        "fiber": 0.0,
+        "sodium": 680
+      }
+    },
+    {
+      "name": "Korean Fried Chicken Wings",
+      "description": "Crispy double-fried wings tossed in sweet and spicy Korean sauce.",
+      "source_url": "https://www.meatchurch.com/blogs/recipes/korean-fried-chicken-wings",
+      "servings": 4,
+      "servings_text": "4 servings",
+      "working_time": 30,
+      "waiting_time": 30,
+      "keywords": [{"name": "meat-church"}, {"name": "wings"}, {"name": "korean"}, {"name": "fried"}],
+      "steps": [
+        {
+          "name": "Prep wings",
+          "instruction": "Pat wings very dry. Season with salt and pepper. Dredge in cornstarch.",
+          "ingredients": [
+            {"amount": 900.0, "unit": {"name": "g"}, "food": {"name": "chicken wings"}, "note": "2 lb"},
+            {"amount": 60.0, "unit": {"name": "g"}, "food": {"name": "cornstarch"}, "note": "0.5 cup"},
+            {"amount": 3.0, "unit": {"name": "g"}, "food": {"name": "salt"}, "note": "0.5 tsp"},
+            {"amount": 1.0, "unit": {"name": "g"}, "food": {"name": "black pepper"}, "note": "0.25 tsp"}
+          ]
+        },
+        {
+          "name": "Double fry",
+          "instruction": "Fry at 325°F for 10 minutes. Rest 5 minutes. Fry again at 375°F for 5 minutes until crispy.",
+          "ingredients": [
+            {"amount": 960.0, "unit": {"name": "ml"}, "food": {"name": "vegetable oil"}, "note": "for frying"}
+          ]
+        },
+        {
+          "name": "Sauce",
+          "instruction": "Toss hot wings in Korean BBQ sauce.",
+          "ingredients": [
+            {"amount": 120.0, "unit": {"name": "ml"}, "food": {"name": "Korean BBQ sauce"}, "note": "0.5 cup"}
+          ]
+        }
+      ],
+      "nutrition": {
+        "calories": 480,
+        "protein": 32.0,
+        "carbohydrate": 22.0,
+        "fat": 30.0,
+        "saturated_fat": 8.0,
+        "fiber": 0.0,
+        "sodium": 780
+      }
+    },
+    {
+      "name": "Garlic Parmesan Chicken Wings",
+      "description": "House favorite at Meat Church. Hands down the family's favorite wings.",
+      "source_url": "https://www.meatchurch.com/blogs/recipes/garlic-parmesan-chicken-wings",
+      "servings": 4,
+      "servings_text": "4 servings",
+      "working_time": 15,
+      "waiting_time": 45,
+      "keywords": [{"name": "meat-church"}, {"name": "wings"}, {"name": "garlic-parmesan"}, {"name": "favorite"}],
+      "steps": [
+        {
+          "name": "Season and cook",
+          "instruction": "Season wings with Garlic & Herb. Cook at 400°F until internal temp 175°F and skin is crispy.",
+          "ingredients": [
+            {"amount": 900.0, "unit": {"name": "g"}, "food": {"name": "chicken wings"}, "note": "2 lb"},
+            {"amount": 30.0, "unit": {"name": "g"}, "food": {"name": "Meat Church Garlic & Herb rub"}, "note": "2 tbsp"}
+          ]
+        },
+        {
+          "name": "Toss in sauce",
+          "instruction": "Toss hot wings in garlic parmesan butter sauce. Top with grated parmesan.",
+          "ingredients": [
+            {"amount": 56.0, "unit": {"name": "g"}, "food": {"name": "butter, melted"}, "note": "4 tbsp"},
+            {"amount": 6.0, "unit": {"name": "g"}, "food": {"name": "garlic, minced"}, "note": "2 cloves"},
+            {"amount": 30.0, "unit": {"name": "g"}, "food": {"name": "parmesan cheese, grated"}, "note": "0.25 cup"}
+          ]
+        }
+      ],
+      "nutrition": {
+        "calories": 420,
+        "protein": 34.0,
+        "carbohydrate": 3.0,
+        "fat": 30.0,
+        "saturated_fat": 12.0,
+        "fiber": 0.0,
+        "sodium": 620
+      }
+    },
+    {
+      "name": "Smoked Chicken with Alabama White Sauce",
+      "description": "Spatchcock chicken dunked in tangy Alabama white sauce.",
+      "source_url": "https://www.meatchurch.com/blogs/recipes/hickory-smoked-chicken",
+      "servings": 4,
+      "servings_text": "4 servings",
+      "working_time": 20,
+      "waiting_time": 120,
+      "keywords": [{"name": "meat-church"}, {"name": "chicken"}, {"name": "smoked"}, {"name": "alabama-white-sauce"}],
+      "steps": [
+        {
+          "name": "Spatchcock",
+          "instruction": "Remove backbone from chicken with shears. Press flat. Season with Holy Cow on all sides, including under skin.",
+          "ingredients": [
+            {"amount": 1800.0, "unit": {"name": "g"}, "food": {"name": "whole chicken"}, "note": "4 lb"},
+            {"amount": 30.0, "unit": {"name": "g"}, "food": {"name": "Meat Church Holy Cow rub"}, "note": "2 tbsp"}
+          ]
+        },
+        {
+          "name": "Smoke",
+          "instruction": "Smoke at 300°F with hickory until internal temp 160°F in breast, about 1.5-2 hours. Baste with melted butter during cook.",
+          "ingredients": [
+            {"amount": 56.0, "unit": {"name": "g"}, "food": {"name": "butter, melted"}, "note": "4 tbsp"}
+          ]
+        },
+        {
+          "name": "Sauce",
+          "instruction": "Dunk chicken in Alabama white sauce as soon as it comes off. Rest 10 minutes.",
+          "ingredients": [
+            {"amount": 240.0, "unit": {"name": "ml"}, "food": {"name": "Alabama white sauce"}, "note": "1 cup"}
+          ]
+        }
+      ],
+      "nutrition": {
+        "calories": 420,
+        "protein": 45.0,
+        "carbohydrate": 3.0,
+        "fat": 24.0,
+        "saturated_fat": 10.0,
+        "fiber": 0.0,
+        "sodium": 680
+      }
+    },
+    {
+      "name": "Pork Tenderloin",
+      "description": "Honey Garlic Dijon pork tenderloin. Easy, versatile, and delicious.",
+      "source_url": "https://www.meatchurch.com/blogs/recipes/pork-tenderloin",
+      "servings": 4,
+      "servings_text": "4 servings",
+      "working_time": 15,
+      "waiting_time": 45,
+      "keywords": [{"name": "meat-church"}, {"name": "pork"}, {"name": "tenderloin"}, {"name": "honey-garlic"}],
+      "steps": [
+        {
+          "name": "Season",
+          "instruction": "Season pork tenderloin with Holy Cow.",
+          "ingredients": [
+            {"amount": 680.0, "unit": {"name": "g"}, "food": {"name": "pork tenderloin"}, "note": "1.5 lb"},
+            {"amount": 20.0, "unit": {"name": "g"}, "food": {"name": "Meat Church Holy Cow rub"}, "note": "1.5 tbsp"}
+          ]
+        },
+        {
+          "name": "Cook",
+          "instruction": "Cook at 375°F until internal temp 140°F, about 30 minutes. Rest 10 minutes before slicing.",
+          "ingredients": []
+        },
+        {
+          "name": "Glaze",
+          "instruction": "Make glaze with honey, Dijon, and garlic. Drizzle over sliced tenderloin.",
+          "ingredients": [
+            {"amount": 60.0, "unit": {"name": "ml"}, "food": {"name": "honey"}, "note": "4 tbsp"},
+            {"amount": 30.0, "unit": {"name": "ml"}, "food": {"name": "Dijon mustard"}, "note": "2 tbsp"},
+            {"amount": 6.0, "unit": {"name": "g"}, "food": {"name": "garlic, minced"}, "note": "2 cloves"}
+          ]
+        }
+      ],
+      "nutrition": {
+        "calories": 280,
+        "protein": 36.0,
+        "carbohydrate": 14.0,
+        "fat": 8.0,
+        "saturated_fat": 3.0,
+        "fiber": 0.0,
+        "sodium": 420
+      }
+    },
+    {
+      "name": "Whole Pork Loin",
+      "description": "Affordable, versatile, and feeds a crowd. Great for meal prep.",
+      "source_url": "https://www.meatchurch.com/blogs/recipes/whole-pork-loin",
+      "servings": 10,
+      "servings_text": "10 servings",
+      "working_time": 20,
+      "waiting_time": 120,
+      "keywords": [{"name": "meat-church"}, {"name": "pork"}, {"name": "pork-loin"}, {"name": "meal-prep"}],
+      "steps": [
+        {
+          "name": "Brine and season",
+          "instruction": "Brine pork loin overnight. Pat dry. Season with Garlic & Herb.",
+          "ingredients": [
+            {"amount": 2250.0, "unit": {"name": "g"}, "food": {"name": "pork loin, boneless"}, "note": "5 lb"},
+            {"amount": 45.0, "unit": {"name": "g"}, "food": {"name": "Meat Church Garlic & Herb rub"}, "note": "3 tbsp"}
+          ]
+        },
+        {
+          "name": "Smoke",
+          "instruction": "Smoke at 275°F until internal temp 140°F. Baste with herb butter during cook. Rest 10 minutes.",
+          "ingredients": [
+            {"amount": 56.0, "unit": {"name": "g"}, "food": {"name": "butter, melted"}, "note": "4 tbsp"},
+            {"amount": 6.0, "unit": {"name": "g"}, "food": {"name": "fresh herbs, chopped"}, "note": "2 tbsp"}
+          ]
+        }
+      ],
+      "nutrition": {
+        "calories": 260,
+        "protein": 35.0,
+        "carbohydrate": 1.0,
+        "fat": 12.0,
+        "saturated_fat": 5.0,
+        "fiber": 0.0,
+        "sodium": 380
+      }
+    },
+    {
+      "name": "Reverse Seared Tri-Tip",
+      "description": "Smoke then sear for the perfect tri-tip. Great for uneven cuts.",
+      "source_url": "https://www.meatchurch.com/blogs/recipes/reverse-seared-tri-tip",
+      "servings": 6,
+      "servings_text": "6 servings",
+      "working_time": 15,
+      "waiting_time": 90,
+      "keywords": [{"name": "meat-church"}, {"name": "tri-tip"}, {"name": "reverse-sear"}, {"name": "beef"}],
+      "steps": [
+        {
+          "name": "Season",
+          "instruction": "Season tri-tip with Holy Gospel, then add light coating of Garlic & Herb.",
+          "ingredients": [
+            {"amount": 1350.0, "unit": {"name": "g"}, "food": {"name": "tri-tip roast"}, "note": "3 lb"},
+            {"amount": 20.0, "unit": {"name": "g"}, "food": {"name": "Meat Church Holy Gospel rub"}, "note": "1.5 tbsp"},
+            {"amount": 10.0, "unit": {"name": "g"}, "food": {"name": "Meat Church Garlic & Herb rub"}, "note": "2 tsp"}
+          ]
+        },
+        {
+          "name": "Smoke",
+          "instruction": "Smoke at 225°F with oak, mesquite, hickory, or pecan until internal temp 115°F for medium-rare.",
+          "ingredients": []
+        },
+        {
+          "name": "Sear",
+          "instruction": "Sear over high heat 1-2 minutes per side. Rest 10 minutes before slicing against the grain.",
+          "ingredients": []
+        }
+      ],
+      "nutrition": {
+        "calories": 340,
+        "protein": 42.0,
+        "carbohydrate": 1.0,
+        "fat": 18.0,
+        "saturated_fat": 7.0,
+        "fiber": 0.0,
+        "sodium": 480
+      }
+    },
+    {
+      "name": "The Ultimate Prime Rib",
+      "description": "Smoke + sous vide method for the ultimate prime rib experience.",
+      "source_url": "https://www.meatchurch.com/blogs/recipes/the-ultimate-prime-rib",
+      "servings": 8,
+      "servings_text": "8 servings",
+      "working_time": 30,
+      "waiting_time": 360,
+      "keywords": [{"name": "meat-church"}, {"name": "prime-rib"}, {"name": "sous-vide"}, {"name": "holiday"}],
+      "steps": [
+        {
+          "name": "Season",
+          "instruction": "Apply heavy coat of salt, let sit 1 hour, rinse and pat dry. Slather with Worcestershire. Season liberally with Holy Cow and Garlic & Herb.",
+          "ingredients": [
+            {"amount": 3600.0, "unit": {"name": "g"}, "food": {"name": "prime rib roast, bone-in"}, "note": "8 lb"},
+            {"amount": 30.0, "unit": {"name": "g"}, "food": {"name": "kosher salt"}, "note": "2 tbsp, for dry brine"},
+            {"amount": 30.0, "unit": {"name": "ml"}, "food": {"name": "Worcestershire sauce"}, "note": "2 tbsp"},
+            {"amount": 30.0, "unit": {"name": "g"}, "food": {"name": "Meat Church Holy Cow rub"}, "note": "2 tbsp"},
+            {"amount": 30.0, "unit": {"name": "g"}, "food": {"name": "Meat Church Garlic & Herb rub"}, "note": "2 tbsp"}
+          ]
+        },
+        {
+          "name": "Smoke",
+          "instruction": "Smoke at 200°F with oak, mesquite, or hickory until internal temp 120°F. Rest and sear if desired.",
+          "ingredients": []
+        }
+      ],
+      "nutrition": {
+        "calories": 580,
+        "protein": 48.0,
+        "carbohydrate": 1.0,
+        "fat": 42.0,
+        "saturated_fat": 18.0,
+        "fiber": 0.0,
+        "sodium": 620
+      }
+    },
+    {
+      "name": "Smoked Prime Rib",
+      "description": "All-time favorite meal. So easy and so dang good.",
+      "source_url": "https://www.meatchurch.com/blogs/recipes/82199492-prime-rib",
+      "servings": 8,
+      "servings_text": "8 servings",
+      "working_time": 20,
+      "waiting_time": 300,
+      "keywords": [{"name": "meat-church"}, {"name": "prime-rib"}, {"name": "smoked"}, {"name": "christmas"}],
+      "steps": [
+        {
+          "name": "Dry brine",
+          "instruction": "Apply heavy coat of salt. Let sit 1 hour. Wash off salt and pat very dry. Slather with Worcestershire as binder.",
+          "ingredients": [
+            {"amount": 3600.0, "unit": {"name": "g"}, "food": {"name": "prime rib roast"}, "note": "8 lb, bone-in"},
+            {"amount": 30.0, "unit": {"name": "g"}, "food": {"name": "kosher salt"}, "note": "2 tbsp"},
+            {"amount": 30.0, "unit": {"name": "ml"}, "food": {"name": "Worcestershire sauce"}, "note": "2 tbsp"}
+          ]
+        },
+        {
+          "name": "Season",
+          "instruction": "Season liberally with Holy Cow on all sides, then heavy coat of Garlic & Herb.",
+          "ingredients": [
+            {"amount": 30.0, "unit": {"name": "g"}, "food": {"name": "Meat Church Holy Cow rub"}, "note": "2 tbsp"},
+            {"amount": 30.0, "unit": {"name": "g"}, "food": {"name": "Meat Church Garlic & Herb rub"}, "note": "2 tbsp"}
+          ]
+        },
+        {
+          "name": "Smoke",
+          "instruction": "Smoke at 250°F until internal temp 120°F for medium-rare. Rest 20-30 minutes before carving.",
+          "ingredients": []
+        }
+      ],
+      "nutrition": {
+        "calories": 560,
+        "protein": 46.0,
+        "carbohydrate": 1.0,
+        "fat": 40.0,
+        "saturated_fat": 17.0,
+        "fiber": 0.0,
+        "sodium": 580
+      }
+    },
+    {
+      "name": "Smoked Turkey Breast",
+      "description": "Great alternative to whole turkey. Easier to carve and presents beautifully.",
+      "source_url": "https://www.meatchurch.com/blogs/recipes/smoked-turkey-breast",
+      "servings": 6,
+      "servings_text": "6 servings",
+      "working_time": 15,
+      "waiting_time": 180,
+      "keywords": [{"name": "meat-church"}, {"name": "turkey"}, {"name": "smoked"}, {"name": "thanksgiving"}],
+      "steps": [
+        {
+          "name": "Prep and season",
+          "instruction": "Slather turkey breast with mayo as binder. Season liberally with Holy Cow or Texas Sugar.",
+          "ingredients": [
+            {"amount": 2700.0, "unit": {"name": "g"}, "food": {"name": "turkey breast, bone-in"}, "note": "6 lb"},
+            {"amount": 45.0, "unit": {"name": "ml"}, "food": {"name": "mayonnaise"}, "note": "3 tbsp"},
+            {"amount": 45.0, "unit": {"name": "g"}, "food": {"name": "Meat Church Holy Cow rub"}, "note": "3 tbsp"}
+          ]
+        },
+        {
+          "name": "Smoke",
+          "instruction": "Smoke at 275°F with pecan, hickory, or fruit wood until internal temp 160°F. Rest 15 minutes.",
+          "ingredients": []
+        },
+        {
+          "name": "Glaze",
+          "instruction": "Optional: Apply honey glaze in final 30 minutes.",
+          "ingredients": [
+            {"amount": 120.0, "unit": {"name": "ml"}, "food": {"name": "honey"}, "note": "0.5 cup"},
+            {"amount": 60.0, "unit": {"name": "ml"}, "food": {"name": "Dijon mustard"}, "note": "0.25 cup"},
+            {"amount": 15.0, "unit": {"name": "g"}, "food": {"name": "Meat Church Holy Cow rub"}, "note": "1 tbsp"}
+          ]
+        }
+      ],
+      "nutrition": {
+        "calories": 280,
+        "protein": 48.0,
+        "carbohydrate": 6.0,
+        "fat": 6.0,
+        "saturated_fat": 2.0,
+        "fiber": 0.0,
+        "sodium": 520
+      }
+    },
+    {
+      "name": "Traditional Smoked Turkey",
+      "description": "Perfect smoked turkey for the holidays. Brined overnight for maximum moisture.",
+      "source_url": "https://www.meatchurch.com/blogs/recipes/15197925-smoked-thanksgiving-turkey",
+      "servings": 12,
+      "servings_text": "12 servings",
+      "working_time": 30,
+      "waiting_time": 420,
+      "keywords": [{"name": "meat-church"}, {"name": "turkey"}, {"name": "thanksgiving"}, {"name": "holiday"}],
+      "steps": [
+        {
+          "name": "Brine",
+          "instruction": "Brine turkey overnight using Meat Church brine. Average 1 hour per pound.",
+          "ingredients": [
+            {"amount": 6300.0, "unit": {"name": "g"}, "food": {"name": "whole turkey"}, "note": "14 lb"},
+            {"amount": 1.0, "unit": {"name": "package"}, "food": {"name": "Meat Church brine"}, "note": "1 package"}
+          ]
+        },
+        {
+          "name": "Season",
+          "instruction": "Remove from brine, pat very dry inside and out. Season with Holy Cow or your preferred rub.",
+          "ingredients": [
+            {"amount": 60.0, "unit": {"name": "g"}, "food": {"name": "Meat Church Holy Cow rub"}, "note": "4 tbsp"}
+          ]
+        },
+        {
+          "name": "Smoke",
+          "instruction": "Smoke at 275°F, basting with melted butter periodically. Cook until breast reaches 160°F, about 3 hours for 14 lb bird.",
+          "ingredients": [
+            {"amount": 112.0, "unit": {"name": "g"}, "food": {"name": "butter, melted"}, "note": "8 tbsp"}
+          ]
+        }
+      ],
+      "nutrition": {
+        "calories": 320,
+        "protein": 52.0,
+        "carbohydrate": 1.0,
+        "fat": 12.0,
+        "saturated_fat": 5.0,
+        "fiber": 0.0,
+        "sodium": 580
+      }
+    },
+    {
+      "name": "Spatchcock Turkey",
+      "description": "Cooks more evenly, presents beautifully, and easier to carve.",
+      "source_url": "https://www.meatchurch.com/blogs/recipes/spatchcock-turkey",
+      "servings": 10,
+      "servings_text": "10 servings",
+      "working_time": 25,
+      "waiting_time": 150,
+      "keywords": [{"name": "meat-church"}, {"name": "turkey"}, {"name": "spatchcock"}, {"name": "thanksgiving"}],
+      "steps": [
+        {
+          "name": "Spatchcock",
+          "instruction": "Remove backbone with poultry shears. Press turkey flat, cracking breastbone. Season under skin and all over with Holy Cow.",
+          "ingredients": [
+            {"amount": 5400.0, "unit": {"name": "g"}, "food": {"name": "whole turkey"}, "note": "12 lb"},
+            {"amount": 60.0, "unit": {"name": "g"}, "food": {"name": "Meat Church Holy Cow rub"}, "note": "4 tbsp"}
+          ]
+        },
+        {
+          "name": "Smoke",
+          "instruction": "Smoke at 325°F until breast reaches 160°F, about 2-2.5 hours. Baste with butter.",
+          "ingredients": [
+            {"amount": 112.0, "unit": {"name": "g"}, "food": {"name": "butter, melted"}, "note": "8 tbsp"}
+          ]
+        }
+      ],
+      "nutrition": {
+        "calories": 340,
+        "protein": 50.0,
+        "carbohydrate": 1.0,
+        "fat": 14.0,
+        "saturated_fat": 6.0,
+        "fiber": 0.0,
+        "sodium": 520
+      }
+    },
+    {
+      "name": "Grilled Salmon",
+      "description": "Staple in the Meat Church household. Rich in Omega-3s and great protein.",
+      "source_url": "https://www.meatchurch.com/blogs/recipes/tagged/seafood",
+      "servings": 4,
+      "servings_text": "4 servings",
+      "working_time": 10,
+      "waiting_time": 15,
+      "keywords": [{"name": "meat-church"}, {"name": "salmon"}, {"name": "grilled"}, {"name": "seafood"}],
+      "steps": [
+        {
+          "name": "Season",
+          "instruction": "Pat salmon dry. Season with Garlic & Herb or Holy Voodoo for spicy version.",
+          "ingredients": [
+            {"amount": 680.0, "unit": {"name": "g"}, "food": {"name": "salmon fillets"}, "note": "4 x 6oz fillets"},
+            {"amount": 20.0, "unit": {"name": "g"}, "food": {"name": "Meat Church Garlic & Herb rub"}, "note": "1.5 tbsp"},
+            {"amount": 15.0, "unit": {"name": "ml"}, "food": {"name": "olive oil"}, "note": "1 tbsp"}
+          ]
+        },
+        {
+          "name": "Grill",
+          "instruction": "Grill over medium-high heat skin side down for 4-5 minutes. Flip and cook 3-4 more minutes until internal temp 145°F.",
+          "ingredients": []
+        }
+      ],
+      "nutrition": {
+        "calories": 320,
+        "protein": 38.0,
+        "carbohydrate": 1.0,
+        "fat": 18.0,
+        "saturated_fat": 4.0,
+        "fiber": 0.0,
+        "sodium": 380
+      }
+    },
+    {
+      "name": "Smoked Queso Dip",
+      "description": "Perfect party appetizer with smoky flavor. The ultimate tailgate dip.",
+      "source_url": "https://www.meatchurch.com/blogs/recipes/tagged/appetizer",
+      "servings": 12,
+      "servings_text": "12 servings",
+      "working_time": 15,
+      "waiting_time": 60,
+      "keywords": [{"name": "meat-church"}, {"name": "queso"}, {"name": "appetizer"}, {"name": "tailgate"}],
+      "steps": [
+        {
+          "name": "Cook meat",
+          "instruction": "Brown breakfast sausage in dutch oven and drain fat.",
+          "ingredients": [
+            {"amount": 450.0, "unit": {"name": "g"}, "food": {"name": "hot breakfast sausage"}, "note": "1 lb"}
+          ]
+        },
+        {
+          "name": "Combine and smoke",
+          "instruction": "Add cubed Velveeta, smoked gouda, Rotel, and Holy Voodoo. Place uncovered on smoker at 350°F. Stir every 15 minutes until melted and combined, about 45 minutes.",
+          "ingredients": [
+            {"amount": 900.0, "unit": {"name": "g"}, "food": {"name": "Velveeta cheese, cubed"}, "note": "2 lb block"},
+            {"amount": 225.0, "unit": {"name": "g"}, "food": {"name": "smoked gouda, sliced"}, "note": "8 oz"},
+            {"amount": 280.0, "unit": {"name": "g"}, "food": {"name": "Rotel tomatoes, drained"}, "note": "1 can"},
+            {"amount": 15.0, "unit": {"name": "g"}, "food": {"name": "Meat Church Holy Voodoo rub"}, "note": "1 tbsp"}
+          ]
+        }
+      ],
+      "nutrition": {
+        "calories": 320,
+        "protein": 16.0,
+        "carbohydrate": 8.0,
+        "fat": 24.0,
+        "saturated_fat": 12.0,
+        "fiber": 0.0,
+        "sodium": 980
+      }
+    },
+    {
+      "name": "Buffalo Chicken Dip",
+      "description": "Easiest and tastiest dip. Load with smoked chicken for hearty tailgating.",
+      "source_url": "https://www.meatchurch.com/blogs/recipes/tagged/appetizer",
+      "servings": 10,
+      "servings_text": "10 servings",
+      "working_time": 15,
+      "waiting_time": 30,
+      "keywords": [{"name": "meat-church"}, {"name": "buffalo"}, {"name": "chicken-dip"}, {"name": "appetizer"}],
+      "steps": [
+        {
+          "name": "Mix ingredients",
+          "instruction": "Combine softened cream cheese, ranch dressing, buffalo sauce, and shredded chicken in baking dish.",
+          "ingredients": [
+            {"amount": 450.0, "unit": {"name": "g"}, "food": {"name": "chicken, shredded"}, "note": "2 cups, smoked preferred"},
+            {"amount": 225.0, "unit": {"name": "g"}, "food": {"name": "cream cheese, softened"}, "note": "8 oz"},
+            {"amount": 120.0, "unit": {"name": "ml"}, "food": {"name": "ranch dressing"}, "note": "0.5 cup"},
+            {"amount": 120.0, "unit": {"name": "ml"}, "food": {"name": "buffalo sauce"}, "note": "0.5 cup"}
+          ]
+        },
+        {
+          "name": "Bake",
+          "instruction": "Top with shredded cheese. Bake or smoke at 350°F until bubbly, about 25-30 minutes.",
+          "ingredients": [
+            {"amount": 225.0, "unit": {"name": "g"}, "food": {"name": "cheddar cheese, shredded"}, "note": "2 cups"}
+          ]
+        }
+      ],
+      "nutrition": {
+        "calories": 280,
+        "protein": 14.0,
+        "carbohydrate": 4.0,
+        "fat": 22.0,
+        "saturated_fat": 10.0,
+        "fiber": 0.0,
+        "sodium": 620
+      }
+    },
+    {
+      "name": "Country Style Ribs",
+      "description": "BBQ classic. Not actually ribs but strips from pork butt or loin. Inexpensive and tasty.",
+      "source_url": "https://www.meatchurch.com/blogs/recipes/country-style-ribs",
+      "servings": 4,
+      "servings_text": "4 servings",
+      "working_time": 10,
+      "waiting_time": 180,
+      "keywords": [{"name": "meat-church"}, {"name": "country-style-ribs"}, {"name": "pork"}, {"name": "budget"}],
+      "steps": [
+        {
+          "name": "Season",
+          "instruction": "Season country style ribs with Honey Hog on all sides.",
+          "ingredients": [
+            {"amount": 900.0, "unit": {"name": "g"}, "food": {"name": "country style pork ribs"}, "note": "2 lb"},
+            {"amount": 30.0, "unit": {"name": "g"}, "food": {"name": "Meat Church Honey Hog rub"}, "note": "2 tbsp"}
+          ]
+        },
+        {
+          "name": "Smoke",
+          "instruction": "Smoke at 275°F until internal temp 195°F for pull-apart tender, about 2.5-3 hours. Glaze with BBQ sauce if desired.",
+          "ingredients": [
+            {"amount": 120.0, "unit": {"name": "ml"}, "food": {"name": "BBQ sauce"}, "note": "0.5 cup, optional"}
+          ]
+        }
+      ],
+      "nutrition": {
+        "calories": 380,
+        "protein": 32.0,
+        "carbohydrate": 8.0,
+        "fat": 24.0,
+        "saturated_fat": 9.0,
+        "fiber": 0.0,
+        "sodium": 520
+      }
+    },
+    {
+      "name": "Beef Tips",
+      "description": "Tender beef tips, great over rice or mashed potatoes.",
+      "source_url": "https://www.meatchurch.com/blogs/recipes/beef-tips",
+      "servings": 4,
+      "servings_text": "4 servings",
+      "working_time": 15,
+      "waiting_time": 120,
+      "keywords": [{"name": "meat-church"}, {"name": "beef-tips"}, {"name": "comfort-food"}, {"name": "gravy"}],
+      "steps": [
+        {
+          "name": "Season and sear",
+          "instruction": "Season beef tips with Holy Cow. Sear in hot cast iron with butter until browned on all sides.",
+          "ingredients": [
+            {"amount": 680.0, "unit": {"name": "g"}, "food": {"name": "beef sirloin tips"}, "note": "1.5 lb, cubed"},
+            {"amount": 20.0, "unit": {"name": "g"}, "food": {"name": "Meat Church Holy Cow rub"}, "note": "1.5 tbsp"},
+            {"amount": 28.0, "unit": {"name": "g"}, "food": {"name": "butter"}, "note": "2 tbsp"}
+          ]
+        },
+        {
+          "name": "Braise",
+          "instruction": "Add beef broth and Worcestershire. Cover and braise at 300°F until tender, about 1.5-2 hours.",
+          "ingredients": [
+            {"amount": 480.0, "unit": {"name": "ml"}, "food": {"name": "beef broth"}, "note": "2 cups"},
+            {"amount": 30.0, "unit": {"name": "ml"}, "food": {"name": "Worcestershire sauce"}, "note": "2 tbsp"}
+          ]
+        }
+      ],
+      "nutrition": {
+        "calories": 320,
+        "protein": 38.0,
+        "carbohydrate": 4.0,
+        "fat": 16.0,
+        "saturated_fat": 7.0,
+        "fiber": 0.0,
+        "sodium": 580
+      }
+    },
+    {
+      "name": "Pork Belly Burnt Ends",
+      "description": "Sweet and sticky pork belly burnt ends - candy-like BBQ perfection.",
+      "source_url": "https://www.meatchurch.com/blogs/recipes/pork-belly-burnt-ends",
+      "servings": 8,
+      "servings_text": "8 servings",
+      "working_time": 30,
+      "waiting_time": 240,
+      "keywords": [{"name": "meat-church"}, {"name": "pork-belly"}, {"name": "burnt-ends"}, {"name": "smoked"}],
+      "steps": [
+        {
+          "name": "Cube and season",
+          "instruction": "Cut pork belly into 1.5 inch cubes. Season generously with Honey Hog Hot.",
+          "ingredients": [
+            {"amount": 1360.0, "unit": {"name": "g"}, "food": {"name": "pork belly, skinless"}, "note": "3 lb, cubed"},
+            {"amount": 30.0, "unit": {"name": "g"}, "food": {"name": "Meat Church Honey Hog Hot rub"}, "note": "3 tbsp"}
+          ]
+        },
+        {
+          "name": "Smoke",
+          "instruction": "Smoke at 275°F for 2 hours until mahogany color develops."
+        },
+        {
+          "name": "Braise and glaze",
+          "instruction": "Transfer to foil pan. Add butter, honey, and brown sugar. Cover and cook 1.5 hours. Uncover and glaze with BBQ sauce for final 30 minutes.",
+          "ingredients": [
+            {"amount": 115.0, "unit": {"name": "g"}, "food": {"name": "butter"}, "note": "0.5 cup, cubed"},
+            {"amount": 120.0, "unit": {"name": "ml"}, "food": {"name": "honey"}, "note": "0.5 cup"},
+            {"amount": 110.0, "unit": {"name": "g"}, "food": {"name": "brown sugar"}, "note": "0.5 cup packed"},
+            {"amount": 120.0, "unit": {"name": "ml"}, "food": {"name": "BBQ sauce"}, "note": "0.5 cup"}
+          ]
+        }
+      ],
+      "nutrition": {
+        "calories": 520,
+        "protein": 18.0,
+        "carbohydrate": 28.0,
+        "fat": 38.0,
+        "saturated_fat": 16.0,
+        "fiber": 0.0,
+        "sodium": 480
+      }
+    },
+    {
+      "name": "Smoked Mac and Cheese",
+      "description": "Creamy, smoky mac and cheese with a crispy top - the ultimate BBQ side dish.",
+      "source_url": "https://www.meatchurch.com/blogs/recipes/smoked-mac-and-cheese",
+      "servings": 10,
+      "servings_text": "10 servings",
+      "working_time": 25,
+      "waiting_time": 90,
+      "keywords": [{"name": "meat-church"}, {"name": "mac-and-cheese"}, {"name": "side-dish"}, {"name": "smoked"}],
+      "steps": [
+        {
+          "name": "Cook pasta",
+          "instruction": "Cook elbow macaroni to al dente. Drain and set aside.",
+          "ingredients": [
+            {"amount": 454.0, "unit": {"name": "g"}, "food": {"name": "elbow macaroni"}, "note": "1 lb"}
+          ]
+        },
+        {
+          "name": "Make cheese sauce",
+          "instruction": "Melt butter, whisk in flour. Add milk and cream, simmer until thickened. Remove from heat, stir in cheeses until melted. Season with Holy Gospel.",
+          "ingredients": [
+            {"amount": 115.0, "unit": {"name": "g"}, "food": {"name": "butter"}, "note": "0.5 cup"},
+            {"amount": 45.0, "unit": {"name": "g"}, "food": {"name": "all-purpose flour"}, "note": "0.33 cup"},
+            {"amount": 480.0, "unit": {"name": "ml"}, "food": {"name": "whole milk"}, "note": "2 cups"},
+            {"amount": 240.0, "unit": {"name": "ml"}, "food": {"name": "heavy cream"}, "note": "1 cup"},
+            {"amount": 225.0, "unit": {"name": "g"}, "food": {"name": "sharp cheddar cheese, shredded"}, "note": "2 cups"},
+            {"amount": 225.0, "unit": {"name": "g"}, "food": {"name": "Velveeta cheese"}, "note": "8 oz, cubed"},
+            {"amount": 10.0, "unit": {"name": "g"}, "food": {"name": "Meat Church Holy Gospel rub"}, "note": "1 tbsp"}
+          ]
+        },
+        {
+          "name": "Smoke",
+          "instruction": "Combine pasta and sauce in cast iron or foil pan. Top with more shredded cheese. Smoke at 275°F for 1 hour until bubbly and top is golden.",
+          "ingredients": [
+            {"amount": 115.0, "unit": {"name": "g"}, "food": {"name": "cheddar cheese, shredded"}, "note": "1 cup, for topping"}
+          ]
+        }
+      ],
+      "nutrition": {
+        "calories": 450,
+        "protein": 16.0,
+        "carbohydrate": 38.0,
+        "fat": 26.0,
+        "saturated_fat": 15.0,
+        "fiber": 1.5,
+        "sodium": 620
+      }
+    },
+    {
+      "name": "Jalapeño Poppers",
+      "description": "Bacon-wrapped jalapeño poppers stuffed with cream cheese - a BBQ party favorite.",
+      "source_url": "https://www.meatchurch.com/blogs/recipes/jalapeno-poppers",
+      "servings": 12,
+      "servings_text": "24 poppers (2 per serving)",
+      "working_time": 30,
+      "waiting_time": 60,
+      "keywords": [{"name": "meat-church"}, {"name": "jalapeno-poppers"}, {"name": "appetizer"}, {"name": "bacon"}],
+      "steps": [
+        {
+          "name": "Prep jalapeños",
+          "instruction": "Halve jalapeños lengthwise, remove seeds and membranes.",
+          "ingredients": [
+            {"amount": 340.0, "unit": {"name": "g"}, "food": {"name": "jalapeño peppers"}, "note": "12 large, halved"}
+          ]
+        },
+        {
+          "name": "Make filling",
+          "instruction": "Mix cream cheese with shredded cheddar and Holy Voodoo. Fill each jalapeño half.",
+          "ingredients": [
+            {"amount": 225.0, "unit": {"name": "g"}, "food": {"name": "cream cheese, softened"}, "note": "8 oz"},
+            {"amount": 115.0, "unit": {"name": "g"}, "food": {"name": "cheddar cheese, shredded"}, "note": "1 cup"},
+            {"amount": 15.0, "unit": {"name": "g"}, "food": {"name": "Meat Church Holy Voodoo rub"}, "note": "1.5 tbsp"}
+          ]
+        },
+        {
+          "name": "Wrap and smoke",
+          "instruction": "Wrap each stuffed jalapeño with half a bacon slice. Smoke at 275°F for 45-60 minutes until bacon is crispy.",
+          "ingredients": [
+            {"amount": 340.0, "unit": {"name": "g"}, "food": {"name": "bacon"}, "note": "12 slices, halved"}
+          ]
+        }
+      ],
+      "nutrition": {
+        "calories": 185,
+        "protein": 8.0,
+        "carbohydrate": 3.0,
+        "fat": 16.0,
+        "saturated_fat": 8.0,
+        "fiber": 0.5,
+        "sodium": 380
+      }
+    }
+  ]
+}

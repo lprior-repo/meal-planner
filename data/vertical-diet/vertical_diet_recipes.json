@@ -1,0 +1,806 @@
+{
+  "metadata": {
+    "name": "Vertical Diet Recipe Collection",
+    "description": "Stan Efferding's Vertical Diet recipes optimized for muscle gain, athletic performance, and easy digestion",
+    "source": "Compiled from multiple sources for Tandoor import",
+    "created_at": "2026-01-04",
+    "format_version": "1.1",
+    "compatibility": ["tandoor", "fatsecret"],
+    "diet_principles": {
+      "protein": "1g per pound of bodyweight",
+      "fat": "0.3g per pound of bodyweight",
+      "carbs": "50-60% of total calories",
+      "emphasis": ["red meat", "white rice", "low-FODMAP vegetables", "easy digestion"]
+    }
+  },
+  "recipes": [
+    {
+      "name": "Monster Mash (Classic)",
+      "description": "Stan Efferding's signature Vertical Diet meal - ground beef, white rice, spinach, and peppers cooked in bone broth. The cornerstone of the Vertical Diet.",
+      "source_url": "https://mealsbymeg.blog/2022/10/16/monster-mash/",
+      "reference_urls": [
+        "https://outdoormusclefit.com/vertical-diet-monster-mash-recipe/",
+        "https://verticaldiet.com/product/monster-mash-deluxe/"
+      ],
+      "servings": 4,
+      "servings_text": "4 servings",
+      "working_time": 15,
+      "waiting_time": 25,
+      "keywords": [{"name": "vertical-diet"}, {"name": "meal-prep"}, {"name": "high-protein"}, {"name": "muscle-building"}, {"name": "monster-mash"}],
+      "steps": [
+        {
+          "name": "Prepare rice",
+          "instruction": "Combine chicken broth and rice in a medium saucepan. Bring to a boil over high heat. Reduce heat to low, cover, and simmer for 18-20 minutes until rice is tender and liquid is absorbed.",
+          "ingredients": [
+            {"amount": 185.0, "unit": {"name": "g"}, "food": {"name": "white rice, uncooked"}, "note": "1 cup, medium or long grain"},
+            {"amount": 360.0, "unit": {"name": "ml"}, "food": {"name": "chicken bone broth"}, "note": "1.5 cups"}
+          ]
+        },
+        {
+          "name": "Cook beef and vegetables",
+          "instruction": "In a large skillet, melt butter over medium-high heat. Add ground beef and season with salt and pepper. Brown the beef, breaking it into small pieces, for about 5-7 minutes. When beef is almost done, add diced bell peppers and cook for 2-3 minutes until slightly softened. Add spinach and stir until wilted, about 1-2 minutes.",
+          "ingredients": [
+            {"amount": 454.0, "unit": {"name": "g"}, "food": {"name": "ground beef, 93% lean"}, "note": "1 lb, grass-fed preferred"},
+            {"amount": 14.0, "unit": {"name": "g"}, "food": {"name": "butter, unsalted"}, "note": "1 tbsp"},
+            {"amount": 200.0, "unit": {"name": "g"}, "food": {"name": "bell pepper, mixed colors"}, "note": "2 medium, diced"},
+            {"amount": 60.0, "unit": {"name": "g"}, "food": {"name": "spinach, fresh"}, "note": "2 cups"},
+            {"amount": 3.0, "unit": {"name": "g"}, "food": {"name": "salt"}, "note": "0.5 tsp"},
+            {"amount": 0.5, "unit": {"name": "g"}, "food": {"name": "black pepper, ground"}, "note": "0.25 tsp"}
+          ]
+        },
+        {
+          "name": "Combine and serve",
+          "instruction": "Combine cooked rice with the beef and vegetable mixture. Mix thoroughly. Divide into meal prep containers. Stores in fridge 4 days or freezer 3 months.",
+          "ingredients": []
+        }
+      ],
+      "nutrition": {
+        "calories": 438,
+        "protein": 32.0,
+        "carbohydrate": 44.0,
+        "fat": 15.0,
+        "saturated_fat": 8.0,
+        "fiber": 2.0,
+        "sodium": 380
+      }
+    },
+    {
+      "name": "Monster Mash (High Calorie)",
+      "description": "Larger portion Monster Mash for athletes with higher caloric needs. Includes Yukon Gold potatoes for extra carbs.",
+      "source_url": "https://the-vertical-diet.myshopify.com/products/large-ground-beef-mash-deluxe-potato",
+      "reference_urls": [
+        "https://verticaldiet.com/product/monster-mash-deluxe/"
+      ],
+      "servings": 2,
+      "servings_text": "2 large servings",
+      "working_time": 20,
+      "waiting_time": 30,
+      "keywords": [{"name": "vertical-diet"}, {"name": "high-calorie"}, {"name": "bulking"}, {"name": "monster-mash"}, {"name": "athlete-meal"}],
+      "steps": [
+        {
+          "name": "Cook potatoes",
+          "instruction": "Place diced potatoes in salted water. Bring to boil and cook 10-12 minutes until fork tender. Drain and set aside.",
+          "ingredients": [
+            {"amount": 300.0, "unit": {"name": "g"}, "food": {"name": "Yukon Gold potatoes"}, "note": "2 medium, diced 1-inch cubes"}
+          ]
+        },
+        {
+          "name": "Cook rice",
+          "instruction": "Combine broth and rice in saucepan. Bring to boil, reduce heat, cover and simmer 20 minutes.",
+          "ingredients": [
+            {"amount": 280.0, "unit": {"name": "g"}, "food": {"name": "white rice, uncooked"}, "note": "1.5 cups"},
+            {"amount": 480.0, "unit": {"name": "ml"}, "food": {"name": "chicken bone broth"}, "note": "2 cups"}
+          ]
+        },
+        {
+          "name": "Cook beef and vegetables",
+          "instruction": "Brown ground beef in large skillet with butter. Season with salt. Add bell peppers when beef is nearly cooked. Sauté 3 minutes. Add spinach and stir until wilted.",
+          "ingredients": [
+            {"amount": 680.0, "unit": {"name": "g"}, "food": {"name": "ground beef, 93% lean"}, "note": "1.5 lb, grass-fed preferred"},
+            {"amount": 21.0, "unit": {"name": "g"}, "food": {"name": "butter, unsalted"}, "note": "1.5 tbsp"},
+            {"amount": 250.0, "unit": {"name": "g"}, "food": {"name": "bell pepper, mixed colors"}, "note": "2 large, diced"},
+            {"amount": 90.0, "unit": {"name": "g"}, "food": {"name": "spinach, fresh"}, "note": "3 cups"},
+            {"amount": 3.0, "unit": {"name": "g"}, "food": {"name": "pink Himalayan salt"}, "note": "0.5 tsp"}
+          ]
+        },
+        {
+          "name": "Combine",
+          "instruction": "Combine rice, potatoes, and beef mixture. Mix well and serve.",
+          "ingredients": []
+        }
+      ],
+      "nutrition": {
+        "calories": 890,
+        "protein": 65.0,
+        "carbohydrate": 80.0,
+        "fat": 30.0,
+        "fiber": 5.0,
+        "sodium": 520
+      }
+    },
+    {
+      "name": "Bison Monster Mash",
+      "description": "Leaner alternative using ground bison instead of beef. Lower in fat and calories while maintaining high protein content.",
+      "source_url": "https://www.athleticinsight.com/diet/vertical",
+      "reference_urls": [
+        "https://buckwildbison.com/blogs/bison-meat-recipes",
+        "https://bonytobeastly.com/vertical-diet-review/"
+      ],
+      "servings": 4,
+      "servings_text": "4 servings",
+      "working_time": 15,
+      "waiting_time": 25,
+      "keywords": [{"name": "vertical-diet"}, {"name": "bison"}, {"name": "lean-protein"}, {"name": "monster-mash"}, {"name": "game-meat"}],
+      "steps": [
+        {
+          "name": "Cook rice",
+          "instruction": "Cook rice in bone broth according to package directions. Set aside.",
+          "ingredients": [
+            {"amount": 185.0, "unit": {"name": "g"}, "food": {"name": "white rice, uncooked"}, "note": "1 cup"},
+            {"amount": 360.0, "unit": {"name": "ml"}, "food": {"name": "beef bone broth"}, "note": "1.5 cups"}
+          ]
+        },
+        {
+          "name": "Cook bison and vegetables",
+          "instruction": "Heat ghee in large skillet over medium-high heat. Add ground bison and cook, breaking up pieces, until browned (5-6 minutes). Add bell peppers and tomatoes. Cook 3-4 minutes. Add spinach and stir until wilted.",
+          "ingredients": [
+            {"amount": 454.0, "unit": {"name": "g"}, "food": {"name": "ground bison"}, "note": "1 lb, 90/10 lean"},
+            {"amount": 14.0, "unit": {"name": "g"}, "food": {"name": "ghee"}, "note": "1 tbsp"},
+            {"amount": 200.0, "unit": {"name": "g"}, "food": {"name": "bell pepper, mixed colors"}, "note": "2 medium, diced"},
+            {"amount": 150.0, "unit": {"name": "g"}, "food": {"name": "cherry tomatoes"}, "note": "1 cup, halved"},
+            {"amount": 60.0, "unit": {"name": "g"}, "food": {"name": "spinach, fresh"}, "note": "2 cups"},
+            {"amount": 3.0, "unit": {"name": "g"}, "food": {"name": "salt"}, "note": "0.5 tsp"}
+          ]
+        },
+        {
+          "name": "Combine",
+          "instruction": "Fold in cooked rice and season with salt. Serve immediately or meal prep.",
+          "ingredients": []
+        }
+      ],
+      "nutrition": {
+        "calories": 380,
+        "protein": 34.0,
+        "carbohydrate": 42.0,
+        "fat": 8.0,
+        "saturated_fat": 3.0,
+        "fiber": 3.0,
+        "sodium": 350
+      }
+    },
+    {
+      "name": "Grass-Fed Steak with Rice and Spinach",
+      "description": "Classic Vertical Diet dinner featuring grass-fed steak, white rice cooked in chicken stock, and sautéed spinach.",
+      "source_url": "https://www.healthline.com/nutrition/vertical-diet-review",
+      "reference_urls": [
+        "https://barbend.com/vertical-diet/",
+        "https://squatwolf.com/blogs/nutrition/the-vertical-diet"
+      ],
+      "servings": 1,
+      "servings_text": "1 serving",
+      "working_time": 10,
+      "waiting_time": 25,
+      "keywords": [{"name": "vertical-diet"}, {"name": "steak"}, {"name": "grass-fed"}, {"name": "dinner"}, {"name": "high-protein"}],
+      "steps": [
+        {
+          "name": "Cook rice",
+          "instruction": "Cook rice in chicken stock according to package directions.",
+          "ingredients": [
+            {"amount": 185.0, "unit": {"name": "g"}, "food": {"name": "white rice, cooked"}, "note": "1 cup cooked"},
+            {"amount": 180.0, "unit": {"name": "ml"}, "food": {"name": "chicken stock"}, "note": "0.75 cup"}
+          ]
+        },
+        {
+          "name": "Cook steak",
+          "instruction": "Remove steak from refrigerator 20 minutes before cooking. Pat dry and season with salt and pepper. Heat beef tallow in cast iron skillet over high heat until smoking. Sear steak 3-4 minutes per side for medium-rare. Rest 5 minutes before slicing.",
+          "ingredients": [
+            {"amount": 170.0, "unit": {"name": "g"}, "food": {"name": "sirloin steak, grass-fed"}, "note": "6 oz"},
+            {"amount": 14.0, "unit": {"name": "g"}, "food": {"name": "beef tallow"}, "note": "1 tbsp, or ghee"},
+            {"amount": 3.0, "unit": {"name": "g"}, "food": {"name": "pink Himalayan salt"}, "note": "0.5 tsp"},
+            {"amount": 0.5, "unit": {"name": "g"}, "food": {"name": "black pepper, ground"}, "note": "0.25 tsp"}
+          ]
+        },
+        {
+          "name": "Cook spinach and serve",
+          "instruction": "In same pan, add spinach and sauté until wilted (1-2 minutes). Plate rice, top with sliced steak and spinach. Serve with cranberry juice.",
+          "ingredients": [
+            {"amount": 60.0, "unit": {"name": "g"}, "food": {"name": "spinach, fresh"}, "note": "2 cups"},
+            {"amount": 120.0, "unit": {"name": "ml"}, "food": {"name": "cranberry juice, 100%"}, "note": "4 oz"}
+          ]
+        }
+      ],
+      "nutrition": {
+        "calories": 620,
+        "protein": 48.0,
+        "carbohydrate": 58.0,
+        "fat": 22.0,
+        "saturated_fat": 9.0,
+        "fiber": 2.0,
+        "sodium": 420
+      }
+    },
+    {
+      "name": "Vertical Diet Salmon Bowl",
+      "description": "Wild Atlantic salmon with white rice, spinach, and peppers. Rich in omega-3 fatty acids for recovery.",
+      "source_url": "https://www.healthline.com/nutrition/vertical-diet-review",
+      "reference_urls": [
+        "https://reallifenutritionist.com/salmon-rice-bowls-rice-cooker-recipe/",
+        "https://fitia.app/en/calories-nutritional-information/salmon-with-rice-and-asparagus-1206227/"
+      ],
+      "servings": 1,
+      "servings_text": "1 serving",
+      "working_time": 10,
+      "waiting_time": 20,
+      "keywords": [{"name": "vertical-diet"}, {"name": "salmon"}, {"name": "omega-3"}, {"name": "fish"}, {"name": "dinner"}],
+      "steps": [
+        {
+          "name": "Cook rice",
+          "instruction": "Preheat oven to 400°F (200°C). Cook rice in chicken broth. Set aside and keep warm.",
+          "ingredients": [
+            {"amount": 185.0, "unit": {"name": "g"}, "food": {"name": "white rice, cooked"}, "note": "1 cup cooked"},
+            {"amount": 180.0, "unit": {"name": "ml"}, "food": {"name": "chicken broth"}, "note": "0.75 cup"}
+          ]
+        },
+        {
+          "name": "Bake salmon",
+          "instruction": "Place salmon on baking sheet. Drizzle with olive oil and lemon juice. Season with salt. Bake salmon 12-15 minutes until internal temp reaches 145°F.",
+          "ingredients": [
+            {"amount": 170.0, "unit": {"name": "g"}, "food": {"name": "salmon fillet, wild Atlantic"}, "note": "6 oz"},
+            {"amount": 15.0, "unit": {"name": "ml"}, "food": {"name": "extra virgin olive oil"}, "note": "1 tbsp"},
+            {"amount": 5.0, "unit": {"name": "ml"}, "food": {"name": "lemon juice, fresh"}, "note": "1 tsp"},
+            {"amount": 3.0, "unit": {"name": "g"}, "food": {"name": "salt"}, "note": "0.5 tsp"}
+          ]
+        },
+        {
+          "name": "Cook vegetables and serve",
+          "instruction": "While salmon bakes, sauté spinach and peppers in a bit of olive oil until wilted. Plate rice, top with vegetables and salmon. Serve with orange juice.",
+          "ingredients": [
+            {"amount": 45.0, "unit": {"name": "g"}, "food": {"name": "spinach, fresh"}, "note": "1.5 cups"},
+            {"amount": 75.0, "unit": {"name": "g"}, "food": {"name": "bell pepper, sliced"}, "note": "0.5 cup"},
+            {"amount": 120.0, "unit": {"name": "ml"}, "food": {"name": "orange juice, fresh"}, "note": "4 oz"}
+          ]
+        }
+      ],
+      "nutrition": {
+        "calories": 616,
+        "protein": 42.0,
+        "carbohydrate": 62.0,
+        "fat": 20.0,
+        "saturated_fat": 3.0,
+        "fiber": 3.0,
+        "sodium": 380
+      }
+    },
+    {
+      "name": "Vertical Diet Breakfast - Eggs and Spinach",
+      "description": "High-protein breakfast with scrambled eggs, spinach, and cheese. Pairs with Greek yogurt and orange juice.",
+      "source_url": "https://www.athleticinsight.com/diet/vertical",
+      "reference_urls": [
+        "https://www.skinnytaste.com/mushroom-spinach-scrambled-eggs/",
+        "https://blog.myfitnesspal.com/scrambled-eggs-with-parmesan-spinach/"
+      ],
+      "servings": 1,
+      "servings_text": "1 serving",
+      "working_time": 10,
+      "waiting_time": 0,
+      "keywords": [{"name": "vertical-diet"}, {"name": "breakfast"}, {"name": "eggs"}, {"name": "high-protein"}, {"name": "quick-meal"}],
+      "steps": [
+        {
+          "name": "Cook eggs with spinach",
+          "instruction": "Melt butter in non-stick skillet over medium heat. Add spinach and sauté until wilted, about 1-2 minutes. Beat eggs with salt and pepper. Pour over spinach. Gently stir eggs as they cook, creating soft curds. When eggs are almost set, sprinkle cheese on top. Remove from heat.",
+          "ingredients": [
+            {"amount": 150.0, "unit": {"name": "g"}, "food": {"name": "eggs, whole"}, "note": "3 large"},
+            {"amount": 60.0, "unit": {"name": "g"}, "food": {"name": "spinach, fresh"}, "note": "2 cups"},
+            {"amount": 28.0, "unit": {"name": "g"}, "food": {"name": "cheddar cheese, shredded"}, "note": "0.25 cup"},
+            {"amount": 14.0, "unit": {"name": "g"}, "food": {"name": "butter, unsalted"}, "note": "1 tbsp"},
+            {"amount": 1.5, "unit": {"name": "g"}, "food": {"name": "salt"}, "note": "0.25 tsp"},
+            {"amount": 0.25, "unit": {"name": "g"}, "food": {"name": "black pepper, ground"}, "note": "0.125 tsp"}
+          ]
+        },
+        {
+          "name": "Serve with sides",
+          "instruction": "Serve with Greek yogurt and orange juice on the side.",
+          "ingredients": [
+            {"amount": 125.0, "unit": {"name": "g"}, "food": {"name": "Greek yogurt, full-fat plain"}, "note": "0.5 cup"},
+            {"amount": 120.0, "unit": {"name": "ml"}, "food": {"name": "orange juice"}, "note": "4 oz"}
+          ]
+        }
+      ],
+      "nutrition": {
+        "calories": 485,
+        "protein": 32.0,
+        "carbohydrate": 22.0,
+        "fat": 30.0,
+        "saturated_fat": 14.0,
+        "fiber": 1.0,
+        "sodium": 520
+      }
+    },
+    {
+      "name": "Egg Deluxe Monster Mash",
+      "description": "Breakfast version of Monster Mash using eggs instead of ground beef. Perfect for morning meal prep.",
+      "source_url": "https://verticaldiet.com/product/egg-deluxe-monster-mash/",
+      "reference_urls": [
+        "https://bonytobeastly.com/vertical-diet-review/"
+      ],
+      "servings": 2,
+      "servings_text": "2 servings",
+      "working_time": 15,
+      "waiting_time": 20,
+      "keywords": [{"name": "vertical-diet"}, {"name": "breakfast"}, {"name": "eggs"}, {"name": "monster-mash"}, {"name": "meal-prep"}],
+      "steps": [
+        {
+          "name": "Cook rice",
+          "instruction": "Cook rice in chicken broth according to package directions. Set aside.",
+          "ingredients": [
+            {"amount": 185.0, "unit": {"name": "g"}, "food": {"name": "white rice, uncooked"}, "note": "1 cup"},
+            {"amount": 360.0, "unit": {"name": "ml"}, "food": {"name": "chicken broth"}, "note": "1.5 cups"}
+          ]
+        },
+        {
+          "name": "Cook vegetables and eggs",
+          "instruction": "Melt 1 tbsp butter in large skillet over medium heat. Add bell pepper and cook 2-3 minutes until softened. Add spinach and cook until wilted. Push vegetables to the side. Add remaining butter. Scramble eggs in the pan, then combine with vegetables.",
+          "ingredients": [
+            {"amount": 300.0, "unit": {"name": "g"}, "food": {"name": "eggs, whole"}, "note": "6 large"},
+            {"amount": 100.0, "unit": {"name": "g"}, "food": {"name": "bell pepper, diced"}, "note": "1 medium"},
+            {"amount": 60.0, "unit": {"name": "g"}, "food": {"name": "spinach, fresh"}, "note": "2 cups"},
+            {"amount": 28.0, "unit": {"name": "g"}, "food": {"name": "butter, unsalted"}, "note": "2 tbsp"},
+            {"amount": 3.0, "unit": {"name": "g"}, "food": {"name": "salt"}, "note": "0.5 tsp"}
+          ]
+        },
+        {
+          "name": "Combine",
+          "instruction": "Fold in cooked rice and season with salt. Divide into containers.",
+          "ingredients": []
+        }
+      ],
+      "nutrition": {
+        "calories": 520,
+        "protein": 28.0,
+        "carbohydrate": 48.0,
+        "fat": 24.0,
+        "saturated_fat": 10.0,
+        "fiber": 2.0,
+        "sodium": 460
+      }
+    },
+    {
+      "name": "Chicken Breast with Sweet Potato",
+      "description": "Sheet pan meal with roasted chicken breast, sweet potato, and broccoli. Vertical Diet approved alternative protein.",
+      "source_url": "https://gimmedelicious.com/chicken-broccoli-sweet-potatoes-meal-prep/",
+      "reference_urls": [
+        "https://athletesnutrition.com.au/products/muscle-meal-200g-chicken-breast-with-200g-sweet-potato-vegetables",
+        "https://recipes.sparkpeople.com/recipe-calories.asp?recipe=1812842"
+      ],
+      "servings": 4,
+      "servings_text": "4 servings",
+      "working_time": 15,
+      "waiting_time": 30,
+      "keywords": [{"name": "vertical-diet"}, {"name": "chicken"}, {"name": "sweet-potato"}, {"name": "meal-prep"}, {"name": "sheet-pan"}],
+      "steps": [
+        {
+          "name": "Prep vegetables",
+          "instruction": "Preheat oven to 425°F (220°C). Line two sheet pans with parchment paper. Toss sweet potato cubes with 1 tbsp olive oil, salt, and pepper. Spread on one pan. Toss broccoli with 1 tbsp olive oil and garlic powder. Spread on second pan.",
+          "ingredients": [
+            {"amount": 600.0, "unit": {"name": "g"}, "food": {"name": "sweet potato, cubed"}, "note": "4 cups, 1-inch cubes"},
+            {"amount": 300.0, "unit": {"name": "g"}, "food": {"name": "broccoli florets"}, "note": "4 cups"},
+            {"amount": 30.0, "unit": {"name": "ml"}, "food": {"name": "extra virgin olive oil"}, "note": "2 tbsp for vegetables"},
+            {"amount": 3.0, "unit": {"name": "g"}, "food": {"name": "garlic powder"}, "note": "1 tsp"}
+          ]
+        },
+        {
+          "name": "Prep and roast chicken",
+          "instruction": "Rub chicken breasts with remaining olive oil, paprika, salt, and pepper. Place chicken on pan with sweet potatoes. Roast sweet potatoes and chicken 25-30 minutes until chicken reaches 165°F internal temp. Add broccoli pan for last 15 minutes of cooking.",
+          "ingredients": [
+            {"amount": 680.0, "unit": {"name": "g"}, "food": {"name": "chicken breast, boneless skinless"}, "note": "4 medium breasts"},
+            {"amount": 15.0, "unit": {"name": "ml"}, "food": {"name": "extra virgin olive oil"}, "note": "1 tbsp for chicken"},
+            {"amount": 3.0, "unit": {"name": "g"}, "food": {"name": "paprika"}, "note": "1 tsp"},
+            {"amount": 6.0, "unit": {"name": "g"}, "food": {"name": "salt"}, "note": "1 tsp"},
+            {"amount": 1.0, "unit": {"name": "g"}, "food": {"name": "black pepper, ground"}, "note": "0.5 tsp"}
+          ]
+        },
+        {
+          "name": "Portion",
+          "instruction": "Divide into 4 meal prep containers.",
+          "ingredients": []
+        }
+      ],
+      "nutrition": {
+        "calories": 478,
+        "protein": 53.0,
+        "carbohydrate": 35.0,
+        "fat": 14.0,
+        "saturated_fat": 2.0,
+        "fiber": 8.0,
+        "sugar": 8.0,
+        "sodium": 420
+      }
+    },
+    {
+      "name": "Ground Beef and Rice Bowl",
+      "description": "Simple Vertical Diet staple - seasoned ground beef over white rice with low-FODMAP vegetables.",
+      "source_url": "https://terianncarty.com/high-protein-beef-and-rice-bowl/",
+      "reference_urls": [
+        "https://healthyfitnessmeals.com/ground-beef-and-rice/",
+        "https://www.food.com/recipe/ground-beef-and-rice-150993"
+      ],
+      "servings": 4,
+      "servings_text": "4 servings",
+      "working_time": 10,
+      "waiting_time": 20,
+      "keywords": [{"name": "vertical-diet"}, {"name": "ground-beef"}, {"name": "rice"}, {"name": "simple"}, {"name": "quick-meal"}],
+      "steps": [
+        {
+          "name": "Cook rice",
+          "instruction": "Cook rice according to package directions. Set aside.",
+          "ingredients": [
+            {"amount": 370.0, "unit": {"name": "g"}, "food": {"name": "white rice, cooked"}, "note": "2 cups cooked"}
+          ]
+        },
+        {
+          "name": "Cook beef and vegetables",
+          "instruction": "Heat sesame oil in large skillet over medium-high heat. Add ground beef and cook until browned, breaking into pieces. Add garlic, carrots, and zucchini. Cook 3-4 minutes. Stir in soy sauce and ground ginger.",
+          "ingredients": [
+            {"amount": 454.0, "unit": {"name": "g"}, "food": {"name": "ground beef, 90% lean"}, "note": "1 lb"},
+            {"amount": 15.0, "unit": {"name": "ml"}, "food": {"name": "sesame oil"}, "note": "1 tbsp"},
+            {"amount": 6.0, "unit": {"name": "g"}, "food": {"name": "garlic, minced"}, "note": "2 cloves"},
+            {"amount": 130.0, "unit": {"name": "g"}, "food": {"name": "carrots, diced"}, "note": "1 cup"},
+            {"amount": 130.0, "unit": {"name": "g"}, "food": {"name": "zucchini, diced"}, "note": "1 cup"},
+            {"amount": 30.0, "unit": {"name": "ml"}, "food": {"name": "soy sauce"}, "note": "2 tbsp, or coconut aminos"},
+            {"amount": 1.0, "unit": {"name": "g"}, "food": {"name": "ground ginger"}, "note": "0.5 tsp"}
+          ]
+        },
+        {
+          "name": "Serve",
+          "instruction": "Serve beef mixture over cooked rice.",
+          "ingredients": []
+        }
+      ],
+      "nutrition": {
+        "calories": 420,
+        "protein": 28.0,
+        "carbohydrate": 38.0,
+        "fat": 16.0,
+        "saturated_fat": 5.0,
+        "fiber": 2.0,
+        "sodium": 480
+      }
+    },
+    {
+      "name": "Greek Yogurt Parfait with Berries",
+      "description": "Quick Vertical Diet snack or light breakfast. High in protein with probiotics for gut health.",
+      "source_url": "https://www.athleticinsight.com/diet/vertical",
+      "reference_urls": [
+        "https://masonfit.com/greek-yogurt-breakfast-bowls/",
+        "https://thedomesticdietitian.com/greek-yogurt-breakfast-bowl-mediterranean-diet-recipe/"
+      ],
+      "servings": 1,
+      "servings_text": "1 serving",
+      "working_time": 5,
+      "waiting_time": 0,
+      "keywords": [{"name": "vertical-diet"}, {"name": "breakfast"}, {"name": "snack"}, {"name": "yogurt"}, {"name": "quick-meal"}],
+      "steps": [
+        {
+          "name": "Assemble parfait",
+          "instruction": "Spoon Greek yogurt into a bowl or jar. Top with mixed berries. Drizzle with honey. Sprinkle with chopped almonds. Serve immediately.",
+          "ingredients": [
+            {"amount": 245.0, "unit": {"name": "g"}, "food": {"name": "Greek yogurt, full-fat plain"}, "note": "1 cup"},
+            {"amount": 75.0, "unit": {"name": "g"}, "food": {"name": "mixed berries"}, "note": "0.5 cup, strawberries and blueberries"},
+            {"amount": 21.0, "unit": {"name": "g"}, "food": {"name": "honey, raw"}, "note": "1 tbsp"},
+            {"amount": 18.0, "unit": {"name": "g"}, "food": {"name": "almonds, raw, chopped"}, "note": "2 tbsp"}
+          ]
+        }
+      ],
+      "nutrition": {
+        "calories": 340,
+        "protein": 22.0,
+        "carbohydrate": 32.0,
+        "fat": 14.0,
+        "saturated_fat": 5.0,
+        "fiber": 3.0,
+        "sugar": 26.0,
+        "sodium": 65
+      }
+    },
+    {
+      "name": "Vertical Diet Pre-Workout Meal",
+      "description": "Light, easily digestible meal 1-2 hours before training. Provides quick energy without stomach distress.",
+      "source_url": "https://bonytobeastly.com/vertical-diet-review/",
+      "reference_urls": [
+        "https://stanefferding.com/products/vertical-diet-peak-performance-detailed-program-notes"
+      ],
+      "servings": 1,
+      "servings_text": "1 serving",
+      "working_time": 10,
+      "waiting_time": 5,
+      "keywords": [{"name": "vertical-diet"}, {"name": "pre-workout"}, {"name": "quick-meal"}, {"name": "energy"}],
+      "steps": [
+        {
+          "name": "Prepare and serve",
+          "instruction": "Have pre-cooked rice and ground beef ready from meal prep. Reheat rice and beef together in microwave for 90 seconds. Season with salt. Serve with hard boiled egg and orange juice. Eat 1-2 hours before training.",
+          "ingredients": [
+            {"amount": 140.0, "unit": {"name": "g"}, "food": {"name": "white rice, cooked"}, "note": "0.75 cup cooked"},
+            {"amount": 113.0, "unit": {"name": "g"}, "food": {"name": "ground beef, 93% lean, cooked"}, "note": "4 oz cooked"},
+            {"amount": 50.0, "unit": {"name": "g"}, "food": {"name": "egg, hard boiled"}, "note": "1 large"},
+            {"amount": 120.0, "unit": {"name": "ml"}, "food": {"name": "orange juice"}, "note": "4 oz"},
+            {"amount": 1.5, "unit": {"name": "g"}, "food": {"name": "salt"}, "note": "0.25 tsp"}
+          ]
+        }
+      ],
+      "nutrition": {
+        "calories": 380,
+        "protein": 26.0,
+        "carbohydrate": 38.0,
+        "fat": 12.0,
+        "fiber": 0.0,
+        "sodium": 340
+      }
+    },
+    {
+      "name": "Post-Workout Recovery Shake",
+      "description": "Quick post-workout nutrition following Vertical Diet principles. Easily digestible protein and carbs.",
+      "source_url": "https://bonytobeastly.com/vertical-diet-review/",
+      "reference_urls": [
+        "https://krillarcticfoods.com/blog/vertical-diet/"
+      ],
+      "servings": 1,
+      "servings_text": "1 serving",
+      "working_time": 5,
+      "waiting_time": 0,
+      "keywords": [{"name": "vertical-diet"}, {"name": "post-workout"}, {"name": "shake"}, {"name": "recovery"}],
+      "steps": [
+        {
+          "name": "Blend and serve",
+          "instruction": "Add all ingredients to a blender. Blend until smooth, about 30 seconds. Consume within 30 minutes after training.",
+          "ingredients": [
+            {"amount": 240.0, "unit": {"name": "ml"}, "food": {"name": "whole milk"}, "note": "1 cup"},
+            {"amount": 30.0, "unit": {"name": "g"}, "food": {"name": "whey protein powder"}, "note": "1 scoop, vanilla or unflavored"},
+            {"amount": 118.0, "unit": {"name": "g"}, "food": {"name": "banana"}, "note": "1 medium"},
+            {"amount": 42.0, "unit": {"name": "g"}, "food": {"name": "honey, raw"}, "note": "2 tbsp"},
+            {"amount": 1.5, "unit": {"name": "g"}, "food": {"name": "salt"}, "note": "0.25 tsp, for electrolytes"}
+          ]
+        }
+      ],
+      "nutrition": {
+        "calories": 420,
+        "protein": 32.0,
+        "carbohydrate": 56.0,
+        "fat": 8.0,
+        "sugar": 48.0,
+        "sodium": 280
+      }
+    },
+    {
+      "name": "Steak and Eggs Breakfast",
+      "description": "Classic bodybuilder breakfast adapted for the Vertical Diet. High protein start to the day.",
+      "source_url": "https://www.healthline.com/nutrition/vertical-diet-review",
+      "reference_urls": [
+        "https://barbend.com/vertical-diet/"
+      ],
+      "servings": 1,
+      "servings_text": "1 serving",
+      "working_time": 15,
+      "waiting_time": 0,
+      "keywords": [{"name": "vertical-diet"}, {"name": "breakfast"}, {"name": "steak"}, {"name": "eggs"}, {"name": "high-protein"}],
+      "steps": [
+        {
+          "name": "Cook steak",
+          "instruction": "Bring steak to room temperature. Season with salt and pepper. Heat cast iron skillet over high heat. Sear steak 3-4 minutes per side. Remove steak and let rest. Reduce heat to medium.",
+          "ingredients": [
+            {"amount": 170.0, "unit": {"name": "g"}, "food": {"name": "sirloin steak"}, "note": "6 oz"},
+            {"amount": 3.0, "unit": {"name": "g"}, "food": {"name": "salt"}, "note": "0.5 tsp"},
+            {"amount": 0.5, "unit": {"name": "g"}, "food": {"name": "black pepper, ground"}, "note": "0.25 tsp"}
+          ]
+        },
+        {
+          "name": "Cook spinach and eggs",
+          "instruction": "Add half the butter, sauté spinach until wilted. Remove. Add remaining butter and fry eggs to desired doneness.",
+          "ingredients": [
+            {"amount": 14.0, "unit": {"name": "g"}, "food": {"name": "butter, unsalted"}, "note": "1 tbsp"},
+            {"amount": 30.0, "unit": {"name": "g"}, "food": {"name": "spinach, fresh"}, "note": "1 cup"},
+            {"amount": 150.0, "unit": {"name": "g"}, "food": {"name": "eggs, whole"}, "note": "3 large"}
+          ]
+        },
+        {
+          "name": "Serve",
+          "instruction": "Slice steak against the grain. Plate with eggs, spinach, and orange juice.",
+          "ingredients": [
+            {"amount": 120.0, "unit": {"name": "ml"}, "food": {"name": "orange juice"}, "note": "4 oz"}
+          ]
+        }
+      ],
+      "nutrition": {
+        "calories": 680,
+        "protein": 58.0,
+        "carbohydrate": 16.0,
+        "fat": 42.0,
+        "saturated_fat": 18.0,
+        "fiber": 1.0,
+        "sodium": 520
+      }
+    },
+    {
+      "name": "Instant Pot Monster Mash",
+      "description": "Pressure cooker version of Monster Mash for faster meal prep. One-pot convenience.",
+      "source_url": "https://joinelitenation.com/monster-mash-recipe/",
+      "reference_urls": [
+        "https://www.umami.recipes/recipe/mXiZJiJEPWAc7SD6N1dz"
+      ],
+      "servings": 6,
+      "servings_text": "6 servings",
+      "working_time": 10,
+      "waiting_time": 25,
+      "keywords": [{"name": "vertical-diet"}, {"name": "instant-pot"}, {"name": "monster-mash"}, {"name": "meal-prep"}, {"name": "one-pot"}],
+      "steps": [
+        {
+          "name": "Brown beef",
+          "instruction": "Set Instant Pot to Sauté mode. Add butter and ground beef. Brown beef, breaking into pieces, about 5 minutes. Drain excess fat if needed.",
+          "ingredients": [
+            {"amount": 907.0, "unit": {"name": "g"}, "food": {"name": "ground beef, 93% lean"}, "note": "2 lb"},
+            {"amount": 28.0, "unit": {"name": "g"}, "food": {"name": "butter, unsalted"}, "note": "2 tbsp"}
+          ]
+        },
+        {
+          "name": "Pressure cook",
+          "instruction": "Add rice, broth, peppers, frozen spinach, and tomatoes. Season with salt and pepper. Lock lid. Set to Pressure Cook/Manual for 8 minutes. Natural release for 10 minutes, then quick release remaining pressure.",
+          "ingredients": [
+            {"amount": 280.0, "unit": {"name": "g"}, "food": {"name": "white rice, uncooked"}, "note": "1.5 cups, rinsed"},
+            {"amount": 720.0, "unit": {"name": "ml"}, "food": {"name": "chicken bone broth"}, "note": "3 cups"},
+            {"amount": 300.0, "unit": {"name": "g"}, "food": {"name": "bell pepper, mixed colors"}, "note": "3 medium, diced 1-inch"},
+            {"amount": 283.0, "unit": {"name": "g"}, "food": {"name": "spinach, frozen"}, "note": "1 block, 10 oz"},
+            {"amount": 150.0, "unit": {"name": "g"}, "food": {"name": "cherry tomatoes"}, "note": "1 cup, halved"},
+            {"amount": 6.0, "unit": {"name": "g"}, "food": {"name": "salt"}, "note": "1 tsp"},
+            {"amount": 1.0, "unit": {"name": "g"}, "food": {"name": "black pepper, ground"}, "note": "0.5 tsp"}
+          ]
+        },
+        {
+          "name": "Portion",
+          "instruction": "Stir well to combine. Divide into 6 meal prep containers.",
+          "ingredients": []
+        }
+      ],
+      "nutrition": {
+        "calories": 450,
+        "protein": 35.0,
+        "carbohydrate": 40.0,
+        "fat": 16.0,
+        "saturated_fat": 7.0,
+        "fiber": 3.0,
+        "sodium": 520
+      }
+    },
+    {
+      "name": "Vertical Diet Turkey Mash",
+      "description": "Leaner poultry-based alternative to Monster Mash. Uses ground turkey for those wanting reduced red meat intake.",
+      "source_url": "https://www.healthline.com/nutrition/vertical-diet-review",
+      "reference_urls": [
+        "https://fitnessvolt.com/vertical-diet-ultimate-guide/"
+      ],
+      "servings": 4,
+      "servings_text": "4 servings",
+      "working_time": 15,
+      "waiting_time": 25,
+      "keywords": [{"name": "vertical-diet"}, {"name": "turkey"}, {"name": "lean-protein"}, {"name": "poultry"}, {"name": "meal-prep"}],
+      "steps": [
+        {
+          "name": "Cook rice",
+          "instruction": "Cook rice in chicken broth. Set aside.",
+          "ingredients": [
+            {"amount": 185.0, "unit": {"name": "g"}, "food": {"name": "white rice, uncooked"}, "note": "1 cup"},
+            {"amount": 360.0, "unit": {"name": "ml"}, "food": {"name": "chicken broth"}, "note": "1.5 cups"}
+          ]
+        },
+        {
+          "name": "Cook turkey and vegetables",
+          "instruction": "Heat olive oil in large skillet over medium-high heat. Add ground turkey and cook until no longer pink, breaking into pieces. Add carrots and zucchini. Cook 4-5 minutes until tender. Add spinach, salt, and thyme. Stir until spinach wilts.",
+          "ingredients": [
+            {"amount": 454.0, "unit": {"name": "g"}, "food": {"name": "ground turkey, 93% lean"}, "note": "1 lb"},
+            {"amount": 15.0, "unit": {"name": "ml"}, "food": {"name": "extra virgin olive oil"}, "note": "1 tbsp"},
+            {"amount": 200.0, "unit": {"name": "g"}, "food": {"name": "carrots, diced"}, "note": "2 medium"},
+            {"amount": 130.0, "unit": {"name": "g"}, "food": {"name": "zucchini, diced"}, "note": "1 medium"},
+            {"amount": 60.0, "unit": {"name": "g"}, "food": {"name": "spinach, fresh"}, "note": "2 cups"},
+            {"amount": 3.0, "unit": {"name": "g"}, "food": {"name": "salt"}, "note": "0.5 tsp"},
+            {"amount": 1.0, "unit": {"name": "g"}, "food": {"name": "dried thyme"}, "note": "0.5 tsp"}
+          ]
+        },
+        {
+          "name": "Combine",
+          "instruction": "Combine with rice and divide into containers.",
+          "ingredients": []
+        }
+      ],
+      "nutrition": {
+        "calories": 360,
+        "protein": 30.0,
+        "carbohydrate": 42.0,
+        "fat": 8.0,
+        "saturated_fat": 2.0,
+        "fiber": 3.0,
+        "sodium": 380
+      }
+    },
+    {
+      "name": "Bone Broth Rice",
+      "description": "Simple side dish - white rice cooked in nutrient-rich bone broth. Base for many Vertical Diet meals.",
+      "source_url": "https://barbend.com/vertical-diet/",
+      "reference_urls": [
+        "https://verticaldiet.com/"
+      ],
+      "servings": 4,
+      "servings_text": "4 servings",
+      "working_time": 5,
+      "waiting_time": 20,
+      "keywords": [{"name": "vertical-diet"}, {"name": "rice"}, {"name": "bone-broth"}, {"name": "side-dish"}, {"name": "base"}],
+      "steps": [
+        {
+          "name": "Cook rice",
+          "instruction": "Combine rice, bone broth, butter, and salt in a medium saucepan. Bring to a boil over high heat. Reduce heat to low, cover, and simmer 18-20 minutes. Remove from heat and let stand covered 5 minutes. Fluff with fork before serving.",
+          "ingredients": [
+            {"amount": 370.0, "unit": {"name": "g"}, "food": {"name": "white rice, uncooked"}, "note": "2 cups, medium grain"},
+            {"amount": 840.0, "unit": {"name": "ml"}, "food": {"name": "chicken bone broth"}, "note": "3.5 cups"},
+            {"amount": 14.0, "unit": {"name": "g"}, "food": {"name": "butter, unsalted"}, "note": "1 tbsp"},
+            {"amount": 3.0, "unit": {"name": "g"}, "food": {"name": "salt"}, "note": "0.5 tsp"}
+          ]
+        }
+      ],
+      "nutrition": {
+        "calories": 220,
+        "protein": 5.0,
+        "carbohydrate": 44.0,
+        "fat": 3.0,
+        "saturated_fat": 2.0,
+        "fiber": 0.0,
+        "sodium": 380
+      }
+    }
+  ],
+  "shopping_list_categories": {
+    "proteins": [
+      {"name": "ground beef, 93% lean", "note": "grass-fed preferred"},
+      {"name": "sirloin steak, grass-fed"},
+      {"name": "ground bison"},
+      {"name": "ground turkey, 93% lean"},
+      {"name": "chicken breast, boneless skinless"},
+      {"name": "salmon fillet, wild Atlantic"},
+      {"name": "eggs, whole"}
+    ],
+    "carbohydrates": [
+      {"name": "white rice, uncooked", "note": "medium or long grain"},
+      {"name": "sweet potato"},
+      {"name": "Yukon Gold potatoes"}
+    ],
+    "vegetables": [
+      {"name": "spinach, fresh"},
+      {"name": "bell pepper, mixed colors"},
+      {"name": "carrots"},
+      {"name": "zucchini"},
+      {"name": "broccoli florets"},
+      {"name": "cherry tomatoes"}
+    ],
+    "dairy": [
+      {"name": "butter, unsalted"},
+      {"name": "ghee"},
+      {"name": "Greek yogurt, full-fat plain"},
+      {"name": "cheddar cheese, shredded"},
+      {"name": "whole milk"}
+    ],
+    "liquids": [
+      {"name": "chicken bone broth"},
+      {"name": "beef bone broth"},
+      {"name": "chicken broth"},
+      {"name": "orange juice"},
+      {"name": "cranberry juice, 100%"}
+    ],
+    "pantry": [
+      {"name": "extra virgin olive oil"},
+      {"name": "sesame oil"},
+      {"name": "beef tallow"},
+      {"name": "salt"},
+      {"name": "pink Himalayan salt"},
+      {"name": "black pepper, ground"},
+      {"name": "garlic"},
+      {"name": "honey, raw"},
+      {"name": "almonds, raw"}
+    ]
+  }
+}
