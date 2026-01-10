@@ -36,6 +36,9 @@
 pub mod fatsecret;
 pub mod tandoor;
 
+// Sync layer - FatSecret ↔ Tandoor integration
+pub mod sync;
+
 // Test utilities - only compiled for tests
 #[cfg(test)]
 pub mod test_helpers;
@@ -53,3 +56,29 @@ pub use fatsecret::diary::{FoodEntry, FoodEntryId, FoodEntryInput, MealType};
 
 // Foods types
 pub use fatsecret::foods::{FoodSearchResponse, FoodSearchResult};
+
+// Sync layer types (FatSecret ↔ Tandoor integration)
+pub use sync::{
+    // Core types
+    SyncConfig, NutritionData, SyncError, SyncResult,
+    // Matching
+    IngredientMatcher, MatchConfig, MatchResult,
+    // Cache
+    NutritionCache, CacheConfig,
+    // Meal plan sync
+    MealPlanSyncer, MealPlanSyncConfig,
+    // Analytics
+    NutritionAnalyzer, AnalyticsConfig,
+    // Weekly planning
+    WeeklyPlanner, WeeklyPlanConfig, NutritionTarget,
+    // Batch operations
+    BatchSyncer, BatchConfig,
+    // Recipe import
+    RecipeImporter, ImportConfig, ImportedRecipe,
+    // Shopping nutrition
+    ShoppingNutritionCalculator, ShoppingConfig, ShoppingNutrition,
+    // Exercise balance
+    ExerciseBalanceTracker, ExerciseConfig, DailyBalance,
+    // Nutrition history
+    NutritionHistory, HistoryConfig, HistoryEntry,
+};
