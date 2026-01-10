@@ -139,6 +139,20 @@ struct ErrorOutput {
 
 #[tokio::main]
 async fn main() {
+    // Check for help and schema flags first
+    let args: Vec<String> = std::env::args().collect();
+    if args.len() > 1 {
+        let arg = &args[1];
+        if arg == "--help" || arg == "-h" || arg == "help" {
+            print_help();
+            std::process::exit(0);
+        }
+        if arg == "--schema" {
+            print_schema();
+            std::process::exit(0);
+        }
+    }
+
     match run().await {
         Ok(output) => {
             println!(
@@ -171,8 +185,9 @@ async fn run() -> Result<Output, Box<dyn std::error::Error>> {
 
     let token = AccessToken::new(input.access_token, input.access_secret);
 
-    // Convert date to int
-    let date_int = date_to_int(&input.date)?;
+    // Validate and convert date with strict YYYY-MM-DD format checking
+    let date_int = date_to_int(&input.date)
+        .map_err(|e| format!("Invalid date '{}': {}", input.date, e))?;
 
     // Get food entries for the date
     let entries = get_food_entries(&fs_config, &token, date_int).await?;
@@ -383,4 +398,223 @@ mod tests {
         let json = serde_json::to_string(&error).expect("Failed to serialize");
         assert!(json.contains("\"success\":false"));
     }
+}
+
+fn print_help() {
+    println!(
+        r#"track_exercise_balance - Track calorie balance between intake and expenditure
+
+USAGE
+    echo '{{...}}' | track_exercise_balance
+    track_exercise_balance --help
+    track_exercise_balance -h
+    track_exercise_balance help
+
+    This binary calculates the balance between calorie intake and expenditure from
+    exercise and BMR, providing daily summaries and goal tracking. Part of the
+    Tandoor ↔ FatSecret sync layer.
+
+INPUT SCHEMA
+    JSON input via stdin (or first command-line argument):
+    {{
+        "fatsecret": {{               // Optional: FatSecret credentials
+            "consumer_key": "...",     // (if not provided, uses env vars)
+            "consumer_secret": "..."
+        }},
+        "access_token": "...",        // Required: OAuth access token
+        "access_secret": "...",       // Required: OAuth access secret
+        "date": "2025-01-15",         // Required: Date to analyze (YYYY-MM-DD)
+        "bmr": 1800,                  // Required: Base metabolic rate (calories)
+        "activity_multiplier": 1.375, // Optional: Activity level (1.2-1.9)
+        "goal": "deficit",            // Optional: deficit|maintenance|surplus
+        "target_adjustment": -500,    // Optional: Target calorie adjustment
+        "weight_kg": 75,              // Optional: Weight in kg (for protein targets)
+        "exercises": [                // Optional: Manual exercise entries
+            {{
+                "name": "Running",
+                "calories": 300,
+                "minutes": 30
+            }}
+        ]
+    }}
+
+OUTPUT SCHEMA
+    Success response (JSON on stdout):
+    {{
+        "success": true,
+        "balance": {{
+            "calories_in": 1800,
+            "calories_out_exercise": 300,
+            "bmr": 1800,
+            "tdee": 2475,
+            "net_balance": -675,
+            "goal_met": true,
+            "goal_target": -500
+        }},
+        "meals": {{
+            "breakfast": 400,
+            "lunch": 600,
+            "dinner": 700,
+            "snacks": 100,
+            "total": 1800
+        }},
+        "exercises": [
+            {{
+                "name": "Running",
+                "calories": 300,
+                "minutes": 30
+            }}
+        ],
+        "recommendations": [
+            "You are on track with your deficit goal",
+            "Consider increasing protein intake"
+        ]
+    }}
+
+    Error response (JSON on stdout):
+    {{
+        "success": false,
+        "error": "Error description"
+    }}
+
+EXAMPLES
+    1. Track balance for a specific day:
+       $ echo '{{"access_token":"token","access_secret":"secret","date":"2025-01-15","bmr":1800}}' | track_exercise_balance
+
+    2. Track with deficit goal:
+       $ echo '{{"access_token":"token","access_secret":"secret","date":"2025-01-15","bmr":1800,"goal":"deficit","target_adjustment":-500}}' | track_exercise_balance
+
+    3. Track with manual exercise:
+       $ echo '{{"access_token":"token","access_secret":"secret","date":"2025-01-15","bmr":1800,"exercises":[{{"name":"Running","calories":300,"minutes":30}}]}}' | track_exercise_balance
+
+    4. Display help:
+       $ track_exercise_balance --help
+
+EXIT CODES
+    0 - Success (balance calculated)
+    1 - Error (invalid input, authentication failure, or API error)
+
+NOTES
+    - Fetches food diary entries from FatSecret for the specified date
+    - Calculates TDEE = BMR × activity_multiplier
+    - Net balance = calories_in - (calories_out_exercise + TDEE)
+    - Goal targets: deficit (-300 to -700), maintenance (±100), surplus (+200 to +500)
+    - Provides meal-by-meal breakdown (breakfast, lunch, dinner, snacks)
+    - Generates recommendations based on balance and goals
+"#
+    );
+}
+
+fn print_schema() {
+    use meal_planner::schema::SchemaBuilder;
+
+    let schema = SchemaBuilder::new("track_exercise_balance", env!("CARGO_PKG_VERSION"))
+        .description("Track daily calorie balance between intake and expenditure")
+        .input_schema(serde_json::json!({
+            "type": "object",
+            "properties": {
+                "fatsecret": {
+                    "type": "object",
+                    "properties": {
+                        "consumer_key": {"type": "string"},
+                        "consumer_secret": {"type": "string"}
+                    }
+                },
+                "access_token": {"type": "string"},
+                "access_secret": {"type": "string"},
+                "date": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$"},
+                "bmr": {"type": "number", "minimum": 0},
+                "activity_multiplier": {"type": "number", "minimum": 1.0, "maximum": 2.0},
+                "goal": {"type": "string", "enum": ["deficit", "maintenance", "surplus"]},
+                "target_adjustment": {"type": "number"},
+                "weight_kg": {"type": "number", "minimum": 0},
+                "exercises": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "name": {"type": "string"},
+                            "calories": {"type": "number"},
+                            "minutes": {"type": "integer"}
+                        },
+                        "required": ["name", "calories", "minutes"]
+                    }
+                }
+            },
+            "required": ["access_token", "access_secret", "date", "bmr"]
+        }))
+        .output_success_schema(serde_json::json!({
+            "type": "object",
+            "properties": {
+                "success": {"type": "boolean"},
+                "balance": {"type": "object"},
+                "meals": {"type": "object"},
+                "exercises": {"type": "array"},
+                "recommendations": {"type": "array"}
+            },
+            "required": ["success", "balance", "meals", "exercises", "recommendations"]
+        }))
+        .output_error_schema(serde_json::json!({
+            "type": "object",
+            "properties": {
+                "success": {"type": "boolean", "const": false},
+                "error": {"type": "string"}
+            },
+            "required": ["success", "error"]
+        }))
+        .example(
+            "Track with exercise",
+            serde_json::json!({
+                "access_token": "user_token",
+                "access_secret": "user_secret",
+                "date": "2025-01-15",
+                "bmr": 1800.0,
+                "activity_multiplier": 1.375,
+                "goal": "deficit",
+                "target_adjustment": -500.0,
+                "exercises": [
+                    {"name": "Running", "calories": 300.0, "minutes": 30}
+                ]
+            }),
+            serde_json::json!({
+                "success": true,
+                "balance": {
+                    "calories_in": 1800.0,
+                    "calories_out_exercise": 300.0,
+                    "tdee": 2475.0,
+                    "net_balance": -675.0,
+                    "goal_met": true
+                },
+                "meals": {},
+                "exercises": [],
+                "recommendations": []
+            })
+        )
+        .example(
+            "Track without exercise",
+            serde_json::json!({
+                "access_token": "user_token",
+                "access_secret": "user_secret",
+                "date": "2025-01-16",
+                "bmr": 1750.0,
+                "goal": "maintenance"
+            }),
+            serde_json::json!({
+                "success": true,
+                "balance": {
+                    "calories_in": 2000.0,
+                    "tdee": 2400.0,
+                    "net_balance": -400.0
+                },
+                "meals": {},
+                "exercises": [],
+                "recommendations": []
+            })
+        )
+        .build();
+
+    println!(
+        "{}",
+        serde_json::to_string_pretty(&schema).expect("Failed to serialize schema")
+    );
 }

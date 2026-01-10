@@ -26,5 +26,8 @@ pub mod recipe_selection_tests;
 #[path = "../helpers/common.rs"]
 pub mod common;
 
+#[path = "../helpers/support/mod.rs"]
+pub mod support;
+
 #[path = "helpers.rs"]
 pub mod helpers;

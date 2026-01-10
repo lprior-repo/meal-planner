@@ -5,7 +5,7 @@ use serde_json::json;
 use std::env;
 use std::process::Command;
 
-use crate::fatsecret::common::run_binary;
+use crate::tandoor::support::binary_runner::run_binary;
 
 fn expect_failure(binary_name: &str, input: &str) {
     let input_value: serde_json::Value = serde_json::from_str(input).unwrap();

@@ -56,7 +56,7 @@ fn tandoor_user_list_success() {
     assert!(result.is_ok(), "User list should succeed");
     let value = result.unwrap();
     assert!(value["success"].as_bool().unwrap_or(false));
-    assert!(value["count"].as_u64().unwrap_or(0) >= 0);
+    assert!(value["count"].is_u64());
     assert!(value["users"].is_array());
 }
 

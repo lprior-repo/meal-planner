@@ -6,7 +6,7 @@
 
 use serde_json::json;
 
-use crate::fatsecret::common::expect_failure;
+use crate::fatsecret::support::binary_runner::expect_failure;
 
 #[test]
 fn test_fatsecret_recipes_search_missing_expression() {

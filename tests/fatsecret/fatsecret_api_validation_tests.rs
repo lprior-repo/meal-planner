@@ -12,9 +12,8 @@
 
 #![allow(clippy::unwrap_used, clippy::indexing_slicing, clippy::panic)]
 
-use super::common::{
-    binary_exists, get_fatsecret_credentials, get_oauth_tokens, run_with_exit_code,
-};
+use super::common::{get_fatsecret_credentials, get_oauth_tokens};
+use super::support::binary_runner::{binary_exists, run_with_exit_code};
 use serde_json::json;
 
 #[test]

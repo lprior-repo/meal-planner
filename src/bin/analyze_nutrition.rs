@@ -144,6 +144,20 @@ struct ErrorOutput {
 
 #[tokio::main]
 async fn main() {
+    // Check for help and schema flags first
+    let args: Vec<String> = std::env::args().collect();
+    if args.len() > 1 {
+        let arg = &args[1];
+        if arg == "--help" || arg == "-h" || arg == "help" {
+            print_help();
+            std::process::exit(0);
+        }
+        if arg == "--schema" {
+            print_schema();
+            std::process::exit(0);
+        }
+    }
+
     match run().await {
         Ok(output) => {
             println!(
@@ -176,9 +190,11 @@ async fn run() -> Result<Output, Box<dyn std::error::Error>> {
 
     let token = AccessToken::new(input.access_token, input.access_secret);
 
-    // Get diary entries for date range by iterating through each day
-    let start_int = date_to_int(&input.date_range.start)?;
-    let end_int = date_to_int(&input.date_range.end)?;
+    // Validate and convert date range with strict YYYY-MM-DD format checking
+    let start_int = date_to_int(&input.date_range.start)
+        .map_err(|e| format!("Invalid start date '{}': {}", input.date_range.start, e))?;
+    let end_int = date_to_int(&input.date_range.end)
+        .map_err(|e| format!("Invalid end date '{}': {}", input.date_range.end, e))?;
 
     let mut entries: Vec<FoodEntry> = Vec::new();
     for date_int in start_int..=end_int {
@@ -567,4 +583,187 @@ mod tests {
         let date = int_to_date(20089);
         assert_eq!(date, "2025-01-01");
     }
+}
+
+fn print_help() {
+    println!(
+        r#"analyze_nutrition - Analyze nutrition data from FatSecret diary
+
+USAGE
+    echo '{{...}}' | analyze_nutrition
+    analyze_nutrition --help
+    analyze_nutrition -h
+    analyze_nutrition help
+
+    This binary analyzes nutrition data from FatSecret diary entries and provides
+    trends, statistics, and recommendations. Part of the Tandoor ↔ FatSecret sync layer.
+
+INPUT SCHEMA
+    JSON input via stdin (or first command-line argument):
+    {{
+        "fatsecret": {{               // Optional: FatSecret credentials
+            "consumer_key": "...",     // (if not provided, uses env vars)
+            "consumer_secret": "..."
+        }},
+        "access_token": "...",        // Required: OAuth access token
+        "access_secret": "...",       // Required: OAuth access secret
+        "date_range": {{              // Required: Date range to analyze
+            "start": "2025-01-01",     // Start date (YYYY-MM-DD)
+            "end": "2025-01-31"        // End date (YYYY-MM-DD)
+        }},
+        "analyze": [                  // Optional: Nutrients to analyze
+            "calories",                // (defaults to all)
+            "protein",
+            "carbohydrates",
+            "fat"
+        ],
+        "calorie_target": 2000,       // Optional: Daily calorie target
+        "protein_target": 150         // Optional: Daily protein target (g)
+    }}
+
+OUTPUT SCHEMA
+    Success response (JSON on stdout):
+    {{
+        "success": true,
+        "analysis": {{
+            "date_range": {{"start": "2025-01-01", "end": "2025-01-31"}},
+            "days_with_data": 31,
+            "daily_average": {{"calories": 2100, "protein": 145, ...}},
+            "total": {{"calories": 65100, "protein": 4495, ...}},
+            "minimum": {{"calories": 1500, ...}},
+            "maximum": {{"calories": 2800, ...}},
+            "std_dev": {{"calories": 250, ...}},
+            "trends": [...],
+            "recommendations": [...],
+            "daily_data": [...],
+            "weekly_averages": [...]
+        }}
+    }}
+
+    Error response (JSON on stdout):
+    {{
+        "success": false,
+        "error": "Error description"
+    }}
+
+EXAMPLES
+    1. Analyze last 30 days:
+       $ echo '{{"access_token":"token","access_secret":"secret","date_range":{{"start":"2025-01-01","end":"2025-01-31"}}}}' | analyze_nutrition
+
+    2. Analyze with targets:
+       $ echo '{{"access_token":"token","access_secret":"secret","date_range":{{"start":"2025-01-01","end":"2025-01-31"}},"calorie_target":2200,"protein_target":160}}' | analyze_nutrition
+
+    3. Display help:
+       $ analyze_nutrition --help
+
+EXIT CODES
+    0 - Success (analysis completed)
+    1 - Error (invalid input, authentication failure, or API error)
+
+NOTES
+    - Fetches diary entries for each day in the date range
+    - Calculates daily averages, totals, min/max, and standard deviation
+    - Provides trend analysis (increasing, decreasing, stable)
+    - Generates recommendations based on targets and patterns
+    - Weekly averages group data by 7-day periods
+"#
+    );
+}
+
+fn print_schema() {
+    use meal_planner::schema::SchemaBuilder;
+
+    let schema = SchemaBuilder::new("analyze_nutrition", env!("CARGO_PKG_VERSION"))
+        .description("Analyze nutrition data from FatSecret diary with trends and recommendations")
+        .input_schema(serde_json::json!({
+            "type": "object",
+            "properties": {
+                "fatsecret": {
+                    "type": "object",
+                    "properties": {
+                        "consumer_key": {"type": "string"},
+                        "consumer_secret": {"type": "string"}
+                    }
+                },
+                "access_token": {"type": "string"},
+                "access_secret": {"type": "string"},
+                "date_range": {
+                    "type": "object",
+                    "properties": {
+                        "start": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$"},
+                        "end": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$"}
+                    },
+                    "required": ["start", "end"]
+                },
+                "calorie_target": {"type": "number"},
+                "protein_target": {"type": "number"}
+            },
+            "required": ["access_token", "access_secret", "date_range"]
+        }))
+        .output_success_schema(serde_json::json!({
+            "type": "object",
+            "properties": {
+                "success": {"type": "boolean"},
+                "analysis": {"type": "object"}
+            },
+            "required": ["success", "analysis"]
+        }))
+        .output_error_schema(serde_json::json!({
+            "type": "object",
+            "properties": {
+                "success": {"type": "boolean", "const": false},
+                "error": {"type": "string"}
+            },
+            "required": ["success", "error"]
+        }))
+        .example(
+            "Analyze one month",
+            serde_json::json!({
+                "access_token": "user_token",
+                "access_secret": "user_secret",
+                "date_range": {
+                    "start": "2025-01-01",
+                    "end": "2025-01-31"
+                },
+                "calorie_target": 2000.0,
+                "protein_target": 150.0
+            }),
+            serde_json::json!({
+                "success": true,
+                "analysis": {
+                    "days_with_data": 30,
+                    "daily_average": {
+                        "calories": 1950.0,
+                        "protein": 145.0
+                    }
+                }
+            })
+        )
+        .example(
+            "Weekly analysis",
+            serde_json::json!({
+                "access_token": "user_token",
+                "access_secret": "user_secret",
+                "date_range": {
+                    "start": "2025-01-15",
+                    "end": "2025-01-22"
+                }
+            }),
+            serde_json::json!({
+                "success": true,
+                "analysis": {
+                    "days_with_data": 7,
+                    "daily_average": {
+                        "calories": 2100.0,
+                        "protein": 160.0
+                    }
+                }
+            })
+        )
+        .build();
+
+    println!(
+        "{}",
+        serde_json::to_string_pretty(&schema).expect("Failed to serialize schema")
+    );
 }

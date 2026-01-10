@@ -1,0 +1,27 @@
+{
+  "access_token": "user_oauth_token_here",
+  "access_secret": "user_oauth_secret_here",
+  "date": "2026-01-10",
+  "bmr": 1800.0,
+  "activity_multiplier": 1.375,
+  "goal": "deficit",
+  "target_adjustment": -500.0,
+  "weight_kg": 75.0,
+  "exercises": [
+    {
+      "name": "Running (moderate pace)",
+      "calories": 350.0,
+      "minutes": 35
+    },
+    {
+      "name": "Weight Training",
+      "calories": 180.0,
+      "minutes": 45
+    },
+    {
+      "name": "Walking",
+      "calories": 120.0,
+      "minutes": 30
+    }
+  ]
+}

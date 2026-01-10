@@ -1,0 +1,6 @@
+{
+  "tandoor": {
+    "base_url": "https://recipes.example.com",
+    "api_token": "your_tandoor_api_token_here"
+  }
+}

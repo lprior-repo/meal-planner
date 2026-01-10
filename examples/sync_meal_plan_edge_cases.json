@@ -1,0 +1,106 @@
+{
+  "access_token": "user_oauth_token_here",
+  "access_secret": "user_oauth_secret_here",
+  "entries": [
+    {
+      "date": "2026-01-10",
+      "meal_type": "breakfast",
+      "recipe_name": "Valid Breakfast",
+      "servings": 1.0,
+      "calories": 300.0,
+      "protein": 15.0,
+      "carbohydrate": 40.0,
+      "fat": 8.0
+    },
+    {
+      "date": "2026-01-10",
+      "meal_type": "lunch",
+      "recipe_name": "Valid Lunch",
+      "servings": 2.5,
+      "calories": 450.0,
+      "protein": 35.0,
+      "carbohydrate": 48.0,
+      "fat": 18.0
+    },
+    {
+      "date": "2026-01-10",
+      "meal_type": "snack",
+      "recipe_name": "Protein Bar",
+      "servings": 0.5,
+      "calories": 200.0,
+      "protein": 20.0,
+      "carbohydrate": 24.0,
+      "fat": 6.0
+    },
+    {
+      "date": "2026-01-10",
+      "meal_type": "dinner",
+      "recipe_name": "High Calorie Dinner",
+      "servings": 3.0,
+      "calories": 800.0,
+      "protein": 60.0,
+      "carbohydrate": 90.0,
+      "fat": 28.0
+    },
+    {
+      "date": "2026-01-11",
+      "meal_type": "breakfast",
+      "recipe_name": "Zero Fat Meal",
+      "servings": 1.0,
+      "calories": 150.0,
+      "protein": 8.0,
+      "carbohydrate": 32.0,
+      "fat": 0.0
+    },
+    {
+      "date": "2026-01-11",
+      "meal_type": "lunch",
+      "recipe_name": "Fractional Serving",
+      "servings": 0.25,
+      "calories": 100.0,
+      "protein": 5.0,
+      "carbohydrate": 12.0,
+      "fat": 3.0
+    },
+    {
+      "date": "2026-01-11",
+      "meal_type": "dinner",
+      "recipe_name": "Recipe with Special Characters !@#$",
+      "servings": 1.0,
+      "calories": 520.0,
+      "protein": 32.0,
+      "carbohydrate": 55.0,
+      "fat": 18.0
+    },
+    {
+      "date": "2026-01-12",
+      "meal_type": "snack",
+      "recipe_name": "Very Long Recipe Name That Tests Maximum Length Handling in the System With Many Words",
+      "servings": 1.0,
+      "calories": 180.0,
+      "protein": 6.0,
+      "carbohydrate": 28.0,
+      "fat": 5.0
+    },
+    {
+      "date": "2026-02-29",
+      "meal_type": "lunch",
+      "recipe_name": "Invalid Leap Year Date",
+      "servings": 1.0,
+      "calories": 400.0,
+      "protein": 25.0,
+      "carbohydrate": 45.0,
+      "fat": 12.0
+    },
+    {
+      "date": "2026-01-13",
+      "meal_type": "breakfast",
+      "recipe_name": "Minimal Nutrition",
+      "servings": 10.0,
+      "calories": 50.0,
+      "protein": 1.0,
+      "carbohydrate": 8.0,
+      "fat": 1.0
+    }
+  ]
+}

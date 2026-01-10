@@ -1,0 +1,16 @@
+{
+  "access_token": "user_oauth_token_here",
+  "access_secret": "user_oauth_secret_here",
+  "entries": [
+    {
+      "date": "2026-01-10",
+      "meal_type": "breakfast",
+      "recipe_name": "Oatmeal with Berries",
+      "servings": 1.0,
+      "calories": 320.0,
+      "protein": 12.0,
+      "carbohydrate": 54.0,
+      "fat": 6.5
+    }
+  ]
+}

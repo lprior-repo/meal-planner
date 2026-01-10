@@ -6,7 +6,7 @@
 
 #![allow(clippy::unwrap_used, clippy::indexing_slicing, clippy::panic)]
 
-use super::common::binary_exists;
+use super::support::binary_runner::binary_exists;
 
 #[test]
 fn test_all_binaries_exist() {

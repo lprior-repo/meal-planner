@@ -2,7 +2,7 @@
 
 #![allow(clippy::unwrap_used, clippy::indexing_slicing, clippy::panic)]
 
-use super::common::{binary_exists, run_with_exit_code};
+use super::support::binary_runner::{binary_exists, run_with_exit_code};
 use serde_json::json;
 
 #[test]

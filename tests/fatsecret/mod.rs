@@ -22,6 +22,8 @@ pub mod fatsecret_recipe_favorites_tests;
 pub mod fatsecret_recipe_types_tests;
 pub mod fatsecret_saved_meals_binary_tests;
 pub mod fatsecret_weight_binary_tests;
+pub mod log_recipe_to_fatsecret_validation_tests;
+pub mod sync_meal_plan_validation_tests;
 
 pub mod diary_tests;
 pub mod exercise_tests;

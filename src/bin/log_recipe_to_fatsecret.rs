@@ -72,6 +72,20 @@ struct ErrorOutput {
 
 #[tokio::main]
 async fn main() {
+    // Check for help and schema flags first
+    let args: Vec<String> = std::env::args().collect();
+    if args.len() > 1 {
+        let arg = &args[1];
+        if arg == "--help" || arg == "-h" || arg == "help" {
+            print_help();
+            std::process::exit(0);
+        }
+        if arg == "--schema" {
+            print_schema();
+            std::process::exit(0);
+        }
+    }
+
     match run().await {
         Ok(output) => {
             println!(
@@ -96,6 +110,16 @@ async fn main() {
 async fn run() -> Result<Output, Box<dyn std::error::Error>> {
     let input: Input = read_input()?;
 
+    // Validate base_url is not empty (BEAD-006)
+    if input.tandoor.base_url.trim().is_empty() {
+        return Err("base_url cannot be empty".into());
+    }
+
+    // Validate api_token is not empty (BEAD-006)
+    if input.tandoor.api_token.trim().is_empty() {
+        return Err("api_token cannot be empty".into());
+    }
+
     // Get recipe from Tandoor
     let tandoor_config = TandoorConfig {
         base_url: input.tandoor.base_url.clone(),
@@ -110,6 +134,11 @@ async fn run() -> Result<Output, Box<dyn std::error::Error>> {
         .and_then(serde_json::Value::as_str)
         .ok_or("Recipe has no name")?
         .to_string();
+
+    // Validate recipe_name is not empty (BEAD-006)
+    if recipe_name.trim().is_empty() {
+        return Err("recipe_name cannot be empty".into());
+    }
 
     // Extract nutrition from recipe (as JSON Value)
     let nutrition = recipe
@@ -243,4 +272,190 @@ mod tests {
         assert!(json.contains("\"success\":false"));
         assert!(json.contains("\"error\":\"Test error\""));
     }
+}
+
+fn print_help() {
+    println!(
+        r#"log_recipe_to_fatsecret - Log a Tandoor recipe to FatSecret food diary
+
+USAGE
+    echo '{{...}}' | log_recipe_to_fatsecret
+    log_recipe_to_fatsecret --help
+    log_recipe_to_fatsecret -h
+    log_recipe_to_fatsecret help
+
+    This binary logs a Tandoor recipe to FatSecret by creating a custom food diary
+    entry. It fetches the recipe from Tandoor and uses its nutrition data to create
+    the FatSecret entry. Part of the Tandoor ↔ FatSecret sync layer.
+
+INPUT SCHEMA
+    JSON input via stdin (or first command-line argument):
+    {{
+        "tandoor": {{                  // Required: Tandoor configuration
+            "base_url": "...",          // Tandoor API base URL
+            "api_token": "..."          // Tandoor API token
+        }},
+        "fatsecret": {{               // Optional: FatSecret credentials
+            "consumer_key": "...",     // (if not provided, uses env vars)
+            "consumer_secret": "..."
+        }},
+        "access_token": "...",        // Required: OAuth access token
+        "access_secret": "...",       // Required: OAuth access secret
+        "recipe_id": 123,             // Required: Tandoor recipe ID
+        "servings": 2.0,              // Optional: Number of servings
+        "meal": "dinner",             // Required: breakfast|lunch|dinner|other
+        "date": "2025-01-01"          // Required: YYYY-MM-DD format
+    }}
+
+OUTPUT SCHEMA
+    Success response (JSON on stdout):
+    {{
+        "success": true,
+        "food_entry_id": "123456789",
+        "recipe_name": "Grilled Chicken",
+        "calories": 450.0,
+        "protein": 40.0,
+        "carbohydrate": 5.0,
+        "fat": 25.0
+    }}
+
+    Error response (JSON on stdout):
+    {{
+        "success": false,
+        "error": "Error description"
+    }}
+
+EXAMPLES
+    1. Log a recipe with default servings:
+       $ echo '{{"tandoor":{{"base_url":"https://tandoor.example.com","api_token":"token"}},"access_token":"token","access_secret":"secret","recipe_id":123,"meal":"dinner","date":"2025-01-15"}}' | log_recipe_to_fatsecret
+
+    2. Log a recipe with custom servings:
+       $ echo '{{"tandoor":{{"base_url":"https://tandoor.example.com","api_token":"token"}},"access_token":"token","access_secret":"secret","recipe_id":456,"servings":2.5,"meal":"lunch","date":"2025-01-15"}}' | log_recipe_to_fatsecret
+
+    3. Display help:
+       $ log_recipe_to_fatsecret --help
+
+EXIT CODES
+    0 - Success (recipe logged to FatSecret)
+    1 - Error (invalid input, recipe not found, or API failure)
+
+NOTES
+    - Recipe must have nutrition data calculated in Tandoor
+    - Nutrition values are scaled by the servings parameter
+    - Entry is created as a custom food in FatSecret with "(Tandoor)" suffix
+"#
+    );
+}
+
+fn print_schema() {
+    use meal_planner::schema::SchemaBuilder;
+
+    let schema = SchemaBuilder::new("log_recipe_to_fatsecret", env!("CARGO_PKG_VERSION"))
+        .description("Log a Tandoor recipe to FatSecret food diary")
+        .input_schema(serde_json::json!({
+            "type": "object",
+            "properties": {
+                "tandoor": {
+                    "type": "object",
+                    "properties": {
+                        "base_url": {"type": "string", "format": "uri"},
+                        "api_token": {"type": "string"}
+                    },
+                    "required": ["base_url", "api_token"]
+                },
+                "fatsecret": {
+                    "type": "object",
+                    "properties": {
+                        "consumer_key": {"type": "string"},
+                        "consumer_secret": {"type": "string"}
+                    },
+                    "required": ["consumer_key", "consumer_secret"]
+                },
+                "access_token": {"type": "string"},
+                "access_secret": {"type": "string"},
+                "recipe_id": {"type": "integer", "minimum": 1},
+                "servings": {"type": "number", "minimum": 0},
+                "meal": {"type": "string", "enum": ["breakfast", "lunch", "dinner", "other"]},
+                "date": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$"}
+            },
+            "required": ["tandoor", "access_token", "access_secret", "recipe_id", "meal", "date"]
+        }))
+        .output_success_schema(serde_json::json!({
+            "type": "object",
+            "properties": {
+                "success": {"type": "boolean", "const": true},
+                "food_entry_id": {"type": "string"},
+                "recipe_name": {"type": "string"},
+                "calories": {"type": "number"},
+                "protein": {"type": "number"},
+                "carbohydrate": {"type": "number"},
+                "fat": {"type": "number"}
+            },
+            "required": ["success", "food_entry_id", "recipe_name", "calories", "protein", "carbohydrate", "fat"]
+        }))
+        .output_error_schema(serde_json::json!({
+            "type": "object",
+            "properties": {
+                "success": {"type": "boolean", "const": false},
+                "error": {"type": "string"}
+            },
+            "required": ["success", "error"]
+        }))
+        .example(
+            "Log recipe with default servings",
+            serde_json::json!({
+                "tandoor": {
+                    "base_url": "https://recipes.example.com",
+                    "api_token": "tandoor_token"
+                },
+                "fatsecret": {
+                    "consumer_key": "fs_consumer_key",
+                    "consumer_secret": "fs_consumer_secret"
+                },
+                "access_token": "user_oauth_token",
+                "access_secret": "user_oauth_secret",
+                "recipe_id": 42,
+                "meal": "dinner",
+                "date": "2025-01-15"
+            }),
+            serde_json::json!({
+                "success": true,
+                "food_entry_id": "123456",
+                "recipe_name": "Grilled Chicken",
+                "calories": 450.0,
+                "protein": 40.0,
+                "carbohydrate": 5.0,
+                "fat": 25.0
+            })
+        )
+        .example(
+            "Log recipe with custom servings",
+            serde_json::json!({
+                "tandoor": {
+                    "base_url": "https://recipes.example.com",
+                    "api_token": "tandoor_token"
+                },
+                "access_token": "user_oauth_token",
+                "access_secret": "user_oauth_secret",
+                "recipe_id": 100,
+                "servings": 2.5,
+                "meal": "lunch",
+                "date": "2025-01-15"
+            }),
+            serde_json::json!({
+                "success": true,
+                "food_entry_id": "789012",
+                "recipe_name": "Pasta Salad",
+                "calories": 750.0,
+                "protein": 25.0,
+                "carbohydrate": 90.0,
+                "fat": 20.0
+            })
+        )
+        .build();
+
+    println!(
+        "{}",
+        serde_json::to_string_pretty(&schema).expect("Failed to serialize schema")
+    );
 }

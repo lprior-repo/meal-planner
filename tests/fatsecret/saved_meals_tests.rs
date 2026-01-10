@@ -6,7 +6,7 @@
 
 #![allow(clippy::unwrap_used, clippy::indexing_slicing)]
 
-use super::common::expect_failure;
+use super::support::binary_runner::expect_failure;
 use serde_json::json;
 
 // =============================================================================

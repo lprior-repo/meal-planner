@@ -1,0 +1,788 @@
+{
+  "project": "meal-planner",
+  "version": "1.0",
+  "description": "Comprehensive CLI user guide for meal-planner binaries. All binaries accept JSON input via stdin or CLI argument and output JSON to stdout.",
+  "quickstart": {
+    "stdin_usage": "echo '{\"key\":\"value\"}' | binary_name",
+    "cli_arg_usage": "binary_name '{\"key\":\"value\"}'",
+    "file_usage": "binary_name < input.json",
+    "help_flag": "binary_name --help",
+    "schema_flag": "binary_name --schema",
+    "notes": [
+      "All binaries read JSON input from stdin OR first CLI argument",
+      "All binaries output JSON to stdout",
+      "Success response always includes {\"success\": true}",
+      "Error response always includes {\"success\": false, \"error\": \"...\"}",
+      "Exit code 0 = success, Exit code 1 = error",
+      "Some binaries support --help and --schema flags for detailed documentation"
+    ]
+  },
+  "binary_categories": {
+    "fatsecret_oauth": {
+      "description": "FatSecret OAuth 3-legged authentication flow",
+      "binaries": ["fatsecret_oauth_start", "fatsecret_oauth_complete", "fatsecret_get_token", "fatsecret_get_profile"]
+    },
+    "fatsecret_foods": {
+      "description": "FatSecret food database operations",
+      "binaries": ["fatsecret_foods_search", "fatsecret_food_get", "fatsecret_food_add_favorite", "fatsecret_food_delete_favorite", "fatsecret_foods_get_favorites", "fatsecret_foods_most_eaten", "fatsecret_foods_recently_eaten", "fatsecret_food_find_barcode", "fatsecret_foods_autocomplete"]
+    },
+    "fatsecret_diary": {
+      "description": "FatSecret food diary (logging meals)",
+      "binaries": ["fatsecret_food_entries_get", "fatsecret_food_entries_get_month", "fatsecret_food_entry_create", "fatsecret_food_entry_edit", "fatsecret_food_entry_delete"]
+    },
+    "fatsecret_exercise": {
+      "description": "FatSecret exercise tracking",
+      "binaries": ["fatsecret_exercise_entries_get", "fatsecret_exercise_entry_create", "fatsecret_exercise_entry_edit", "fatsecret_exercise_entry_delete", "fatsecret_exercise_get", "fatsecret_exercise_month_summary"]
+    },
+    "fatsecret_recipes": {
+      "description": "FatSecret recipe operations",
+      "binaries": ["fatsecret_recipes_search", "fatsecret_recipe_get", "fatsecret_recipe_add_favorite", "fatsecret_recipe_delete_favorite", "fatsecret_recipes_get_favorites", "fatsecret_recipe_types_get", "fatsecret_recipes_autocomplete"]
+    },
+    "fatsecret_saved_meals": {
+      "description": "FatSecret saved meals (meal templates)",
+      "binaries": ["fatsecret_saved_meals_get", "fatsecret_saved_meals_get_items", "fatsecret_saved_meals_create", "fatsecret_saved_meals_edit", "fatsecret_saved_meals_delete"]
+    },
+    "fatsecret_weight": {
+      "description": "FatSecret weight tracking",
+      "binaries": ["fatsecret_weight_update", "fatsecret_weight_month_summary"]
+    },
+    "tandoor_connection": {
+      "description": "Tandoor API connectivity and testing",
+      "binaries": ["tandoor_test_connection", "tandoor_user_get", "tandoor_user_list"]
+    },
+    "tandoor_recipes": {
+      "description": "Tandoor recipe management",
+      "binaries": ["tandoor_recipe_list", "tandoor_recipe_get", "tandoor_recipe_create", "tandoor_recipe_update", "tandoor_recipe_delete", "tandoor_recipe_batch_update", "tandoor_recipe_get_related", "tandoor_recipe_upload_image", "tandoor_recipe_calculate_nutrition", "tandoor_recipe_update_nutrition", "tandoor_scrape_recipe", "tandoor_ai_import"]
+    },
+    "tandoor_foods": {
+      "description": "Tandoor food (ingredient) database",
+      "binaries": ["tandoor_food_list", "tandoor_food_get", "tandoor_food_create", "tandoor_food_update", "tandoor_food_delete", "tandoor_food_batch_update"]
+    },
+    "tandoor_ingredients": {
+      "description": "Tandoor recipe ingredients",
+      "binaries": ["tandoor_ingredient_list", "tandoor_ingredient_get", "tandoor_ingredient_create", "tandoor_ingredient_update", "tandoor_ingredient_delete", "tandoor_ingredient_lookup_nutrition", "tandoor_ingredient_from_string", "tandoor_get_all_ingredients"]
+    },
+    "tandoor_meal_plans": {
+      "description": "Tandoor meal planning and scheduling",
+      "binaries": ["tandoor_meal_plan_list", "tandoor_meal_plan_get", "tandoor_meal_plan_create", "tandoor_meal_plan_update", "tandoor_meal_plan_delete", "tandoor_meal_plan_export_ical", "tandoor_format_weekly_meal_plan"]
+    },
+    "tandoor_meal_types": {
+      "description": "Tandoor meal type categories (breakfast, lunch, dinner, etc.)",
+      "binaries": ["tandoor_meal_type_list", "tandoor_meal_type_get", "tandoor_meal_type_create", "tandoor_meal_type_update", "tandoor_meal_type_delete"]
+    },
+    "tandoor_keywords": {
+      "description": "Tandoor recipe tags/keywords",
+      "binaries": ["tandoor_keyword_list", "tandoor_keyword_get", "tandoor_keyword_create", "tandoor_keyword_update", "tandoor_keyword_delete"]
+    },
+    "tandoor_recipe_books": {
+      "description": "Tandoor recipe collections",
+      "binaries": ["tandoor_recipe_book_list", "tandoor_recipe_book_get", "tandoor_recipe_book_create", "tandoor_recipe_book_update", "tandoor_recipe_book_delete", "tandoor_recipe_book_entry_list", "tandoor_recipe_book_entry_get", "tandoor_recipe_book_entry_create", "tandoor_recipe_book_entry_delete"]
+    },
+    "tandoor_shopping": {
+      "description": "Tandoor shopping list operations",
+      "binaries": ["tandoor_shopping_list_recipe_get", "tandoor_shopping_list_recipe_add", "tandoor_shopping_list_recipe_delete", "tandoor_shopping_list_entry_list", "tandoor_shopping_list_entry_create", "tandoor_shopping_list_entry_update", "tandoor_shopping_list_entry_delete", "tandoor_shopping_list_entry_bulk"]
+    },
+    "tandoor_units": {
+      "description": "Tandoor measurement units",
+      "binaries": ["tandoor_unit_list", "tandoor_unit_get", "tandoor_unit_create", "tandoor_unit_update", "tandoor_unit_delete", "tandoor_unit_conversion_list"]
+    },
+    "tandoor_properties": {
+      "description": "Tandoor custom properties for recipes",
+      "binaries": ["tandoor_property_list", "tandoor_property_get", "tandoor_property_create", "tandoor_property_update", "tandoor_property_delete", "tandoor_property_type_list", "tandoor_property_type_get", "tandoor_property_type_create", "tandoor_property_type_update", "tandoor_property_type_delete"]
+    },
+    "tandoor_steps": {
+      "description": "Tandoor recipe preparation steps",
+      "binaries": ["tandoor_step_list", "tandoor_step_get", "tandoor_step_create", "tandoor_step_update", "tandoor_step_delete"]
+    },
+    "tandoor_spaces": {
+      "description": "Tandoor multi-tenant spaces",
+      "binaries": ["tandoor_space_list", "tandoor_space_get"]
+    },
+    "tandoor_supermarkets": {
+      "description": "Tandoor supermarket categories for shopping",
+      "binaries": ["tandoor_supermarket_list", "tandoor_supermarket_get", "tandoor_supermarket_create", "tandoor_supermarket_update", "tandoor_supermarket_delete"]
+    },
+    "tandoor_recipe_selection": {
+      "description": "Tandoor recipe selection and filtering utilities",
+      "binaries": ["tandoor_recipe_random_select", "tandoor_recipe_select_by_calories", "tandoor_add_calories_to_recipes"]
+    }
+  },
+  "binaries": [
+    {
+      "name": "fatsecret_oauth_start",
+      "category": "fatsecret_oauth",
+      "purpose": "Start FatSecret OAuth 3-legged flow to get authorization URL",
+      "authentication": "Consumer key/secret only (2-legged)",
+      "usage": "echo '{\"fatsecret\":{\"consumer_key\":\"...\",\"consumer_secret\":\"...\"},\"callback_url\":\"oob\"}' | fatsecret_oauth_start",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "fatsecret": {
+            "type": "object",
+            "description": "FatSecret API credentials (optional, falls back to env vars FATSECRET_CONSUMER_KEY and FATSECRET_CONSUMER_SECRET)",
+            "properties": {
+              "consumer_key": {"type": "string"},
+              "consumer_secret": {"type": "string"}
+            },
+            "required": ["consumer_key", "consumer_secret"]
+          },
+          "callback_url": {
+            "type": "string",
+            "description": "OAuth callback URL. Use 'oob' for out-of-band (manual verification code entry)"
+          }
+        },
+        "required": ["callback_url"]
+      },
+      "output_schema": {
+        "success": {
+          "type": "object",
+          "properties": {
+            "success": {"type": "boolean", "const": true},
+            "auth_url": {"type": "string", "description": "URL user should visit to authorize"},
+            "oauth_token": {"type": "string", "description": "Request token (save for oauth_complete)"},
+            "oauth_token_secret": {"type": "string", "description": "Request token secret (save for oauth_complete)"}
+          }
+        },
+        "error": {
+          "type": "object",
+          "properties": {
+            "success": {"type": "boolean", "const": false},
+            "error": {"type": "string"}
+          }
+        }
+      },
+      "examples": [
+        {
+          "description": "Start OAuth flow with out-of-band callback",
+          "input": {
+            "fatsecret": {
+              "consumer_key": "your-consumer-key",
+              "consumer_secret": "your-consumer-secret"
+            },
+            "callback_url": "oob"
+          },
+          "output": {
+            "success": true,
+            "auth_url": "https://www.fatsecret.com/oauth/authorize?oauth_token=abc123",
+            "oauth_token": "abc123",
+            "oauth_token_secret": "def456"
+          }
+        }
+      ],
+      "error_cases": [
+        {
+          "condition": "Missing callback_url",
+          "error": "Missing field `callback_url`"
+        },
+        {
+          "condition": "Invalid credentials",
+          "error": "Invalid FatSecret credentials"
+        }
+      ],
+      "notes": [
+        "Requires OAUTH_ENCRYPTION_KEY environment variable for security",
+        "Step 1 of 3-legged OAuth flow",
+        "Save oauth_token and oauth_token_secret for next step",
+        "User must visit auth_url to authorize application"
+      ]
+    },
+    {
+      "name": "fatsecret_oauth_complete",
+      "category": "fatsecret_oauth",
+      "purpose": "Complete OAuth flow after user authorization to get access token",
+      "authentication": "Consumer key/secret + request token",
+      "usage": "echo '{\"fatsecret\":{...},\"oauth_token\":\"...\",\"oauth_token_secret\":\"...\",\"verifier\":\"...\"}' | fatsecret_oauth_complete",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "fatsecret": {"$ref": "#/components/fatsecret_credentials"},
+          "oauth_token": {"type": "string", "description": "Request token from oauth_start"},
+          "oauth_token_secret": {"type": "string", "description": "Request token secret from oauth_start"},
+          "verifier": {"type": "string", "description": "Verification code from authorization page"}
+        },
+        "required": ["oauth_token", "oauth_token_secret", "verifier"]
+      },
+      "output_schema": {
+        "success": {
+          "properties": {
+            "success": {"type": "boolean", "const": true},
+            "access_token": {"type": "string"},
+            "access_secret": {"type": "string"}
+          }
+        }
+      },
+      "notes": [
+        "Step 2 of 3-legged OAuth flow",
+        "Use access_token and access_secret for all subsequent API calls",
+        "Tokens do not expire and should be stored securely"
+      ]
+    },
+    {
+      "name": "fatsecret_foods_search",
+      "category": "fatsecret_foods",
+      "purpose": "Search FatSecret food database by query string",
+      "authentication": "Consumer key/secret only (2-legged)",
+      "usage": "echo '{\"query\":\"chicken breast\",\"page\":0,\"max_results\":20}' | fatsecret_foods_search",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "fatsecret": {"$ref": "#/components/fatsecret_credentials"},
+          "query": {"type": "string", "description": "Search query (e.g., 'chicken breast')"},
+          "page": {"type": "integer", "default": 0, "description": "Page number (0-indexed)"},
+          "max_results": {"type": "integer", "default": 20, "description": "Results per page (max 50)"}
+        },
+        "required": ["query"]
+      },
+      "output_schema": {
+        "success": {
+          "properties": {
+            "success": {"type": "boolean", "const": true},
+            "foods": {"type": "object", "description": "FatSecret foods search results"}
+          }
+        }
+      },
+      "examples": [
+        {
+          "description": "Search for chicken breast",
+          "input": {"query": "chicken breast", "page": 0, "max_results": 10},
+          "output": {
+            "success": true,
+            "foods": {
+              "food": [
+                {
+                  "food_id": "12345",
+                  "food_name": "Chicken Breast",
+                  "food_description": "Per 100g - Calories: 165kcal | Fat: 3.6g | Carbs: 0g | Protein: 31g"
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "notes": [
+        "Does not require user access token (2-legged OAuth)",
+        "Returns generic food database entries",
+        "Use food_id with fatsecret_food_get for detailed nutrition"
+      ]
+    },
+    {
+      "name": "fatsecret_food_entry_create",
+      "category": "fatsecret_diary",
+      "purpose": "Create food diary entry (log a meal)",
+      "authentication": "Consumer key/secret + user access token (3-legged)",
+      "usage": "echo '{\"access_token\":\"...\",\"access_secret\":\"...\",\"food_id\":\"12345\",\"serving_id\":\"54321\",\"meal\":\"lunch\",\"date_int\":20088,\"number_of_units\":1.5,\"food_entry_name\":\"Chicken Breast\"}' | fatsecret_food_entry_create",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "fatsecret": {"$ref": "#/components/fatsecret_credentials"},
+          "access_token": {"type": "string", "description": "User OAuth access token"},
+          "access_secret": {"type": "string", "description": "User OAuth access secret"},
+          "food_id": {"type": "string", "description": "FatSecret food database ID"},
+          "food_entry_name": {"type": "string", "description": "Display name for diary entry"},
+          "serving_id": {"type": "string", "description": "FatSecret serving size ID"},
+          "number_of_units": {"type": "number", "description": "Number of servings (e.g., 1.5)"},
+          "meal": {"type": "string", "enum": ["breakfast", "lunch", "dinner", "other"], "description": "Meal type"},
+          "date_int": {"type": "integer", "description": "Date as days since Unix epoch (1970-01-01)"}
+        },
+        "required": ["access_token", "access_secret", "food_id", "food_entry_name", "serving_id", "number_of_units", "meal", "date_int"]
+      },
+      "output_schema": {
+        "success": {
+          "properties": {
+            "success": {"type": "boolean", "const": true},
+            "food_entry_id": {"type": "string", "description": "Created diary entry ID"}
+          }
+        }
+      },
+      "examples": [
+        {
+          "description": "Log chicken breast for lunch",
+          "input": {
+            "access_token": "user-token",
+            "access_secret": "user-secret",
+            "food_id": "12345",
+            "food_entry_name": "Grilled Chicken Breast",
+            "serving_id": "54321",
+            "number_of_units": 1,
+            "meal": "lunch",
+            "date_int": 20088
+          },
+          "output": {
+            "success": true,
+            "food_entry_id": "987654321"
+          }
+        }
+      ],
+      "error_cases": [
+        {
+          "condition": "Invalid meal type",
+          "error": "Invalid meal type: snack. Expected: breakfast, lunch, dinner, or other"
+        }
+      ],
+      "notes": [
+        "Requires user access token from oauth_complete",
+        "date_int is days since 1970-01-01 (Unix epoch)",
+        "meal must be one of: breakfast, lunch, dinner, other",
+        "Use fatsecret_food_get to find serving_id for a food"
+      ]
+    },
+    {
+      "name": "tandoor_test_connection",
+      "category": "tandoor_connection",
+      "purpose": "Test Tandoor API connection and validate credentials",
+      "authentication": "Tandoor API token",
+      "usage": "echo '{\"tandoor\":{\"base_url\":\"https://recipes.example.com\",\"api_token\":\"your-token\"}}' | tandoor_test_connection",
+      "input_schema": {
+        "oneOf": [
+          {
+            "type": "object",
+            "description": "Windmill resource format",
+            "properties": {
+              "tandoor": {
+                "type": "object",
+                "properties": {
+                  "base_url": {"type": "string", "format": "uri"},
+                  "api_token": {"type": "string"}
+                },
+                "required": ["base_url", "api_token"]
+              }
+            },
+            "required": ["tandoor"]
+          },
+          {
+            "type": "object",
+            "description": "Standalone format",
+            "properties": {
+              "base_url": {"type": "string", "format": "uri"},
+              "api_token": {"type": "string"}
+            },
+            "required": ["base_url", "api_token"]
+          }
+        ]
+      },
+      "output_schema": {
+        "success": {
+          "properties": {
+            "success": {"type": "boolean", "const": true},
+            "message": {"type": "string"},
+            "recipe_count": {"type": "integer", "minimum": 0},
+            "base_url": {"type": "string"}
+          }
+        }
+      },
+      "examples": [
+        {
+          "description": "Test connection (Windmill format)",
+          "input": {
+            "tandoor": {
+              "base_url": "https://recipes.example.com",
+              "api_token": "your-api-token-here"
+            }
+          },
+          "output": {
+            "success": true,
+            "message": "Successfully connected to Tandoor API",
+            "recipe_count": 42,
+            "base_url": "https://recipes.example.com"
+          }
+        }
+      ],
+      "flags": {
+        "--help": "Display detailed help message",
+        "--schema": "Output JSON schema for input/output"
+      },
+      "notes": [
+        "Supports both Windmill resource format and standalone format",
+        "base_url should NOT include trailing slash",
+        "API token obtained from Tandoor Settings > API",
+        "Used for health checks and configuration validation"
+      ]
+    },
+    {
+      "name": "tandoor_recipe_get",
+      "category": "tandoor_recipes",
+      "purpose": "Get recipe details by ID",
+      "authentication": "Tandoor API token",
+      "usage": "echo '{\"tandoor\":{\"base_url\":\"...\",\"api_token\":\"...\"},\"recipe_id\":123}' | tandoor_recipe_get",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "tandoor": {"$ref": "#/components/tandoor_config"},
+          "recipe_id": {"type": "integer", "description": "Tandoor recipe ID"}
+        },
+        "required": ["tandoor", "recipe_id"]
+      },
+      "output_schema": {
+        "success": {
+          "properties": {
+            "success": {"type": "boolean", "const": true},
+            "recipe": {"type": "object", "description": "Full recipe object with ingredients and steps"}
+          }
+        }
+      },
+      "examples": [
+        {
+          "description": "Get recipe by ID",
+          "input": {
+            "tandoor": {
+              "base_url": "https://recipes.example.com",
+              "api_token": "token"
+            },
+            "recipe_id": 123
+          },
+          "output": {
+            "success": true,
+            "recipe": {
+              "id": 123,
+              "name": "Spaghetti Carbonara",
+              "description": "Classic Italian pasta dish",
+              "steps": []
+            }
+          }
+        }
+      ],
+      "notes": [
+        "Returns complete recipe including steps and ingredients",
+        "Use tandoor_recipe_list to find recipe IDs"
+      ]
+    },
+    {
+      "name": "tandoor_meal_plan_create",
+      "category": "tandoor_meal_plans",
+      "purpose": "Create a new meal plan entry",
+      "authentication": "Tandoor API token",
+      "usage": "echo '{\"tandoor\":{...},\"recipe\":123,\"meal_type\":1,\"from_date\":\"2025-12-31\",\"servings\":2.0}' | tandoor_meal_plan_create",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "tandoor": {"$ref": "#/components/tandoor_config"},
+          "recipe": {"type": "integer", "description": "Recipe ID"},
+          "meal_type": {"type": "integer", "description": "Meal type ID (use tandoor_meal_type_list to find)"},
+          "from_date": {"type": "string", "format": "date", "description": "Start date (ISO format: YYYY-MM-DD)"},
+          "servings": {"type": "number", "description": "Number of servings"},
+          "to_date": {"type": "string", "format": "date", "description": "Optional end date"},
+          "title": {"type": "string", "description": "Optional title"},
+          "note": {"type": "string", "description": "Optional note"}
+        },
+        "required": ["tandoor", "recipe", "meal_type", "from_date", "servings"]
+      },
+      "output_schema": {
+        "success": {
+          "properties": {
+            "success": {"type": "boolean", "const": true},
+            "meal_plan": {"type": "object"}
+          }
+        }
+      },
+      "examples": [
+        {
+          "description": "Plan dinner for New Year's Eve",
+          "input": {
+            "tandoor": {
+              "base_url": "https://recipes.example.com",
+              "api_token": "token"
+            },
+            "recipe": 123,
+            "meal_type": 3,
+            "from_date": "2025-12-31",
+            "servings": 4,
+            "title": "New Year's Eve Dinner"
+          },
+          "output": {
+            "success": true,
+            "meal_plan": {
+              "id": 456,
+              "recipe": 123,
+              "meal_type": 3,
+              "from_date": "2025-12-31",
+              "servings": 4
+            }
+          }
+        }
+      ],
+      "notes": [
+        "from_date must be ISO format (YYYY-MM-DD)",
+        "meal_type is an integer ID, not a name",
+        "Use tandoor_meal_type_list to find meal type IDs"
+      ]
+    }
+  ],
+  "validation_rules": [
+    {
+      "field": "meal (FatSecret)",
+      "type": "enum",
+      "constraints": "breakfast | lunch | dinner | other",
+      "error_message": "Invalid meal type: {value}. Expected: breakfast, lunch, dinner, or other",
+      "notes": "Used in fatsecret_food_entry_create, fatsecret_food_entry_edit. The value 'snack' is aliased to 'other'."
+    },
+    {
+      "field": "date_int (FatSecret)",
+      "type": "integer",
+      "constraints": "Days since Unix epoch (1970-01-01). Range: 0 to 2^31-1",
+      "error_message": "Invalid date_int: must be a positive integer representing days since 1970-01-01",
+      "notes": "Example: 2024-01-01 = 19723 days since epoch. Use date calculation utilities to convert."
+    },
+    {
+      "field": "from_date / to_date (Tandoor)",
+      "type": "string",
+      "constraints": "ISO 8601 date format: YYYY-MM-DD",
+      "error_message": "Invalid date format: {value}. Expected: YYYY-MM-DD (e.g., 2025-12-31)",
+      "notes": "Used in Tandoor meal plan operations. Must be valid calendar date."
+    },
+    {
+      "field": "base_url (Tandoor)",
+      "type": "string",
+      "constraints": "Valid URL with protocol (http:// or https://). NO trailing slash.",
+      "error_message": "Invalid base_url format",
+      "notes": "Example: 'https://recipes.example.com' (correct), 'https://recipes.example.com/' (incorrect)"
+    },
+    {
+      "field": "api_token (Tandoor)",
+      "type": "string",
+      "constraints": "Non-empty string. Obtain from Tandoor web UI: Settings > API",
+      "error_message": "Invalid API token or api_token required",
+      "notes": "Token grants full API access. Store securely."
+    },
+    {
+      "field": "consumer_key / consumer_secret (FatSecret)",
+      "type": "string",
+      "constraints": "Non-empty strings. Obtain from FatSecret developer portal",
+      "error_message": "Invalid FatSecret credentials",
+      "notes": "Can be provided in input JSON or via environment variables FATSECRET_CONSUMER_KEY and FATSECRET_CONSUMER_SECRET"
+    },
+    {
+      "field": "access_token / access_secret (FatSecret)",
+      "type": "string",
+      "constraints": "User-specific OAuth tokens from oauth_complete flow",
+      "error_message": "Invalid access token or authentication failed",
+      "notes": "Required for 3-legged OAuth operations (diary, saved meals, weight, etc.). Tokens do not expire."
+    },
+    {
+      "field": "number_of_units (FatSecret)",
+      "type": "number",
+      "constraints": "Positive float. Represents serving quantity.",
+      "error_message": "number_of_units must be a positive number",
+      "notes": "Example: 1.5 servings, 0.5 servings. Use decimal notation."
+    },
+    {
+      "field": "servings (Tandoor)",
+      "type": "number",
+      "constraints": "Positive float. Represents number of servings.",
+      "error_message": "servings must be a positive number",
+      "notes": "Example: 2.0, 4.5. Used in meal plans and recipe nutrition."
+    },
+    {
+      "field": "page (FatSecret search)",
+      "type": "integer",
+      "constraints": "0-indexed page number. Default: 0",
+      "error_message": "page must be a non-negative integer",
+      "notes": "Used in foods_search, recipes_search. Combine with max_results for pagination."
+    },
+    {
+      "field": "max_results (FatSecret search)",
+      "type": "integer",
+      "constraints": "1-50. Default: 20",
+      "error_message": "max_results must be between 1 and 50",
+      "notes": "FatSecret API limit is 50 results per page."
+    }
+  ],
+  "troubleshooting": [
+    {
+      "problem": "Binary not found or permission denied",
+      "solution": "Ensure binaries are built with 'cargo build --release' and are in PATH or use absolute path"
+    },
+    {
+      "problem": "JSON parsing error: 'expected value at line 1 column 1'",
+      "solution": "Check JSON is valid. Use jq to validate: echo '{...}' | jq . If passing via CLI arg, ensure proper quoting."
+    },
+    {
+      "problem": "Missing field error",
+      "solution": "Ensure all required fields are present in input JSON. Check input_schema for binary."
+    },
+    {
+      "problem": "Invalid meal type error",
+      "solution": "Use lowercase: 'breakfast', 'lunch', 'dinner', or 'other'. NOT 'Breakfast' or 'BREAKFAST'."
+    },
+    {
+      "problem": "Tandoor connection failed",
+      "solution": "Verify base_url is correct (no trailing slash), api_token is valid, and network connectivity. Use tandoor_test_connection to diagnose."
+    },
+    {
+      "problem": "FatSecret authentication failed",
+      "solution": "For 2-legged (search): check consumer_key/secret. For 3-legged (diary): complete oauth_start and oauth_complete flow first."
+    },
+    {
+      "problem": "Date parsing error",
+      "solution": "For FatSecret date_int: use integer (days since 1970-01-01). For Tandoor dates: use 'YYYY-MM-DD' format."
+    },
+    {
+      "problem": "SSL certificate error",
+      "solution": "If using self-signed certificate for Tandoor, add certificate to system trust store or use HTTP for local development (not recommended for production)."
+    },
+    {
+      "problem": "Empty or null response",
+      "solution": "Check binary exit code. Exit code 1 = error occurred. Ensure all required environment variables are set (OAUTH_ENCRYPTION_KEY for FatSecret)."
+    },
+    {
+      "problem": "Rate limit exceeded",
+      "solution": "FatSecret API has rate limits. Implement exponential backoff and retry logic in calling code."
+    }
+  ],
+  "environment_variables": {
+    "FATSECRET_CONSUMER_KEY": {
+      "description": "FatSecret API consumer key (optional if provided in JSON input)",
+      "required_for": ["All fatsecret_* binaries"],
+      "example": "abc123def456"
+    },
+    "FATSECRET_CONSUMER_SECRET": {
+      "description": "FatSecret API consumer secret (optional if provided in JSON input)",
+      "required_for": ["All fatsecret_* binaries"],
+      "example": "xyz789secret"
+    },
+    "OAUTH_ENCRYPTION_KEY": {
+      "description": "256-bit encryption key for OAuth token storage (required for FatSecret OAuth flows)",
+      "required_for": ["fatsecret_oauth_start", "fatsecret_oauth_complete", "Any binary storing OAuth tokens"],
+      "example": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+      "notes": "Must be 64 hex characters (32 bytes). Generate with: openssl rand -hex 32"
+    }
+  },
+  "ai_agent_guide": {
+    "overview": "This guide helps AI agents interact with meal-planner binaries programmatically",
+    "using_schema_flag": {
+      "description": "Some binaries support --schema flag to output JSON schema for input/output",
+      "usage": "binary_name --schema",
+      "example": "tandoor_test_connection --schema",
+      "output": "JSON schema document with input/output structure",
+      "notes": "Not all binaries implement --schema yet. Use this guide as reference for all binaries."
+    },
+    "parsing_json_output": {
+      "description": "All binaries output JSON to stdout",
+      "success_detection": "Check for {\"success\": true} in output JSON",
+      "error_detection": "Check for {\"success\": false} or exit code 1",
+      "example_success": "{\"success\": true, \"data\": {...}}",
+      "example_error": "{\"success\": false, \"error\": \"Recipe not found\"}",
+      "parsing_strategy": "1. Capture stdout. 2. Parse as JSON. 3. Check 'success' field. 4. If false, read 'error' field for details."
+    },
+    "handling_errors": {
+      "description": "Error handling best practices",
+      "check_exit_code": "Exit code 0 = success, 1 = error",
+      "parse_error_message": "Error JSON always includes {\"error\": \"detailed message\"}",
+      "common_errors": {
+        "authentication": "Invalid credentials, missing tokens, expired tokens (for FatSecret, tokens don't expire, but may be invalid)",
+        "validation": "Missing required fields, invalid field values, type mismatches",
+        "not_found": "Resource not found (recipe, food, meal plan, etc.)",
+        "network": "Connection refused, timeout, DNS errors"
+      },
+      "retry_logic": "Implement exponential backoff for network errors. Do NOT retry authentication errors."
+    },
+    "validation_before_sending": {
+      "description": "Validate input JSON before calling binary to avoid errors",
+      "steps": [
+        "1. Check all required fields are present",
+        "2. Validate field types (string, number, integer, etc.)",
+        "3. Validate enum values (meal type, date format, etc.)",
+        "4. Validate constraints (positive numbers, date ranges, URL format)",
+        "5. Use jq or JSON schema validator to verify structure"
+      ],
+      "example_validation": "jq -e '.tandoor.base_url and .recipe_id' input.json",
+      "validation_rules_reference": "See 'validation_rules' section for field-specific constraints"
+    },
+    "workflow_examples": {
+      "fatsecret_oauth_flow": {
+        "description": "Complete OAuth flow to get user access token",
+        "steps": [
+          "1. Call fatsecret_oauth_start with callback_url='oob'",
+          "2. Extract auth_url, oauth_token, oauth_token_secret from output",
+          "3. Direct user to visit auth_url in browser",
+          "4. User authorizes and receives verifier code",
+          "5. Call fatsecret_oauth_complete with oauth_token, oauth_token_secret, verifier",
+          "6. Extract access_token and access_secret from output",
+          "7. Store access_token and access_secret for future API calls"
+        ],
+        "example_code": "# Step 1\necho '{\"callback_url\":\"oob\"}' | fatsecret_oauth_start > step1.json\n# Extract tokens\nOAUTH_TOKEN=$(jq -r .oauth_token step1.json)\nOAUTH_SECRET=$(jq -r .oauth_token_secret step1.json)\nAUTH_URL=$(jq -r .auth_url step1.json)\n# Step 2: User visits AUTH_URL\n# Step 3\necho '{\"oauth_token\":\"'$OAUTH_TOKEN'\",\"oauth_token_secret\":\"'$OAUTH_SECRET'\",\"verifier\":\"USER_VERIFIER\"}' | fatsecret_oauth_complete"
+      },
+      "tandoor_meal_planning": {
+        "description": "Create meal plan for a week",
+        "steps": [
+          "1. Get meal type IDs: tandoor_meal_type_list",
+          "2. Search recipes: tandoor_recipe_list with filters",
+          "3. For each day/meal: tandoor_meal_plan_create",
+          "4. Export to calendar: tandoor_meal_plan_export_ical"
+        ],
+        "notes": "Batch operations can be parallelized. Each meal plan create is independent."
+      },
+      "fatsecret_log_meal": {
+        "description": "Log a meal to food diary",
+        "steps": [
+          "1. Search for food: fatsecret_foods_search",
+          "2. Get food details with servings: fatsecret_food_get",
+          "3. Create diary entry: fatsecret_food_entry_create with food_id, serving_id, meal, date_int"
+        ],
+        "notes": "Requires user access token from OAuth flow"
+      }
+    },
+    "batch_operations": {
+      "description": "Process multiple operations efficiently",
+      "parallel_execution": "Most binaries are stateless and can be run in parallel (except OAuth flow)",
+      "example": "# Process 10 recipes in parallel\nfor id in {1..10}; do\n  echo '{\"tandoor\":{...},\"recipe_id\":'$id'}' | tandoor_recipe_get &\ndone\nwait",
+      "notes": "Respect API rate limits. Consider implementing semaphore or rate limiter for large batches."
+    },
+    "debugging": {
+      "enable_verbose": "Set RUST_LOG=debug environment variable for detailed logging (some binaries)",
+      "validate_json": "Use jq to validate and pretty-print JSON: echo '{...}' | jq .",
+      "test_connection_first": "For Tandoor operations, run tandoor_test_connection first to validate credentials",
+      "check_schemas": "Use --schema flag (where available) to see expected input/output structure"
+    }
+  },
+  "components": {
+    "fatsecret_credentials": {
+      "type": "object",
+      "description": "FatSecret API credentials (optional, falls back to env vars)",
+      "properties": {
+        "consumer_key": {"type": "string"},
+        "consumer_secret": {"type": "string"}
+      },
+      "required": ["consumer_key", "consumer_secret"]
+    },
+    "tandoor_config": {
+      "type": "object",
+      "description": "Tandoor API configuration",
+      "properties": {
+        "base_url": {"type": "string", "format": "uri", "description": "Tandoor API base URL (no trailing slash)"},
+        "api_token": {"type": "string", "description": "Tandoor API authentication token"}
+      },
+      "required": ["base_url", "api_token"]
+    }
+  },
+  "quick_reference": {
+    "input_methods": [
+      "stdin: echo '{...}' | binary_name",
+      "cli_arg: binary_name '{...}'",
+      "file: binary_name < input.json"
+    ],
+    "output_format": "Always JSON on stdout",
+    "success_indicator": "{\"success\": true, ...}",
+    "error_indicator": "{\"success\": false, \"error\": \"...\"}",
+    "exit_codes": {
+      "0": "Success",
+      "1": "Error"
+    },
+    "common_flags": {
+      "--help": "Display help (some binaries)",
+      "-h": "Display help (some binaries)",
+      "--schema": "Output JSON schema (some binaries)"
+    }
+  },
+  "notes": [
+    "All 144+ binaries follow consistent JSON input/output pattern",
+    "Binaries are stateless - no session or state preservation between calls",
+    "Authentication credentials can be passed in JSON or environment variables",
+    "FatSecret operations are divided into 2-legged (no user token) and 3-legged (requires user OAuth)",
+    "Tandoor operations all require API token",
+    "Date formats differ: FatSecret uses integer (days since epoch), Tandoor uses ISO 8601 (YYYY-MM-DD)",
+    "All binaries are built with strict Gleam-style safety lints (no panics, no unwraps in library code)",
+    "For complete list of all 144 binaries, see Cargo.toml [[bin]] sections",
+    "Not all binaries are fully documented here - use representative examples and patterns",
+    "For binary-specific help, try: binary_name --help (where supported)"
+  ]
+}

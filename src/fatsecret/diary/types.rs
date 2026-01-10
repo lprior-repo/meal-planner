@@ -539,9 +539,190 @@ pub struct MonthSummary {
 /// Unix epoch date (1970-01-01) - constant for date calculations
 const UNIX_EPOCH_DATE: (i32, u32, u32) = (1970, 1, 1);
 
+/// Validate strict YYYY-MM-DD date format
+///
+/// This function enforces strict date format requirements:
+/// - Exactly 10 characters: YYYY-MM-DD
+/// - Year: 1900-2099 (4 digits, zero-padded)
+/// - Month: 01-12 (2 digits, zero-padded)
+/// - Day: 01-31 (2 digits, zero-padded, valid for the month)
+/// - Leap year logic for February 29
+///
+/// # Examples
+///
+/// ```
+/// use meal_planner::fatsecret::diary::validate_strict_date_format;
+///
+/// // Valid dates
+/// assert!(validate_strict_date_format("2025-01-15").is_ok());
+/// assert!(validate_strict_date_format("2024-02-29").is_ok()); // Leap year
+///
+/// // Invalid format (no zero padding)
+/// assert!(validate_strict_date_format("2025-1-9").is_err());
+///
+/// // Invalid separator
+/// assert!(validate_strict_date_format("2025/01/09").is_err());
+///
+/// // Invalid month
+/// assert!(validate_strict_date_format("2025-13-01").is_err());
+///
+/// // Invalid day for month
+/// assert!(validate_strict_date_format("2025-04-31").is_err());
+///
+/// // Invalid leap year
+/// assert!(validate_strict_date_format("2025-02-29").is_err());
+/// ```
+pub fn validate_strict_date_format(date: &str) -> Result<(), String> {
+    // Check exact length (YYYY-MM-DD = 10 characters)
+    if date.len() != 10 {
+        return Err(format!(
+            "Invalid date '{}': must be exactly YYYY-MM-DD format (10 characters, got {})",
+            date,
+            date.len()
+        ));
+    }
+
+    // Check format structure: YYYY-MM-DD
+    let parts: Vec<&str> = date.split('-').collect();
+    if parts.len() != 3 {
+        return Err(format!(
+            "Invalid date '{}': must be exactly YYYY-MM-DD format with hyphens",
+            date
+        ));
+    }
+
+    // Validate year (4 digits, 1900-2099)
+    let year_str = parts[0];
+    if year_str.len() != 4 {
+        return Err(format!(
+            "Invalid date '{}': year must be exactly 4 digits (got '{}')",
+            date, year_str
+        ));
+    }
+
+    let year = year_str.parse::<i32>().map_err(|_| {
+        format!(
+            "Invalid date '{}': year must be numeric (got '{}')",
+            date, year_str
+        )
+    })?;
+
+    if !(1900..=2099).contains(&year) {
+        return Err(format!(
+            "Invalid date '{}': year must be between 1900 and 2099 (got {})",
+            date, year
+        ));
+    }
+
+    // Validate month (2 digits, 01-12)
+    let month_str = parts[1];
+    if month_str.len() != 2 {
+        return Err(format!(
+            "Invalid date '{}': month must be exactly 2 digits with zero padding (got '{}')",
+            date, month_str
+        ));
+    }
+
+    let month = month_str.parse::<u32>().map_err(|_| {
+        format!(
+            "Invalid date '{}': month must be numeric (got '{}')",
+            date, month_str
+        )
+    })?;
+
+    if !(1..=12).contains(&month) {
+        return Err(format!(
+            "Invalid date '{}': month must be 01-12 (got {:02})",
+            date, month
+        ));
+    }
+
+    // Validate day (2 digits, 01-31 depending on month)
+    let day_str = parts[2];
+    if day_str.len() != 2 {
+        return Err(format!(
+            "Invalid date '{}': day must be exactly 2 digits with zero padding (got '{}')",
+            date, day_str
+        ));
+    }
+
+    let day = day_str.parse::<u32>().map_err(|_| {
+        format!(
+            "Invalid date '{}': day must be numeric (got '{}')",
+            date, day_str
+        )
+    })?;
+
+    if day == 0 {
+        return Err(format!(
+            "Invalid date '{}': day must be between 01 and 31 (got 00)",
+            date
+        ));
+    }
+
+    // Check days per month with leap year logic
+    let is_leap_year = (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
+
+    let max_days = match month {
+        1 | 3 | 5 | 7 | 8 | 10 | 12 => 31,
+        4 | 6 | 9 | 11 => 30,
+        2 => {
+            if is_leap_year {
+                29
+            } else {
+                28
+            }
+        }
+        _ => unreachable!("Month already validated to be 1-12"),
+    };
+
+    if day > max_days {
+        let month_name = match month {
+            1 => "January",
+            2 => "February",
+            3 => "March",
+            4 => "April",
+            5 => "May",
+            6 => "June",
+            7 => "July",
+            8 => "August",
+            9 => "September",
+            10 => "October",
+            11 => "November",
+            12 => "December",
+            _ => unreachable!(),
+        };
+
+        if month == 2 {
+            let leap_msg = if is_leap_year {
+                "leap years"
+            } else {
+                "non-leap years"
+            };
+            return Err(format!(
+                "Invalid date '{}': {} has {} days in {} (got {:02})",
+                date, month_name, max_days, leap_msg, day
+            ));
+        } else {
+            return Err(format!(
+                "Invalid date '{}': {} has {} days (got {:02})",
+                date, month_name, max_days, day
+            ));
+        }
+    }
+
+    Ok(())
+}
+
 /// Convert YYYY-MM-DD to days since epoch (date_int)
+///
+/// This function now performs strict validation before conversion.
+/// Use [`validate_strict_date_format`] for validation-only checks.
 pub fn date_to_int(date: &str) -> Result<i32, String> {
     use chrono::NaiveDate;
+
+    // Perform strict validation first
+    validate_strict_date_format(date)?;
 
     NaiveDate::parse_from_str(date, "%Y-%m-%d")
         .map_err(|e| format!("Invalid date format: {e}"))

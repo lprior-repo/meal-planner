@@ -39,6 +39,9 @@ pub mod tandoor;
 // Sync layer - FatSecret ↔ Tandoor integration
 pub mod sync;
 
+// Schema introspection for binaries
+pub mod schema;
+
 // Test utilities - only compiled for tests
 #[cfg(test)]
 pub mod test_helpers;

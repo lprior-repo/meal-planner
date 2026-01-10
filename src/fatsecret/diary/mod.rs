@@ -130,6 +130,6 @@ pub use client::{
 };
 pub use types::{
     date_to_int, int_to_date, map_auth_error, validate_custom_entry, validate_date_int_string,
-    validate_number_of_units, AuthError, DaySummary, FoodEntry, FoodEntryId, FoodEntryInput,
-    FoodEntryUpdate, MealType, MonthSummary, ValidationError,
+    validate_number_of_units, validate_strict_date_format, AuthError, DaySummary, FoodEntry,
+    FoodEntryId, FoodEntryInput, FoodEntryUpdate, MealType, MonthSummary, ValidationError,
 };
