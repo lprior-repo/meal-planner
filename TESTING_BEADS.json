@@ -1,0 +1,894 @@
+{
+  "project": "meal-planner",
+  "framework": "Test by Contract + EARS + Schema Validation",
+  "description": "Discrete testing and improvement tasks (beads) for world-class CLI",
+  "date": "2025-01-09",
+  "total_beads": 12,
+  "beads": [
+    {
+      "id": "BEAD-001",
+      "name": "Fix: meal_type Silent Default Validation",
+      "priority": "P0-CRITICAL",
+      "effort": "1 hour",
+      "category": "BUG_FIX",
+      "file": "src/bin/sync_meal_plan.rs",
+      "lines": "164-169",
+      "contract": {
+        "current_behavior": "Invalid meal_type values silently default to Snack without error tracking",
+        "desired_behavior": "Invalid meal_type values must be rejected with clear error message",
+        "precondition": "Input entry with invalid meal_type",
+        "postcondition": "Entry rejected, error added to errors array, entry not synced"
+      },
+      "ears": {
+        "normal": {
+          "input": "meal_type: 'breakfast'",
+          "expected": "Synced with Breakfast meal type",
+          "current_result": "PASS"
+        },
+        "alternative": {
+          "input": "meal_type: 'snack'",
+          "expected": "Synced with Snack meal type",
+          "current_result": "PASS"
+        },
+        "edge": {
+          "input": "meal_type: 'invalid_type'",
+          "expected": "FAIL: error in errors array",
+          "current_result": "FAIL (silently defaults to Snack)"
+        },
+        "error": {
+          "input": "meal_type: ''",
+          "expected": "FAIL with error",
+          "current_result": "Defaults to Snack (BUG)"
+        },
+        "robustness": {
+          "input": "meal_type: null",
+          "expected": "FAIL with schema validation error",
+          "current_result": "Unknown (need to test)"
+        }
+      },
+      "schema": {
+        "input": {
+          "type": "string",
+          "enum": ["breakfast", "lunch", "dinner", "snack"],
+          "validation": "strict - case-insensitive but must be one of enum"
+        },
+        "output": {
+          "on_valid": "MealType enum (Breakfast | Lunch | Dinner | Snack)",
+          "on_invalid": "error: string pushed to errors array"
+        },
+        "edge_cases": [
+          "Empty string",
+          "null value",
+          "Case variations (BREAKFAST, Breakfast, breakfast)",
+          "Typos (breakfest)",
+          "Extra whitespace (breakfast )",
+          "Numbers (1 for breakfast)",
+          "Unknown values (anything not in enum)"
+        ]
+      },
+      "test_cases": [
+        {
+          "name": "Valid: breakfast lowercase",
+          "input": "breakfast",
+          "expected_output": "MealType::Breakfast",
+          "expected_behavior": "Entry synced"
+        },
+        {
+          "name": "Valid: LUNCH uppercase",
+          "input": "LUNCH",
+          "expected_output": "MealType::Lunch",
+          "expected_behavior": "Entry synced (case-insensitive)"
+        },
+        {
+          "name": "Invalid: typo breakfest",
+          "input": "breakfest",
+          "expected_output": "error in errors array",
+          "expected_behavior": "Entry skipped, continue to next"
+        },
+        {
+          "name": "Invalid: custom type",
+          "input": "afternoon_snack",
+          "expected_output": "error in errors array",
+          "expected_behavior": "Entry skipped"
+        },
+        {
+          "name": "Invalid: empty string",
+          "input": "",
+          "expected_output": "error in errors array",
+          "expected_behavior": "Entry skipped"
+        }
+      ],
+      "acceptance_criteria": [
+        "Invalid meal_type values must be rejected",
+        "Error message must be actionable: 'Invalid meal_type X: must be breakfast, lunch, dinner, or snack'",
+        "Entry must be skipped (not synced)",
+        "Error must be in errors array",
+        "success field must be false if any errors exist",
+        "All valid meal types still work"
+      ],
+      "implementation": {
+        "pattern": "Match statement with explicit error on invalid",
+        "code_change": "Replace _ => MealType::Snack with explicit error handling",
+        "lines_to_modify": 6,
+        "dependencies": "None (internal logic)"
+      }
+    },
+    {
+      "id": "BEAD-002",
+      "name": "Add: --help Flag to Foundation Binaries",
+      "priority": "P1-HIGH",
+      "effort": "2 hours",
+      "category": "FEATURE",
+      "binaries": ["generate_encryption_key", "validate_encryption", "tandoor_test_connection"],
+      "contract": {
+        "precondition": "Binary invoked with --help, -h, or help argument",
+        "postcondition": "Human-readable help text printed to stdout, exit 0"
+      },
+      "schema": {
+        "input": "--help or -h or help (string argument)",
+        "output": "Text (not JSON)",
+        "format_requirements": [
+          "USAGE section with examples",
+          "INPUT SCHEMA section with field descriptions",
+          "OUTPUT SCHEMA sections for success and error",
+          "EXAMPLES section with 1-2 real examples",
+          "EXIT CODES section",
+          "NOTES section with important details"
+        ]
+      },
+      "ears": {
+        "normal": {
+          "input": "./binary --help",
+          "expected": "Help text printed"
+        },
+        "alternative": {
+          "input": "./binary -h",
+          "expected": "Identical help text"
+        },
+        "alternative2": {
+          "input": "./binary help",
+          "expected": "Identical help text"
+        },
+        "edge": {
+          "input": "./binary '--help'",
+          "expected": "Help text (quotes ignored)"
+        },
+        "error": {
+          "input": "./binary --help ''",
+          "expected": "Help text (extra args ignored if first arg is --help)"
+        }
+      },
+      "test_cases": [
+        {
+          "name": "Help flag --help",
+          "command": "./binary --help",
+          "expected": "Output contains USAGE, INPUT SCHEMA, OUTPUT SCHEMA",
+          "should_not_contain": "success: false (JSON error)"
+        },
+        {
+          "name": "Help flag -h",
+          "command": "./binary -h",
+          "expected": "Same as --help",
+          "should_not_contain": "JSON"
+        },
+        {
+          "name": "Help flag help",
+          "command": "./binary help",
+          "expected": "Same as --help",
+          "should_not_contain": "JSON"
+        },
+        {
+          "name": "No args still expects JSON",
+          "command": "echo '{}' | ./binary",
+          "expected": "JSON output (not help)",
+          "should_contain": "success"
+        }
+      ],
+      "acceptance_criteria": [
+        "--help, -h, help all work identically",
+        "Help text is human-readable (not JSON)",
+        "Help text includes USAGE section",
+        "Help text includes INPUT SCHEMA with descriptions",
+        "Help text includes OUTPUT SCHEMA examples",
+        "Help text includes EXAMPLES with real-world use cases",
+        "No JSON output when help flags used",
+        "Exit code 0 (success)"
+      ]
+    },
+    {
+      "id": "BEAD-003",
+      "name": "Add: --schema Introspection Flag",
+      "priority": "P1-HIGH",
+      "effort": "3 hours",
+      "category": "FEATURE",
+      "binaries": ["all foundation binaries"],
+      "contract": {
+        "precondition": "Binary invoked with --schema argument",
+        "postcondition": "JSON schema describing input/output contracts printed to stdout, exit 0"
+      },
+      "schema": {
+        "input": "--schema (string flag)",
+        "output": {
+          "type": "JSON object",
+          "structure": {
+            "binary_name": "string",
+            "description": "string",
+            "version": "string",
+            "input": "JSON Schema (full type definition)",
+            "output_success": "JSON Schema",
+            "output_error": "JSON Schema",
+            "examples": "array of {description, input, expected_output}"
+          }
+        },
+        "format": "JSON Schema Draft 7 compatible"
+      },
+      "ears": {
+        "normal": {
+          "input": "./binary --schema",
+          "expected": "Valid JSON with schema"
+        },
+        "edge": {
+          "input": "./binary --schema | jq .",
+          "expected": "Pipes to jq successfully"
+        },
+        "error": {
+          "input": "./binary --schema '{}' (extra args after --schema)",
+          "expected": "Ignores extra args, outputs schema"
+        }
+      },
+      "test_cases": [
+        {
+          "name": "Schema output is valid JSON",
+          "command": "./binary --schema | jq empty",
+          "expected": "Exit 0 (valid JSON)"
+        },
+        {
+          "name": "Schema has binary_name",
+          "command": "./binary --schema | jq '.binary_name'",
+          "expected": "Binary name as string"
+        },
+        {
+          "name": "Schema has input schema",
+          "command": "./binary --schema | jq '.input'",
+          "expected": "JSON Schema object"
+        },
+        {
+          "name": "Schema has examples",
+          "command": "./binary --schema | jq '.examples | length'",
+          "expected": "At least 1"
+        },
+        {
+          "name": "Example input matches schema",
+          "command": "./binary --schema | jq '.examples[0].input' | ./binary",
+          "expected": "Should execute without validation error"
+        }
+      ],
+      "acceptance_criteria": [
+        "Valid JSON Schema Draft 7 output",
+        "Schema describes all required input fields",
+        "Schema describes all output success fields",
+        "Schema describes all output error fields",
+        "At least 2 example inputs provided",
+        "Examples are valid according to schema",
+        "AI can use schema to validate inputs before execution",
+        "No breaking changes to normal operation"
+      ]
+    },
+    {
+      "id": "BEAD-004",
+      "name": "Add: Input Validation for Numeric Bounds",
+      "priority": "P2-MEDIUM",
+      "effort": "2 hours",
+      "category": "FEATURE",
+      "binary": "sync_meal_plan",
+      "contract": {
+        "precondition": "MealPlanEntry with numeric fields (calories, protein, carbs, fat, servings, bmr)",
+        "postcondition": "Values must be validated for reasonable bounds before processing"
+      },
+      "schema": {
+        "fields": {
+          "calories": {
+            "type": "number",
+            "constraints": "0 <= value <= 100000",
+            "rejection": "value < 0 or value > 100000"
+          },
+          "protein": {
+            "type": "number",
+            "constraints": "0 <= value <= 10000",
+            "rejection": "value < 0 or value > 10000"
+          },
+          "carbohydrate": {
+            "type": "number",
+            "constraints": "0 <= value <= 10000",
+            "rejection": "value < 0 or value > 10000"
+          },
+          "fat": {
+            "type": "number",
+            "constraints": "0 <= value <= 10000",
+            "rejection": "value < 0 or value > 10000"
+          },
+          "servings": {
+            "type": "number",
+            "constraints": "0 < value <= 1000",
+            "rejection": "value <= 0 or value > 1000",
+            "note": "Servings must be positive"
+          },
+          "bmr": {
+            "type": "number",
+            "constraints": "500 <= value <= 5000",
+            "rejection": "value < 500 or value > 5000"
+          }
+        }
+      },
+      "ears": {
+        "normal": {
+          "calories": 300,
+          "expected": "Accepted"
+        },
+        "edge_zero": {
+          "calories": 0,
+          "expected": "Accepted (valid edge case)"
+        },
+        "edge_max": {
+          "calories": 100000,
+          "expected": "Accepted (at boundary)"
+        },
+        "edge_large": {
+          "calories": 999999,
+          "expected": "Rejected: exceeds maximum"
+        },
+        "error_negative": {
+          "calories": -100,
+          "expected": "Rejected: must be >= 0"
+        },
+        "error_servings_zero": {
+          "servings": 0,
+          "expected": "Rejected: must be > 0"
+        }
+      },
+      "test_cases": [
+        {
+          "name": "Negative calories",
+          "input": "calories: -100",
+          "expected": "error: Invalid calories -100: must be >= 0"
+        },
+        {
+          "name": "Very large calories",
+          "input": "calories: 999999",
+          "expected": "error: Invalid calories 999999: must be <= 100000"
+        },
+        {
+          "name": "Zero servings",
+          "input": "servings: 0",
+          "expected": "error: Invalid servings 0: must be > 0"
+        },
+        {
+          "name": "Negative servings",
+          "input": "servings: -1.5",
+          "expected": "error: Invalid servings -1.5: must be > 0"
+        },
+        {
+          "name": "Valid edge: zero calories",
+          "input": "calories: 0",
+          "expected": "Accepted (valid for water, spices, etc)"
+        },
+        {
+          "name": "Valid edge: max value",
+          "input": "calories: 100000",
+          "expected": "Accepted (at boundary)"
+        }
+      ],
+      "acceptance_criteria": [
+        "Negative values for calories/macros rejected",
+        "Zero servings rejected",
+        "Out-of-range values rejected with clear error messages",
+        "Errors added to errors array",
+        "Entry skipped (not synced)",
+        "success field is false if validation errors occur",
+        "Zero calories allowed (edge case)",
+        "Boundary values (max) allowed"
+      ]
+    },
+    {
+      "id": "BEAD-005",
+      "name": "Add: Date Format Strict Validation",
+      "priority": "P2-MEDIUM",
+      "effort": "1.5 hours",
+      "category": "FEATURE",
+      "binaries": ["sync_meal_plan", "analyze_nutrition", "track_exercise_balance"],
+      "contract": {
+        "precondition": "Date field in YYYY-MM-DD format",
+        "postcondition": "Date must match exact format, invalid dates rejected immediately"
+      },
+      "schema": {
+        "format": "YYYY-MM-DD",
+        "constraints": [
+          "Exactly 10 characters",
+          "Year: 1900-2099 (4 digits)",
+          "Month: 01-12",
+          "Day: 01-31 (depending on month)",
+          "Case-sensitive"
+        ],
+        "edge_cases": [
+          "2025-02-29 (invalid - not leap year)",
+          "2024-02-29 (valid - leap year)",
+          "2025-13-01 (invalid month)",
+          "2025-01-32 (invalid day)",
+          "2025-1-1 (invalid - no padding)",
+          "2025/01/01 (invalid - wrong separator)",
+          "01-01-2025 (invalid - wrong order)"
+        ]
+      },
+      "ears": {
+        "normal": {
+          "input": "2025-01-09",
+          "expected": "Accepted"
+        },
+        "valid_edge": {
+          "input": "2024-02-29",
+          "expected": "Accepted (leap year)"
+        },
+        "invalid_format": {
+          "input": "2025-1-9",
+          "expected": "Rejected: must be YYYY-MM-DD"
+        },
+        "invalid_month": {
+          "input": "2025-13-01",
+          "expected": "Rejected: invalid month"
+        },
+        "invalid_day_month": {
+          "input": "2025-02-29",
+          "expected": "Rejected: not leap year"
+        }
+      },
+      "test_cases": [
+        {
+          "name": "Valid date",
+          "input": "2025-01-15",
+          "expected": "Accepted"
+        },
+        {
+          "name": "Valid leap year",
+          "input": "2024-02-29",
+          "expected": "Accepted"
+        },
+        {
+          "name": "Invalid: missing leading zeros",
+          "input": "2025-1-9",
+          "expected": "Rejected: must be YYYY-MM-DD format"
+        },
+        {
+          "name": "Invalid: wrong separator",
+          "input": "2025/01/09",
+          "expected": "Rejected: must use hyphens"
+        },
+        {
+          "name": "Invalid: month out of range",
+          "input": "2025-13-01",
+          "expected": "Rejected: month must be 01-12"
+        },
+        {
+          "name": "Invalid: day out of range for month",
+          "input": "2025-04-31",
+          "expected": "Rejected: day out of range for April"
+        },
+        {
+          "name": "Invalid: February 29 in non-leap",
+          "input": "2025-02-29",
+          "expected": "Rejected: not a leap year"
+        }
+      ],
+      "acceptance_criteria": [
+        "Strict format validation: YYYY-MM-DD",
+        "Month must be 01-12",
+        "Day must be valid for month (including leap year logic)",
+        "Year must be reasonable (1900-2099)",
+        "Error message includes expected format",
+        "Date is parsed and validated before use",
+        "Invalid dates skip entry (for sync_meal_plan)"
+      ]
+    },
+    {
+      "id": "BEAD-006",
+      "name": "Add: Empty String Validation",
+      "priority": "P2-MEDIUM",
+      "effort": "1 hour",
+      "category": "FEATURE",
+      "binaries": ["sync_meal_plan", "log_recipe_to_fatsecret"],
+      "contract": {
+        "precondition": "String field (recipe_name, base_url, api_token)",
+        "postcondition": "Empty or whitespace-only strings rejected"
+      },
+      "schema": {
+        "fields": {
+          "recipe_name": {
+            "type": "string",
+            "constraint": "non-empty, must have visible characters",
+            "validation": "str.trim().len() > 0"
+          },
+          "base_url": {
+            "type": "string",
+            "constraint": "non-empty, must be valid URL",
+            "validation": "str.trim().len() > 0 && is_valid_url()"
+          },
+          "api_token": {
+            "type": "string",
+            "constraint": "non-empty",
+            "validation": "str.trim().len() > 0"
+          }
+        }
+      },
+      "ears": {
+        "normal": {
+          "input": "recipe_name: 'Chicken Salad'",
+          "expected": "Accepted"
+        },
+        "edge_spaces": {
+          "input": "recipe_name: '   '",
+          "expected": "Rejected: whitespace only"
+        },
+        "edge_empty": {
+          "input": "recipe_name: ''",
+          "expected": "Rejected: empty string"
+        }
+      },
+      "test_cases": [
+        {
+          "name": "Valid recipe name",
+          "input": "Grilled Chicken",
+          "expected": "Accepted"
+        },
+        {
+          "name": "Empty string",
+          "input": "",
+          "expected": "Rejected: recipe_name cannot be empty"
+        },
+        {
+          "name": "Whitespace only",
+          "input": "   ",
+          "expected": "Rejected: recipe_name cannot be empty"
+        },
+        {
+          "name": "Single space",
+          "input": " ",
+          "expected": "Rejected: empty after trim"
+        },
+        {
+          "name": "Tabs and spaces",
+          "input": "  \\t  ",
+          "expected": "Rejected: whitespace only"
+        }
+      ],
+      "acceptance_criteria": [
+        "Empty strings rejected",
+        "Whitespace-only strings rejected",
+        "Trimmed before validation",
+        "Clear error message",
+        "Works for recipe_name, base_url, api_token"
+      ]
+    },
+    {
+      "id": "BEAD-007",
+      "name": "Create: Examples Library (JSON files)",
+      "priority": "P2-MEDIUM",
+      "effort": "1.5 hours",
+      "category": "DOCUMENTATION",
+      "deliverables": [
+        "examples/sync_meal_plan_basic.json",
+        "examples/sync_meal_plan_multiple_days.json",
+        "examples/sync_meal_plan_edge_cases.json",
+        "examples/analyze_nutrition_week.json",
+        "examples/track_exercise_balance_deficit.json",
+        "examples/tandoor_recipe_get_basic.json"
+      ],
+      "schema": {
+        "file_structure": {
+          "format": "Valid JSON matching binary input schema",
+          "naming": "examples/{binary_name}_{scenario}.json",
+          "content": "Real-world example with comments"
+        },
+        "required_files": {
+          "sync_meal_plan_basic": {
+            "description": "Single meal on single day",
+            "fields": "access_token, access_secret, entries (1 item)"
+          },
+          "sync_meal_plan_multiple_days": {
+            "description": "Full week of meals",
+            "fields": "7 days x 3 meals = 21 entries"
+          },
+          "sync_meal_plan_edge_cases": {
+            "description": "Test edge cases (zeros, max values, errors)",
+            "fields": "Mix of valid and invalid entries"
+          },
+          "analyze_nutrition_week": {
+            "description": "Analyze past week",
+            "fields": "date_range: start and end, targets"
+          },
+          "track_exercise_balance_deficit": {
+            "description": "Deficit goal calculation",
+            "fields": "bmr, activity_multiplier, goal, target_adjustment"
+          }
+        }
+      },
+      "test_cases": [
+        {
+          "name": "Example files are valid JSON",
+          "test": "for f in examples/*.json; do jq . $f || exit 1; done",
+          "expected": "All files parse with jq"
+        },
+        {
+          "name": "Example validates against schema",
+          "test": "cat examples/sync_meal_plan_basic.json | sync_meal_plan",
+          "expected": "No JSON parse error"
+        },
+        {
+          "name": "Examples are comprehensive",
+          "test": "Find examples for all 6 main binaries",
+          "expected": "At least 1 example per binary"
+        }
+      ],
+      "acceptance_criteria": [
+        "All examples are valid JSON",
+        "Examples match their respective binary input schemas",
+        "Examples include real-world-like data",
+        "At least 2 examples per binary",
+        "Examples document edge cases and error scenarios",
+        "README in examples/ directory explains usage"
+      ]
+    },
+    {
+      "id": "BEAD-008",
+      "name": "Add: Test Suite for --help Flags",
+      "priority": "P2-MEDIUM",
+      "effort": "1 hour",
+      "category": "TESTING",
+      "file": "tests/test_help_flags.rs",
+      "contract": {
+        "precondition": "All binaries have --help implementation",
+        "postcondition": "Test suite validates help output format and content"
+      },
+      "test_cases": [
+        {
+          "name": "All binaries support --help",
+          "test": "For each binary in BINARIES, run --help and check exit 0",
+          "expected": "All exit 0, output is text (not JSON)"
+        },
+        {
+          "name": "--help output contains USAGE",
+          "test": "Each binary --help output contains 'USAGE' section",
+          "expected": "Case-insensitive match found"
+        },
+        {
+          "name": "--help output contains EXAMPLES",
+          "test": "Each binary --help output contains 'EXAMPLE' section",
+          "expected": "Case-insensitive match found"
+        },
+        {
+          "name": "--help is not JSON",
+          "test": "Output does not parse as JSON (should fail jq)",
+          "expected": "jq . fails"
+        },
+        {
+          "name": "-h flag works identically",
+          "test": "Compare output of --help vs -h",
+          "expected": "Identical output"
+        }
+      ],
+      "acceptance_criteria": [
+        "Test file created at tests/test_help_flags.rs",
+        "Tests all 6 foundation binaries",
+        "Verifies --help, -h, help work",
+        "Checks output format (text, not JSON)",
+        "Checks content (USAGE, EXAMPLES, SCHEMA present)",
+        "All tests pass"
+      ]
+    },
+    {
+      "id": "BEAD-009",
+      "name": "Add: Test Suite for --schema Flags",
+      "priority": "P2-MEDIUM",
+      "effort": "1.5 hours",
+      "category": "TESTING",
+      "file": "tests/test_schema_flags.rs",
+      "contract": {
+        "precondition": "All binaries have --schema implementation",
+        "postcondition": "Schema output is valid JSON Schema and matches actual input/output"
+      },
+      "test_cases": [
+        {
+          "name": "All binaries support --schema",
+          "test": "For each binary, run --schema and check exit 0",
+          "expected": "All exit 0"
+        },
+        {
+          "name": "--schema output is valid JSON",
+          "test": "Pipe output to jq and verify no parse error",
+          "expected": "jq . succeeds"
+        },
+        {
+          "name": "--schema contains required fields",
+          "test": "Verify binary_name, description, input, output_success, output_error present",
+          "expected": "All fields found"
+        },
+        {
+          "name": "Example from schema validates",
+          "test": "Extract example.input, run binary with it, check no validation error",
+          "expected": "Binary executes (may fail on auth, but not JSON validation)"
+        },
+        {
+          "name": "Schema examples are valid JSON",
+          "test": "For each example in schema.examples, parse as JSON",
+          "expected": "All parse successfully"
+        }
+      ],
+      "acceptance_criteria": [
+        "Test file created at tests/test_schema_flags.rs",
+        "Tests all foundation binaries",
+        "Verifies --schema outputs valid JSON Schema",
+        "Verifies schema matches actual binary behavior",
+        "Examples in schema are valid",
+        "Schema can be used to validate inputs",
+        "All tests pass"
+      ]
+    },
+    {
+      "id": "BEAD-010",
+      "name": "Add: Input Validation Test Suite",
+      "priority": "P2-MEDIUM",
+      "effort": "2 hours",
+      "category": "TESTING",
+      "file": "tests/test_input_validation.rs",
+      "contract": {
+        "precondition": "All binaries implement input validation (numeric bounds, date format, etc)",
+        "postcondition": "Test suite validates all edge cases and error conditions"
+      },
+      "test_modules": {
+        "numeric_bounds": {
+          "description": "Test numeric field validation (calories, protein, etc)",
+          "test_cases": ["negative values", "zero values", "max values", "overflow values"]
+        },
+        "date_format": {
+          "description": "Test date format validation (YYYY-MM-DD)",
+          "test_cases": ["valid dates", "invalid format", "invalid dates", "leap years"]
+        },
+        "empty_strings": {
+          "description": "Test string field validation",
+          "test_cases": ["empty string", "whitespace only", "valid strings"]
+        },
+        "enum_validation": {
+          "description": "Test enum field validation (meal_type, goal, etc)",
+          "test_cases": ["valid enum values", "invalid enum values", "case variations"]
+        }
+      },
+      "acceptance_criteria": [
+        "Test file created",
+        "Tests for all validation rules",
+        "Tests all edge cases",
+        "Tests error messages",
+        "Tests that invalid entries are rejected",
+        "Tests that valid entries pass",
+        "All tests pass"
+      ]
+    },
+    {
+      "id": "BEAD-011",
+      "name": "Add: Integration Test for Full Workflows",
+      "priority": "P2-MEDIUM",
+      "effort": "2 hours",
+      "category": "TESTING",
+      "file": "tests/test_workflows.rs",
+      "contract": {
+        "precondition": "All binaries compiled and working",
+        "postcondition": "End-to-end workflows pass with realistic data"
+      },
+      "workflows": {
+        "encryption_setup": {
+          "steps": [
+            "Run generate_encryption_key",
+            "Extract key from output",
+            "Set as OAUTH_ENCRYPTION_KEY env var",
+            "Run validate_encryption",
+            "Verify success"
+          ]
+        },
+        "sync_meal_plan_workflow": {
+          "steps": [
+            "Prepare meal plan entries (JSON)",
+            "Run sync_meal_plan",
+            "Verify output structure",
+            "Check entries_synced count",
+            "Verify errors array (empty for valid input)"
+          ]
+        },
+        "validation_rejection_workflow": {
+          "steps": [
+            "Prepare invalid meal plan (negative calories)",
+            "Run sync_meal_plan",
+            "Verify success=false",
+            "Verify errors array has error message",
+            "Verify entries_synced=0"
+          ]
+        }
+      },
+      "acceptance_criteria": [
+        "Test file created",
+        "All 3+ workflows documented and tested",
+        "Tests use realistic data",
+        "Tests verify output structure",
+        "Tests check for expected errors",
+        "All tests pass"
+      ]
+    },
+    {
+      "id": "BEAD-012",
+      "name": "Document: CLI User Guide (Non-Markdown Format)",
+      "priority": "P2-MEDIUM",
+      "effort": "1.5 hours",
+      "category": "DOCUMENTATION",
+      "file": "CLI_USER_GUIDE.txt (plain text) or CLI_USER_GUIDE.json (structured)",
+      "contract": {
+        "precondition": "All binaries documented and tested",
+        "postcondition": "User guide provides clear instructions for each binary"
+      },
+      "sections": {
+        "quickstart": {
+          "content": "How to invoke a binary (stdin, CLI arg, file input)",
+          "example": "Command examples for each method"
+        },
+        "binaries": {
+          "content": "One section per binary with:",
+          "fields": ["NAME", "PURPOSE", "USAGE", "INPUT SCHEMA", "OUTPUT SCHEMA", "EXAMPLES", "ERROR CASES", "NOTES"]
+        },
+        "validation_rules": {
+          "content": "All validation rules documented",
+          "fields": ["Field name", "Type", "Constraints", "Error message"]
+        },
+        "troubleshooting": {
+          "content": "Common errors and solutions",
+          "examples": ["JSON parse error", "Missing field error", "Network error", "Auth error"]
+        },
+        "ai_agent_section": {
+          "content": "Special section for AI agents",
+          "guidance": ["Use --schema flag", "Parse JSON output", "Handle error codes", "Validate input before sending"]
+        }
+      },
+      "format": {
+        "choice": "JSON or plain text (NOT Markdown)",
+        "structure": "Hierarchical, easy for AI to parse",
+        "examples": "Embedded in each section"
+      },
+      "acceptance_criteria": [
+        "All binaries documented",
+        "All validation rules explained",
+        "Examples for each binary",
+        "Troubleshooting section included",
+        "Special section for AI agents",
+        "Format is not Markdown (JSON or plain text)"
+      ]
+    }
+  ],
+  "summary": {
+    "total_beads": 12,
+    "critical_fixes": 1,
+    "high_priority": 2,
+    "medium_priority": 9,
+    "total_effort": "~18 hours",
+    "estimated_completion": "2-3 days",
+    "success_criteria": "All 12 beads completed and tested"
+  },
+  "execution_order": [
+    "BEAD-001 (Critical fix must go first)",
+    "BEAD-002, BEAD-003 (Features enable testing)",
+    "BEAD-004, BEAD-005, BEAD-006 (Validation improvements)",
+    "BEAD-007 (Examples documentation)",
+    "BEAD-008, BEAD-009, BEAD-010, BEAD-011 (Test suites)",
+    "BEAD-012 (Final documentation)"
+  ],
+  "notes": {
+    "ai_friendly": "Each bead is atomic - can be executed independently",
+    "test_by_contract": "Every bead includes contract definition",
+    "ears_framework": "Every bead includes EARS test matrix",
+    "schema_validation": "Edge cases documented in schema section",
+    "crisp_format": "JSON structure, not Markdown, for easy parsing"
+  }
+}
