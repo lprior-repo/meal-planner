@@ -367,6 +367,8 @@ impl NutrientTrend {
         let sum_xy: f64 = values.iter().enumerate().map(|(i, v)| i as f64 * v).sum();
         let sum_x2: f64 = (0..values.len()).map(|i| (i * i) as f64).sum();
 
+        // Least squares regression formula: (Σx²) * n - (Σx)²
+        #[allow(clippy::suspicious_operation_groupings)]
         let denominator = n * sum_x2 - sum_x * sum_x;
         let slope = if denominator != 0.0 {
             (n * sum_xy - sum_x * sum_y) / denominator

@@ -905,7 +905,7 @@ mod tests {
         let plan = WeeklyPlan::new(config, targets);
 
         assert_eq!(plan.days.len(), 7);
-        assert_eq!(plan.completion_percent(), 0.0);
+        assert!((plan.completion_percent() - 0.0).abs() < 1e-10);
     }
 
     #[test]

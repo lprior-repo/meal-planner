@@ -1034,6 +1034,8 @@ impl NutritionHistory {
         let sum_xy: f64 = values.iter().enumerate().map(|(i, &y)| i as f64 * y).sum();
         let sum_xx: f64 = (0..n).map(|i| (i * i) as f64).sum();
 
+        // Least squares regression formula: (Σx²) * n - (Σx)²
+        #[allow(clippy::suspicious_operation_groupings)]
         let slope = (n_f64 * sum_xy - sum_x * sum_y) / (n_f64 * sum_xx - sum_x * sum_x);
         let intercept = (sum_y - slope * sum_x) / n_f64;
 
@@ -1250,8 +1252,10 @@ mod tests {
 
     #[test]
     fn test_history_config_validation() {
-        let mut config = HistoryConfig::default();
-        config.max_entries = 0;
+        let config = HistoryConfig {
+            max_entries: 0,
+            ..Default::default()
+        };
         assert!(config.validate().is_err());
     }
 
@@ -1259,7 +1263,7 @@ mod tests {
     fn test_history_entry_new() {
         let entry = HistoryEntry::new("2025-01-01", 2000.0, 120.0, 200.0, 70.0);
         assert_eq!(entry.date, "2025-01-01");
-        assert_eq!(entry.nutrition.calories, 2000.0);
+        assert!((entry.nutrition.calories - 2000.0).abs() < 1e-10);
         assert!(entry.is_complete);
     }
 
@@ -1283,7 +1287,7 @@ mod tests {
         let entry = HistoryEntry::new("2025-01-01", 2000.0, 120.0, 200.0, 70.0)
             .with_exercise(300.0);
 
-        assert_eq!(entry.net_calories(), 1700.0);
+        assert!((entry.net_calories() - 1700.0).abs() < 1e-10);
     }
 
     #[test]
@@ -1337,7 +1341,7 @@ mod tests {
 
         let entry = history.get("2025-01-01");
         assert!(entry.is_some());
-        assert_eq!(entry.unwrap().nutrition.calories, 2000.0);
+        assert!((entry.unwrap().nutrition.calories - 2000.0).abs() < 1e-10);
     }
 
     #[test]
@@ -1379,7 +1383,7 @@ mod tests {
 
         let result = history.query(&query);
         assert_eq!(result.len(), 1);
-        assert_eq!(result.entries[0].nutrition.calories, 2000.0);
+        assert!((result.entries[0].nutrition.calories - 2000.0).abs() < 1e-10);
     }
 
     #[test]
@@ -1394,9 +1398,9 @@ mod tests {
 
         assert!(result.summary.is_some());
         let summary = result.summary.unwrap();
-        assert_eq!(summary.average.calories, 2000.0);
-        assert_eq!(summary.min.calories, 1800.0);
-        assert_eq!(summary.max.calories, 2200.0);
+        assert!((summary.average.calories - 2000.0).abs() < 1e-10);
+        assert!((summary.min.calories - 1800.0).abs() < 1e-10);
+        assert!((summary.max.calories - 2200.0).abs() < 1e-10);
     }
 
     #[test]
@@ -1516,7 +1520,7 @@ mod tests {
         assert!(comparison.is_some());
         let comp = comparison.unwrap();
         assert!(comp.calories_increased());
-        assert_eq!(comp.calorie_change, 400.0);
+        assert!((comp.calorie_change - 400.0).abs() < 1e-10);
     }
 
     #[test]
@@ -1619,7 +1623,7 @@ mod tests {
         let not_significant = TrendAnalysis {
             confidence: 0.5,
             r_squared: 0.3,
-            ..significant.clone()
+            ..significant
         };
 
         assert!(!not_significant.is_significant());

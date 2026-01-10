@@ -776,7 +776,7 @@ mod tests {
         let mut progress = BatchProgress::new(100, 10);
         assert_eq!(progress.total, 100);
         assert_eq!(progress.total_batches, 10);
-        assert_eq!(progress.completion_percent(), 0.0);
+        assert!((progress.completion_percent() - 0.0).abs() < 1e-10);
 
         progress.record_success();
         progress.record_success();

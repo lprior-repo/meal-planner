@@ -996,7 +996,7 @@ mod tests {
     fn test_shopping_item_new() {
         let item = ShoppingItem::new("Chicken", 500.0, "g");
         assert_eq!(item.name, "Chicken");
-        assert_eq!(item.amount, 500.0);
+        assert!((item.amount - 500.0).abs() < 1e-10);
         assert_eq!(item.unit, "g");
         assert!(!item.checked);
     }
@@ -1028,7 +1028,7 @@ mod tests {
 
         assert!(result.success);
         assert_eq!(result.fatsecret_food_id, Some(123));
-        assert_eq!(result.confidence, 0.95);
+        assert!((result.confidence - 0.95).abs() < 1e-10);
     }
 
     #[test]
@@ -1057,9 +1057,9 @@ mod tests {
 
         agg.add(&nutrition);
         assert_eq!(agg.items_with_nutrition, 1);
-        assert_eq!(agg.total.calories, 165.0);
+        assert!((agg.total.calories - 165.0).abs() < 1e-10);
         assert_eq!(agg.total_cost, Some(5.0));
-        assert_eq!(agg.coverage, 1.0);
+        assert!((agg.coverage - 1.0).abs() < 1e-10);
     }
 
     #[test]
@@ -1083,7 +1083,7 @@ mod tests {
 
         assert_eq!(agg.calories_per_dollar(), Some(20.0));
         assert_eq!(agg.protein_per_dollar(), Some(2.0));
-        assert_eq!(agg.calories_per_gram(), 2.0);
+        assert!((agg.calories_per_gram() - 2.0).abs() < 1e-10);
     }
 
     #[test]
@@ -1103,7 +1103,7 @@ mod tests {
 
         cat.add_item(nutrition);
         assert_eq!(cat.items.len(), 1);
-        assert_eq!(cat.nutrition.total.calories, 165.0);
+        assert!((cat.nutrition.total.calories - 165.0).abs() < 1e-10);
     }
 
     #[test]
@@ -1159,8 +1159,8 @@ mod tests {
         let result = calc.calculate_item_nutrition(&item);
 
         assert!(result.success);
-        assert_eq!(result.amount_grams, 200.0);
-        assert_eq!(result.nutrition.calories, 330.0); // 165 * 2
+        assert!((result.amount_grams - 200.0).abs() < 1e-10);
+        assert!((result.nutrition.calories - 330.0).abs() < 1e-10); // 165 * 2
     }
 
     #[test]
@@ -1196,7 +1196,7 @@ mod tests {
         assert_eq!(nutrition.items.len(), 2);
         assert_eq!(nutrition.aggregated.items_with_nutrition, 2);
         // 165 * 2 + 130 = 460
-        assert_eq!(nutrition.aggregated.total.calories, 460.0);
+        assert!((nutrition.aggregated.total.calories - 460.0).abs() < 1e-10);
     }
 
     #[test]
@@ -1238,7 +1238,7 @@ mod tests {
 
         let chicken = merged.iter().find(|i| i.name == "Chicken");
         assert!(chicken.is_some());
-        assert_eq!(chicken.expect("Should exist").amount, 500.0);
+        assert!((chicken.expect("Should exist").amount - 500.0).abs() < 1e-10);
     }
 
     #[test]
@@ -1358,8 +1358,8 @@ mod tests {
 
         let result = calc.estimate_nutrition(&item, &similar);
         assert!(result.success);
-        assert_eq!(result.nutrition.calories, 150.0); // Average
-        assert_eq!(result.confidence, 0.5);
+        assert!((result.nutrition.calories - 150.0).abs() < 1e-10); // Average
+        assert!((result.confidence - 0.5).abs() < 1e-10);
     }
 
     #[test]

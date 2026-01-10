@@ -1038,8 +1038,8 @@ mod tests {
     #[test]
     fn test_exercise_config_default() {
         let config = ExerciseConfig::default();
-        assert_eq!(config.bmr, 1800.0);
-        assert_eq!(config.activity_multiplier, 1.375);
+        assert!((config.bmr - 1800.0).abs() < 1e-10);
+        assert!((config.activity_multiplier - 1.375).abs() < 1e-10);
         assert!(config.validate().is_ok());
     }
 
@@ -1053,7 +1053,7 @@ mod tests {
     #[test]
     fn test_exercise_config_tdee() {
         let config = ExerciseConfig::default().with_bmr(2000.0).with_activity(1.5);
-        assert_eq!(config.tdee(), 3000.0);
+        assert!((config.tdee() - 3000.0).abs() < 1e-10);
     }
 
     #[test]
@@ -1071,14 +1071,14 @@ mod tests {
     fn test_exercise_entry_new() {
         let entry = ExerciseEntry::new("Running", 300.0, 30);
         assert_eq!(entry.name, "Running");
-        assert_eq!(entry.calories_burned, 300.0);
+        assert!((entry.calories_burned - 300.0).abs() < 1e-10);
         assert_eq!(entry.duration_minutes, 30);
     }
 
     #[test]
     fn test_exercise_entry_calories_per_minute() {
         let entry = ExerciseEntry::new("Running", 300.0, 30);
-        assert_eq!(entry.calories_per_minute(), 10.0);
+        assert!((entry.calories_per_minute() - 10.0).abs() < 1e-10);
     }
 
     #[test]
@@ -1101,15 +1101,15 @@ mod tests {
 
     #[test]
     fn test_exercise_intensity_met() {
-        assert_eq!(ExerciseIntensity::Light.met_multiplier(), 0.8);
-        assert_eq!(ExerciseIntensity::Vigorous.met_multiplier(), 1.3);
+        assert!((ExerciseIntensity::Light.met_multiplier() - 0.8).abs() < 1e-10);
+        assert!((ExerciseIntensity::Vigorous.met_multiplier() - 1.3).abs() < 1e-10);
     }
 
     #[test]
     fn test_meal_intake_new() {
         let intake = MealIntake::new(500.0, 40.0, 60.0, 15.0);
-        assert_eq!(intake.calories, 500.0);
-        assert_eq!(intake.protein, 40.0);
+        assert!((intake.calories - 500.0).abs() < 1e-10);
+        assert!((intake.protein - 40.0).abs() < 1e-10);
     }
 
     #[test]
@@ -1118,8 +1118,8 @@ mod tests {
         let b = MealIntake::new(200.0, 15.0, 25.0, 5.0);
         let sum = a.add(&b);
 
-        assert_eq!(sum.calories, 500.0);
-        assert_eq!(sum.protein, 35.0);
+        assert!((sum.calories - 500.0).abs() < 1e-10);
+        assert!((sum.protein - 35.0).abs() < 1e-10);
         assert_eq!(sum.meal_count, 2);
     }
 
@@ -1189,7 +1189,7 @@ mod tests {
             effective_tdee: 2475.0,
         };
 
-        assert_eq!(balance.total_expenditure(), 2100.0);
+        assert!((balance.total_expenditure() - 2100.0).abs() < 1e-10);
         assert!((balance.balance_percentage() - (-19.2)).abs() < 0.5);
     }
 
@@ -1206,9 +1206,9 @@ mod tests {
         let config = ExerciseConfig::default();
         let exp = EnergyExpenditure::calculate(&config, 300.0, 2000.0);
 
-        assert_eq!(exp.bmr, 1800.0);
-        assert_eq!(exp.eat, 300.0);
-        assert_eq!(exp.tef, 200.0); // 10% of food
+        assert!((exp.bmr - 1800.0).abs() < 1e-10);
+        assert!((exp.eat - 300.0).abs() < 1e-10);
+        assert!((exp.tef - 200.0).abs() < 1e-10); // 10% of food
     }
 
     #[test]
@@ -1223,8 +1223,8 @@ mod tests {
 
         let balance = tracker.calculate_daily_balance("2025-01-01", &exercises, &meals);
 
-        assert_eq!(balance.calories_in, 1800.0);
-        assert_eq!(balance.calories_out_exercise, 300.0);
+        assert!((balance.calories_in - 1800.0).abs() < 1e-10);
+        assert!((balance.calories_out_exercise - 300.0).abs() < 1e-10);
         assert!(balance.net_balance < 0.0); // Should be in deficit
     }
 
@@ -1233,8 +1233,8 @@ mod tests {
         let tracker = ExerciseBalanceTracker::with_defaults();
         let balance = tracker.calculate_calorie_balance(2000.0, 300.0);
 
-        assert_eq!(balance.intake, 2000.0);
-        assert_eq!(balance.exercise_expenditure, 300.0);
+        assert!((balance.intake - 2000.0).abs() < 1e-10);
+        assert!((balance.exercise_expenditure - 300.0).abs() < 1e-10);
     }
 
     #[test]
@@ -1245,7 +1245,7 @@ mod tests {
         let meals = MealIntake::new(2000.0, 100.0, 200.0, 70.0);
         let balance = tracker.calculate_macro_balance(&meals);
 
-        assert_eq!(balance.protein.actual, 100.0);
+        assert!((balance.protein.actual - 100.0).abs() < 1e-10);
         assert!(balance.protein.target > 0.0);
     }
 
@@ -1290,7 +1290,7 @@ mod tests {
         assert_eq!(summary.days.len(), 2);
         assert_eq!(summary.total_sessions, 1);
         assert_eq!(summary.total_minutes, 30);
-        assert_eq!(summary.total_calories_burned, 300.0);
+        assert!((summary.total_calories_burned - 300.0).abs() < 1e-10);
     }
 
     #[test]

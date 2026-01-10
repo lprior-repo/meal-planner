@@ -17,6 +17,7 @@
 //! 4. Track sync status and handle errors
 
 use serde::{Deserialize, Serialize};
+use std::str::FromStr;
 
 use super::errors::{SyncError, SyncResult};
 use super::types::{
@@ -602,7 +603,7 @@ mod tests {
 
         assert_eq!(diary_entry.date, "2025-01-15");
         assert_eq!(diary_entry.food_name, "Grilled Chicken");
-        assert_eq!(diary_entry.servings, 2.0);
+        assert!((diary_entry.servings - 2.0).abs() < 1e-10);
 
         // 2 servings out of 4, so half the total nutrition
         assert!((diary_entry.nutrition.calories - 200.0).abs() < 0.01);
@@ -698,7 +699,7 @@ mod tests {
 
         let merged = syncer.merge_entries(&entries).unwrap();
 
-        assert_eq!(merged.servings, 2.0);
+        assert!((merged.servings - 2.0).abs() < 1e-10);
         assert!((merged.nutrition.calories - 400.0).abs() < 0.01);
         assert!((merged.nutrition.protein - 40.0).abs() < 0.01);
     }

@@ -9,6 +9,7 @@
 
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+use std::str::FromStr;
 
 // =============================================================================
 // NUTRITION TYPES
@@ -162,7 +163,7 @@ impl NutritionData {
     /// Calculate caloric contribution from macros
     #[must_use]
     pub fn calculated_calories(&self) -> f64 {
-        (self.protein * 4.0) + (self.carbohydrate * 4.0) + (self.fat * 9.0)
+        self.fat.mul_add(9.0, self.protein.mul_add(4.0, self.carbohydrate * 4.0))
     }
 
     /// Alias for carbohydrate field (compatibility)
@@ -327,20 +328,15 @@ impl FatSecretFood {
 }
 
 /// Food type classification
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
 pub enum FoodType {
     /// Generic/unbranded food
+    #[default]
     Generic,
     /// Branded food product
     Brand,
     /// Restaurant menu item
     Restaurant,
-}
-
-impl Default for FoodType {
-    fn default() -> Self {
-        Self::Generic
-    }
 }
 
 /// Serving size information
@@ -365,9 +361,10 @@ pub struct ServingInfo {
 impl ServingInfo {
     /// Create a gram-based serving
     #[must_use]
+    #[allow(clippy::cast_possible_truncation)]
     pub fn grams(amount: f64) -> Self {
         Self {
-            serving_id: format!("g_{}", amount as i64),
+            serving_id: format!("g_{}", amount.round() as i64),
             description: format!("{} g", amount),
             unit: "g".to_string(),
             amount,
@@ -626,27 +623,16 @@ pub enum DiaryEntrySource {
 }
 
 /// Meal category for diary entries
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize, Default)]
 pub enum MealCategory {
     Breakfast,
     Lunch,
     Dinner,
+    #[default]
     Other,
 }
 
 impl MealCategory {
-    /// Convert from string
-    #[must_use]
-    pub fn from_str(s: &str) -> Option<Self> {
-        match s.to_lowercase().as_str() {
-            "breakfast" => Some(Self::Breakfast),
-            "lunch" => Some(Self::Lunch),
-            "dinner" => Some(Self::Dinner),
-            "other" | "snack" => Some(Self::Other),
-            _ => None,
-        }
-    }
-
     /// Convert to FatSecret API string
     #[must_use]
     pub fn to_api_string(self) -> &'static str {
@@ -659,9 +645,17 @@ impl MealCategory {
     }
 }
 
-impl Default for MealCategory {
-    fn default() -> Self {
-        Self::Other
+impl FromStr for MealCategory {
+    type Err = String;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s.to_lowercase().as_str() {
+            "breakfast" => Ok(Self::Breakfast),
+            "lunch" => Ok(Self::Lunch),
+            "dinner" => Ok(Self::Dinner),
+            "other" | "snack" => Ok(Self::Other),
+            _ => Err(format!("Unknown meal category: {s}")),
+        }
     }
 }
 
@@ -737,7 +731,6 @@ fn calculate_date_int(year: i32, month: u32, day: u32) -> i32 {
     // Simplified calculation (actual implementation would use chrono)
     let days_from_year = (year - 1970) * 365 + (year - 1969) / 4;
     let days_from_month = match month {
-        1 => 0,
         2 => 31,
         3 => 59,
         4 => 90,
@@ -749,7 +742,7 @@ fn calculate_date_int(year: i32, month: u32, day: u32) -> i32 {
         10 => 273,
         11 => 304,
         12 => 334,
-        _ => 0,
+        _ => 0, // January and invalid months
     };
     #[allow(clippy::cast_possible_wrap)]
     let result = days_from_year + days_from_month + day as i32;
@@ -788,7 +781,7 @@ impl DateRange {
 // =============================================================================
 
 /// Status of a sync operation
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
 pub enum SyncStatus {
     /// Sync completed successfully
     Success,
@@ -797,15 +790,10 @@ pub enum SyncStatus {
     /// Sync failed completely
     Failed,
     /// Sync is in progress
+    #[default]
     InProgress,
     /// Sync was cancelled
     Cancelled,
-}
-
-impl Default for SyncStatus {
-    fn default() -> Self {
-        Self::InProgress
-    }
 }
 
 /// Summary of a sync operation
@@ -1083,11 +1071,11 @@ mod tests {
 
     #[test]
     fn test_meal_category_from_str() {
-        assert_eq!(MealCategory::from_str("breakfast"), Some(MealCategory::Breakfast));
-        assert_eq!(MealCategory::from_str("LUNCH"), Some(MealCategory::Lunch));
-        assert_eq!(MealCategory::from_str("Dinner"), Some(MealCategory::Dinner));
-        assert_eq!(MealCategory::from_str("snack"), Some(MealCategory::Other));
-        assert_eq!(MealCategory::from_str("invalid"), None);
+        assert_eq!(MealCategory::from_str("breakfast"), Ok(MealCategory::Breakfast));
+        assert_eq!(MealCategory::from_str("LUNCH"), Ok(MealCategory::Lunch));
+        assert_eq!(MealCategory::from_str("Dinner"), Ok(MealCategory::Dinner));
+        assert_eq!(MealCategory::from_str("snack"), Ok(MealCategory::Other));
+        assert!(MealCategory::from_str("invalid").is_err());
     }
 
     #[test]

@@ -852,7 +852,7 @@ mod tests {
     #[test]
     fn test_import_config_strict() {
         let config = ImportConfig::strict();
-        assert_eq!(config.min_nutrition_completeness, 0.8);
+        assert!((config.min_nutrition_completeness - 0.8).abs() < 1e-10);
         assert!(config.validate().is_ok());
     }
 
@@ -863,7 +863,7 @@ mod tests {
             100, "Chicken Breast".to_string(),
         );
         assert!(mapping.is_exact_match);
-        assert_eq!(mapping.confidence, 1.0);
+        assert!((mapping.confidence - 1.0).abs() < 1e-10);
     }
 
     #[test]
@@ -924,8 +924,8 @@ mod tests {
         };
 
         let per_serving = recipe.nutrition_per_serving();
-        assert_eq!(per_serving.calories, 200.0);
-        assert_eq!(per_serving.protein, 20.0);
+        assert!((per_serving.calories - 200.0).abs() < 1e-10);
+        assert!((per_serving.protein - 20.0).abs() < 1e-10);
     }
 
     #[test]
