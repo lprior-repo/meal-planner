@@ -8,9 +8,12 @@
 //!
 //! This binary implements the core workflow:
 //! 1. Get recipe from Tandoor (ingredients, steps)
-//! 2. For each ingredient, search FatSecret for nutrition data
+//! 2. For each ingredient, search FatSecret for nutrition data (DYNAMIC LOOKUP)
 //! 3. Calculate total calories, protein, fat, carbs
 //! 4. Return nutrition data
+//!
+//! Unlike previous versions that used hardcoded ingredients, this now dynamically
+//! looks up each ingredient found in the recipe from FatSecret.
 //!
 //! JSON input (CLI arg or stdin):
 //!   `{"tandoor": {...}, "fatsecret": {...}, "recipe_id": 123}`
@@ -25,7 +28,8 @@ use meal_planner::tandoor::nutrition::core::{
 };
 use meal_planner::tandoor::{TandoorClient, TandoorConfig};
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
+use serde_json::Value;
+use std::collections::{HashMap, HashSet};
 use std::io::{self, Read};
 
 #[derive(Deserialize)]
@@ -95,7 +99,11 @@ fn run() -> Result<Output, Box<dyn std::error::Error>> {
     let client = TandoorClient::new(&input.tandoor)?;
     let recipe = client.get_recipe(input.recipe_id)?;
 
-    let nutrition_db = create_nutrition_database(&input.fatsecret);
+    // Extract all unique ingredient names from the recipe
+    let ingredient_names = extract_ingredient_names(&recipe);
+
+    // Build nutrition database by dynamically looking up each ingredient
+    let nutrition_db = create_nutrition_database(&input.fatsecret, &ingredient_names);
     let result = calculate_recipe_nutrition(&recipe, &nutrition_db);
 
     Ok(Output {
@@ -107,6 +115,30 @@ fn run() -> Result<Output, Box<dyn std::error::Error>> {
         failed_ingredients: result.failed_ingredients,
         error: None,
     })
+}
+
+/// Extract all unique ingredient names from a recipe
+fn extract_ingredient_names(recipe: &Value) -> HashSet<String> {
+    let mut names = HashSet::new();
+
+    if let Some(steps) = recipe.get("steps").and_then(|v| v.as_array()) {
+        for step in steps {
+            if let Some(ingredients) = step.get("ingredients").and_then(|v| v.as_array()) {
+                for ingredient in ingredients {
+                    if let Some(name) = ingredient
+                        .get("food")
+                        .and_then(|f| f.get("name"))
+                        .and_then(|n| n.as_str())
+                    {
+                        // Normalize ingredient name for better FatSecret matching
+                        names.insert(name.to_lowercase());
+                    }
+                }
+            }
+        }
+    }
+
+    names
 }
 
 fn read_input() -> Result<Input, Box<dyn std::error::Error>> {
@@ -121,46 +153,34 @@ fn read_input() -> Result<Input, Box<dyn std::error::Error>> {
 
 fn create_nutrition_database(
     fatsecret: &Option<FatSecretInput>,
+    ingredient_names: &HashSet<String>,
 ) -> HashMap<String, IngredientNutrition> {
-    if fatsecret.is_some() {
-        fetch_fatsecret_nutrition(fatsecret.as_ref().unwrap())
+    if fatsecret.is_some() && !ingredient_names.is_empty() {
+        fetch_fatsecret_nutrition(fatsecret.as_ref().unwrap(), ingredient_names)
     } else {
         create_test_nutrition_db()
     }
 }
 
-fn fetch_fatsecret_nutrition(_config: &FatSecretInput) -> HashMap<String, IngredientNutrition> {
+/// Dynamically fetch nutrition for each ingredient from FatSecret
+fn fetch_fatsecret_nutrition(
+    _config: &FatSecretInput,
+    ingredient_names: &HashSet<String>,
+) -> HashMap<String, IngredientNutrition> {
     let mut db = HashMap::new();
 
     #[allow(clippy::box_collection)]
     let client = meal_planner::fatsecret::core::config::FatSecretConfig::from_env();
 
     if client.is_err() {
+        eprintln!("Warning: FatSecret config not available, using test database");
         return create_test_nutrition_db();
     }
 
     let config = client.unwrap();
 
-    let common_ingredients = [
-        "chicken breast",
-        "lettuce",
-        "olive oil",
-        "egg",
-        "butter",
-        "flour",
-        "rice",
-        "potato",
-        "beef",
-        "salmon",
-        "milk",
-        "cheese",
-        "bread",
-        "tomato",
-        "onion",
-        "garlic",
-    ];
-
-    for ingredient in common_ingredients {
+    // Dynamically lookup each ingredient found in the recipe
+    for ingredient in ingredient_names {
         if let Ok(results) = futures::executor::block_on(
             meal_planner::fatsecret::foods::search_foods_simple(&config, ingredient),
         ) {
@@ -168,12 +188,27 @@ fn fetch_fatsecret_nutrition(_config: &FatSecretInput) -> HashMap<String, Ingred
                 if let Ok(details) = futures::executor::block_on(
                     meal_planner::fatsecret::foods::get_food(&config, &food.food_id),
                 ) {
-                    if let Some(serving) = details.servings.serving.first() {
+                    // Find the best serving - prefer default, metric gram serving, or first
+                    let serving = details
+                        .servings
+                        .serving
+                        .iter()
+                        .find(|s| s.is_default == Some(1))
+                        .or_else(|| {
+                            details.servings.serving.iter().find(|s| {
+                                s.metric_serving_unit
+                                    .as_ref()
+                                    .is_some_and(|u| u == "g")
+                            })
+                        })
+                        .or_else(|| details.servings.serving.first());
+
+                    if let Some(serving) = serving {
                         let grams = serving.metric_serving_amount.unwrap_or(100.0);
-                        let multiplier = 100.0 / grams;
+                        let multiplier = if grams > 0.0 { 100.0 / grams } else { 1.0 };
 
                         db.insert(
-                            ingredient.to_string(),
+                            ingredient.clone(),
                             IngredientNutrition {
                                 food_name: food.food_name.clone(),
                                 calories_per_100g: serving.nutrition.calories * multiplier,
@@ -188,7 +223,9 @@ fn fetch_fatsecret_nutrition(_config: &FatSecretInput) -> HashMap<String, Ingred
         }
     }
 
+    // Fall back to test db if no ingredients were found
     if db.is_empty() {
+        eprintln!("Warning: No ingredients found in FatSecret, using test database");
         return create_test_nutrition_db();
     }
 

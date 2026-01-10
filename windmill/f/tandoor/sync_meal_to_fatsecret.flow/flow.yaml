@@ -1,0 +1,130 @@
+summary: Sync Tandoor recipe to FatSecret diary
+description: |
+  Logs a Tandoor recipe to your FatSecret food diary as a custom entry.
+  This enables tracking Tandoor recipes in FatSecret for calorie counting.
+
+  Requirements:
+  - Recipe must have nutrition data (run nutrition calculation first)
+  - FatSecret OAuth must be connected (run oauth_setup flow first)
+
+  The recipe's nutrition (calories, protein, carbs, fat) is logged directly
+  to FatSecret as a custom food entry with the recipe name.
+
+value:
+  modules:
+    - id: get_token
+      summary: Get FatSecret OAuth token
+      value:
+        type: script
+        path: f/fatsecret/get_token
+        input_transforms:
+          check_only:
+            type: static
+            value: false
+
+    - id: check_token
+      summary: Verify token is valid
+      value:
+        type: rawscript
+        language: bun
+        content: |
+          export async function main(token_result: any) {
+            if (token_result.status === "not_found") {
+              throw new Error("FatSecret not connected. Run the OAuth setup flow first.");
+            }
+            if (token_result.status === "old") {
+              console.log("Warning: Token is " + token_result.days_since_connected + " days old. Consider re-authenticating.");
+            }
+            return {
+              oauth_token: token_result.oauth_token,
+              oauth_token_secret: token_result.oauth_token_secret
+            };
+          }
+        input_transforms:
+          token_result:
+            type: javascript
+            expr: results.get_token
+
+    - id: log_recipe
+      summary: Log recipe to FatSecret diary
+      value:
+        type: script
+        path: f/tandoor/log_recipe_to_fatsecret
+        input_transforms:
+          tandoor:
+            type: static
+            value: '$res:u/admin/tandoor_api'
+          fatsecret:
+            type: static
+            value: '$res:u/admin/fatsecret_api'
+          access_token:
+            type: javascript
+            expr: results.check_token.oauth_token
+          access_secret:
+            type: javascript
+            expr: results.check_token.oauth_token_secret
+          recipe_id:
+            type: javascript
+            expr: flow_input.recipe_id
+          servings:
+            type: javascript
+            expr: flow_input.servings || null
+          meal:
+            type: javascript
+            expr: flow_input.meal || "dinner"
+          date:
+            type: javascript
+            expr: flow_input.date
+
+    - id: format_result
+      summary: Format success message
+      value:
+        type: rawscript
+        language: bun
+        content: |
+          export async function main(log_result: any) {
+            return {
+              success: true,
+              message: `Logged "${log_result.recipe_name}" to FatSecret diary`,
+              entry_id: log_result.food_entry_id,
+              nutrition: {
+                calories: log_result.calories,
+                protein: log_result.protein,
+                carbohydrate: log_result.carbohydrate,
+                fat: log_result.fat
+              }
+            };
+          }
+        input_transforms:
+          log_result:
+            type: javascript
+            expr: results.log_recipe
+
+  same_worker: false
+
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    recipe_id:
+      type: integer
+      description: Tandoor recipe ID to log
+    servings:
+      type: number
+      description: Number of servings consumed (optional, defaults to recipe servings)
+    meal:
+      type: string
+      description: 'Meal type: breakfast, lunch, dinner, or other'
+      default: dinner
+      enum:
+        - breakfast
+        - lunch
+        - dinner
+        - other
+    date:
+      type: string
+      description: Date in YYYY-MM-DD format
+      format: date
+  required:
+    - recipe_id
+    - date

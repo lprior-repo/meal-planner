@@ -1,0 +1,18 @@
+summary: Get FatSecret OAuth token from storage
+description: |
+  Retrieves the stored FatSecret OAuth access token from secure database storage.
+  The token is decrypted and returned for use by other scripts.
+  Use check_only=true to verify token existence without retrieving it.
+lock: ''
+kind: script
+language: bash
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    check_only:
+      type: boolean
+      description: If true, only check token validity without returning the actual token
+      default: false
+      originalType: boolean
+  required: []
