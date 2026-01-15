@@ -8,6 +8,9 @@
 //! - Opaque ID type safety
 
 #![allow(clippy::unwrap_used)]
+#![allow(clippy::panic)]
+#![allow(clippy::manual_assert)]
+#![allow(clippy::approx_constant)]
 
 pub mod fatsecret;
 

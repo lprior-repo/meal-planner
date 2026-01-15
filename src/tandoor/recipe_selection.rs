@@ -170,6 +170,7 @@ mod tests {
     }
 
     #[test]
+    #[allow(clippy::too_many_lines)] // Test setup requires many test cases
     fn test_random_select_returns_exact_count() {
         let recipes = vec![
             RecipeSummary {

@@ -19,6 +19,9 @@
 //! - Test error messages are clear and actionable
 
 #![allow(clippy::unwrap_used, clippy::indexing_slicing, clippy::panic)]
+#![allow(clippy::panic)]
+#![allow(clippy::manual_assert)]
+#![allow(clippy::approx_constant)]
 
 // =============================================================================
 // MODULE 1: NUMERIC BOUNDS VALIDATION

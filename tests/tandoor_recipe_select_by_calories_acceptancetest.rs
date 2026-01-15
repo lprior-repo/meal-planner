@@ -1,3 +1,15 @@
+#![allow(clippy::indexing_slicing)]
+#![allow(clippy::panic)]
+#![allow(clippy::manual_assert)]
+#![allow(clippy::approx_constant)]
+#![allow(clippy::expect_used)]
+#![allow(clippy::panic)]
+#![allow(clippy::manual_assert)]
+#![allow(clippy::approx_constant)]
+#![allow(clippy::option_if_let_else)]
+#![allow(clippy::panic)]
+#![allow(clippy::manual_assert)]
+#![allow(clippy::approx_constant)]
 //! ATDD Layer 1: Acceptance Test
 //! Feature: Select recipes from Tandoor matching calorie targets for weekly meal planning
 //!

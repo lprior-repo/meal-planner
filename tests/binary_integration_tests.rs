@@ -14,6 +14,9 @@
 //! 3. `pass` password manager (meal-planner/fatsecret/*)
 
 #![allow(clippy::unwrap_used, clippy::indexing_slicing, clippy::panic)]
+#![allow(clippy::panic)]
+#![allow(clippy::manual_assert)]
+#![allow(clippy::approx_constant)]
 
 use serde_json::Value;
 use std::io::Write;

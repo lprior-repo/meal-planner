@@ -431,10 +431,15 @@ impl UnitConverter {
             StandardUnit::Milligram => Ok(amount / 1000.0),
             StandardUnit::Ounce => Ok(amount * 28.3495),
             StandardUnit::Pound => Ok(amount * 453.592),
-            _ => Err(SyncError::validation_failed(format!(
-                "Cannot convert {} to grams",
-                unit.name()
-            ))),
+            StandardUnit::Milliliter | StandardUnit::Liter | StandardUnit::Deciliter | StandardUnit::FluidOunce |
+            StandardUnit::Cup | StandardUnit::Tablespoon | StandardUnit::Teaspoon | StandardUnit::Pint |
+            StandardUnit::Quart | StandardUnit::Gallon | StandardUnit::Piece | StandardUnit::Each |
+            StandardUnit::Serving | StandardUnit::Slice | StandardUnit::Whole | StandardUnit::Unknown => {
+                Err(SyncError::validation_failed(format!(
+                    "Cannot convert {} to grams",
+                    unit.name()
+                )))
+            }
         }
     }
 
@@ -446,10 +451,15 @@ impl UnitConverter {
             StandardUnit::Milligram => Ok(grams * 1000.0),
             StandardUnit::Ounce => Ok(grams / 28.3495),
             StandardUnit::Pound => Ok(grams / 453.592),
-            _ => Err(SyncError::validation_failed(format!(
-                "Cannot convert grams to {}",
-                to.name()
-            ))),
+            StandardUnit::Milliliter | StandardUnit::Liter | StandardUnit::Deciliter | StandardUnit::FluidOunce |
+            StandardUnit::Cup | StandardUnit::Tablespoon | StandardUnit::Teaspoon | StandardUnit::Pint |
+            StandardUnit::Quart | StandardUnit::Gallon | StandardUnit::Piece | StandardUnit::Each |
+            StandardUnit::Serving | StandardUnit::Slice | StandardUnit::Whole | StandardUnit::Unknown => {
+                Err(SyncError::validation_failed(format!(
+                    "Cannot convert grams to {}",
+                    to.name()
+                )))
+            }
         }
     }
 
@@ -466,10 +476,14 @@ impl UnitConverter {
             StandardUnit::Pint => Ok(amount * 473.176),
             StandardUnit::Quart => Ok(amount * 946.353),
             StandardUnit::Gallon => Ok(amount * 3785.41),
-            _ => Err(SyncError::validation_failed(format!(
-                "Cannot convert {} to milliliters",
-                unit.name()
-            ))),
+            StandardUnit::Gram | StandardUnit::Kilogram | StandardUnit::Milligram | StandardUnit::Ounce |
+            StandardUnit::Pound | StandardUnit::Piece | StandardUnit::Each | StandardUnit::Serving |
+            StandardUnit::Slice | StandardUnit::Whole | StandardUnit::Unknown => {
+                Err(SyncError::validation_failed(format!(
+                    "Cannot convert {} to milliliters",
+                    unit.name()
+                )))
+            }
         }
     }
 
@@ -486,10 +500,14 @@ impl UnitConverter {
             StandardUnit::Pint => Ok(ml / 473.176),
             StandardUnit::Quart => Ok(ml / 946.353),
             StandardUnit::Gallon => Ok(ml / 3785.41),
-            _ => Err(SyncError::validation_failed(format!(
-                "Cannot convert milliliters to {}",
-                to.name()
-            ))),
+            StandardUnit::Gram | StandardUnit::Kilogram | StandardUnit::Milligram | StandardUnit::Ounce |
+            StandardUnit::Pound | StandardUnit::Piece | StandardUnit::Each | StandardUnit::Serving |
+            StandardUnit::Slice | StandardUnit::Whole | StandardUnit::Unknown => {
+                Err(SyncError::validation_failed(format!(
+                    "Cannot convert milliliters to {}",
+                    to.name()
+                )))
+            }
         }
     }
 

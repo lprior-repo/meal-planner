@@ -6,6 +6,9 @@
 //! GATE-2: Write failing unit test for the core logic
 
 #![allow(dead_code, unused_imports)]
+#![allow(clippy::panic)]
+#![allow(clippy::manual_assert)]
+#![allow(clippy::approx_constant)]
 
 #[cfg(test)]
 mod unit_tests {

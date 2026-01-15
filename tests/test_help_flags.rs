@@ -22,6 +22,9 @@
 //! Run with: cargo test --test test_help_flags
 
 #![allow(clippy::unwrap_used, clippy::indexing_slicing, clippy::panic)]
+#![allow(clippy::panic)]
+#![allow(clippy::manual_assert)]
+#![allow(clippy::approx_constant)]
 
 use std::path::PathBuf;
 use std::process::{Command, Output};

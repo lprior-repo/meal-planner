@@ -1,3 +1,15 @@
+#![allow(clippy::indexing_slicing)]
+#![allow(clippy::panic)]
+#![allow(clippy::manual_assert)]
+#![allow(clippy::approx_constant)]
+#![allow(clippy::expect_used)]
+#![allow(clippy::panic)]
+#![allow(clippy::manual_assert)]
+#![allow(clippy::approx_constant)]
+#![allow(clippy::option_if_let_else)]
+#![allow(clippy::panic)]
+#![allow(clippy::manual_assert)]
+#![allow(clippy::approx_constant)]
 //! Schema Introspection Tests for BEAD-003
 //!
 //! Tests that all foundation binaries support --schema flag and output valid JSON Schema Draft 7

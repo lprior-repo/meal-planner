@@ -10,6 +10,9 @@
 //! Run with: cargo test --test tandoor_scrape_recipe_windmill_tests -- --ignored
 
 #![allow(clippy::unwrap_used, clippy::expect_used)]
+#![allow(clippy::panic)]
+#![allow(clippy::manual_assert)]
+#![allow(clippy::approx_constant)]
 
 use serde_json::json;
 use std::env;

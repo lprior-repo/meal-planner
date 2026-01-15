@@ -238,12 +238,15 @@ impl MatchScore {
             + config.edit_distance_weight;
 
         if total_weight > 0.0 {
-            self.total = (self.exact * config.exact_weight
-                + self.token * config.token_weight
-                + self.substring * config.substring_weight
-                + self.edit_distance * config.edit_distance_weight)
-                / total_weight
-                + self.type_bonus;
+            #[allow(clippy::suboptimal_flops)] // Weighted score formula - clarity over micro-optimization
+            {
+                self.total = (self.exact * config.exact_weight
+                    + self.token * config.token_weight
+                    + self.substring * config.substring_weight
+                    + self.edit_distance * config.edit_distance_weight)
+                    / total_weight
+                    + self.type_bonus;
+            }
 
             // Clamp to [0, 1]
             self.total = self.total.clamp(0.0, 1.0);
@@ -385,13 +388,13 @@ impl IngredientMatcher {
         };
 
         // Token overlap (Jaccard similarity)
-        score.token = self.token_similarity(query_tokens, &food_tokens);
+        score.token = Self::token_similarity(query_tokens, &food_tokens);
 
         // Substring matching
-        score.substring = self.substring_score(normalized_query, &normalized_food);
+        score.substring = Self::substring_score(normalized_query, &normalized_food);
 
         // Edit distance
-        score.edit_distance = self.edit_distance_score(normalized_query, &normalized_food);
+        score.edit_distance = Self::edit_distance_score(normalized_query, &normalized_food);
 
         // Type bonus (prefer generic)
         if self.config.prefer_generic && food.food_type == super::types::FoodType::Generic {
@@ -405,7 +408,8 @@ impl IngredientMatcher {
     }
 
     /// Calculate token similarity (Jaccard coefficient)
-    fn token_similarity(&self, tokens1: &[String], tokens2: &[String]) -> f64 {
+    #[allow(clippy::cast_precision_loss)] // usize to f64 for similarity score calculation
+    fn token_similarity(tokens1: &[String], tokens2: &[String]) -> f64 {
         if tokens1.is_empty() || tokens2.is_empty() {
             return 0.0;
         }
@@ -424,7 +428,8 @@ impl IngredientMatcher {
     }
 
     /// Calculate substring match score
-    fn substring_score(&self, query: &str, target: &str) -> f64 {
+    #[allow(clippy::cast_precision_loss)] // usize to f64 for similarity score calculation
+    fn substring_score(query: &str, target: &str) -> f64 {
         if query.is_empty() || target.is_empty() {
             return 0.0;
         }
@@ -444,7 +449,7 @@ impl IngredientMatcher {
         }
 
         // Find longest common substring
-        let lcs_len = self.longest_common_substring_length(query, target);
+        let lcs_len = Self::longest_common_substring_length(query, target);
         if lcs_len > 0 {
             return lcs_len as f64 / query.len().max(target.len()) as f64;
         }
@@ -453,18 +458,20 @@ impl IngredientMatcher {
     }
 
     /// Calculate normalized edit distance score
-    fn edit_distance_score(&self, s1: &str, s2: &str) -> f64 {
+    #[allow(clippy::cast_precision_loss)] // usize to f64 for similarity score calculation
+    fn edit_distance_score(s1: &str, s2: &str) -> f64 {
         let max_len = s1.len().max(s2.len());
         if max_len == 0 {
             return 1.0;
         }
 
-        let distance = self.levenshtein_distance(s1, s2);
+        let distance = Self::levenshtein_distance(s1, s2);
         1.0 - (distance as f64 / max_len as f64)
     }
 
     /// Calculate Levenshtein edit distance
-    fn levenshtein_distance(&self, s1: &str, s2: &str) -> usize {
+    #[allow(clippy::indexing_slicing)] // Indices guaranteed safe by loop bounds and pre-allocated vector sizes
+    fn levenshtein_distance(s1: &str, s2: &str) -> usize {
         let m = s1.len();
         let n = s2.len();
 
@@ -484,11 +491,7 @@ impl IngredientMatcher {
         for i in 1..=m {
             curr_row[0] = i;
             for j in 1..=n {
-                let cost = if s1_chars.get(i - 1) == s2_chars.get(j - 1) {
-                    0
-                } else {
-                    1
-                };
+                let cost = usize::from(s1_chars.get(i - 1) != s2_chars.get(j - 1));
                 curr_row[j] = (prev_row[j] + 1)
                     .min(curr_row[j - 1] + 1)
                     .min(prev_row[j - 1] + cost);
@@ -500,7 +503,8 @@ impl IngredientMatcher {
     }
 
     /// Find length of longest common substring
-    fn longest_common_substring_length(&self, s1: &str, s2: &str) -> usize {
+    #[allow(clippy::indexing_slicing)] // Indices guaranteed safe by loop bounds and pre-allocated vector sizes
+    fn longest_common_substring_length(s1: &str, s2: &str) -> usize {
         let s1_chars: Vec<char> = s1.chars().collect();
         let s2_chars: Vec<char> = s2.chars().collect();
         let m = s1_chars.len();
@@ -721,24 +725,20 @@ mod tests {
 
     #[test]
     fn test_levenshtein_distance() {
-        let matcher = IngredientMatcher::default_matcher();
-
-        assert_eq!(matcher.levenshtein_distance("kitten", "sitting"), 3);
-        assert_eq!(matcher.levenshtein_distance("chicken", "chicken"), 0);
-        assert_eq!(matcher.levenshtein_distance("", "abc"), 3);
-        assert_eq!(matcher.levenshtein_distance("abc", ""), 3);
+        assert_eq!(IngredientMatcher::levenshtein_distance("kitten", "sitting"), 3);
+        assert_eq!(IngredientMatcher::levenshtein_distance("chicken", "chicken"), 0);
+        assert_eq!(IngredientMatcher::levenshtein_distance("", "abc"), 3);
+        assert_eq!(IngredientMatcher::levenshtein_distance("abc", ""), 3);
     }
 
     #[test]
     fn test_token_similarity() {
-        let matcher = IngredientMatcher::default_matcher();
-
         let tokens1 = vec!["chicken".to_string(), "breast".to_string()];
         let tokens2 = vec!["chicken".to_string(), "breast".to_string()];
-        assert!((matcher.token_similarity(&tokens1, &tokens2) - 1.0).abs() < 0.001);
+        assert!((IngredientMatcher::token_similarity(&tokens1, &tokens2) - 1.0).abs() < 0.001);
 
         let tokens3 = vec!["chicken".to_string(), "thigh".to_string()];
-        let sim = matcher.token_similarity(&tokens1, &tokens3);
+        let sim = IngredientMatcher::token_similarity(&tokens1, &tokens3);
         assert!(sim > 0.0 && sim < 1.0);
     }
 

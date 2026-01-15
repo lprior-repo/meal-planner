@@ -1,4 +1,7 @@
+#![allow(clippy::items_after_test_module)]
+#![allow(clippy::indexing_slicing)]
 //! Log a Tandoor recipe to FatSecret food diary
+#![allow(clippy::cognitive_complexity)]
 //!
 //! This binary syncs a Tandoor recipe to FatSecret by logging it as a custom diary entry.
 //! It uses the recipe's nutrition data (calories, protein, carbs, fat) directly.

@@ -786,7 +786,6 @@ impl WeeklyPlanner {
     /// Filter recipes by constraints
     #[must_use]
     pub fn filter_by_constraints<'a>(
-        &self,
         recipes: &'a [TandoorRecipe],
         constraints: &[PlanningConstraint],
     ) -> Vec<&'a TandoorRecipe> {

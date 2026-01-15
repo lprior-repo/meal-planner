@@ -11,6 +11,9 @@
 //! - Return JSON output with success status and updated recipe
 
 #![allow(clippy::unwrap_used, clippy::expect_used)]
+#![allow(clippy::panic)]
+#![allow(clippy::manual_assert)]
+#![allow(clippy::approx_constant)]
 
 use serde_json::{json, Value};
 use std::process::Command;

@@ -178,6 +178,7 @@ pub struct CacheStats {
 impl CacheStats {
     /// Calculate hit rate
     #[must_use]
+    #[allow(clippy::cast_precision_loss)] // u64 to f64 for hit rate percentage calculation
     pub fn hit_rate(&self) -> f64 {
         let total = self.hits + self.misses;
         if total == 0 {
@@ -827,9 +828,9 @@ mod tests {
         assert!((cache.stats().hit_rate() - 0.0).abs() < 0.001);
 
         // After operations
-        let _ = cache.get_food("missing");
+        assert!(cache.get_food("missing").is_none());
         cache.put_food("1", create_test_food("1"));
-        let _ = cache.get_food("1");
+        assert!(cache.get_food("1").is_some());
 
         assert_eq!(cache.stats().misses, 1);
         assert_eq!(cache.stats().hits, 1);

@@ -688,13 +688,13 @@ impl ShoppingNutritionCalculator {
 
         // Group by category if configured
         if self.config.group_by_category {
-            let categories = self.group_by_category(&nutrition.items, &nutrition.aggregated.total);
+            let categories = Self::group_by_category(&nutrition.items, &nutrition.aggregated.total);
             nutrition = nutrition.with_categories(categories);
         }
 
         // Calculate metrics if configured
         if self.config.calculate_metrics {
-            let metrics = self.calculate_metrics(&nutrition);
+            let metrics = Self::calculate_metrics(&nutrition);
             nutrition = nutrition.with_metrics(metrics);
         }
 
@@ -703,7 +703,6 @@ impl ShoppingNutritionCalculator {
 
     /// Group items by category
     fn group_by_category(
-        &self,
         items: &[ShoppingItemNutrition],
         total: &NutritionData,
     ) -> Vec<CategoryNutrition> {
@@ -740,7 +739,7 @@ impl ShoppingNutritionCalculator {
     }
 
     /// Calculate shopping metrics
-    fn calculate_metrics(&self, nutrition: &ShoppingNutrition) -> ShoppingMetrics {
+    fn calculate_metrics(nutrition: &ShoppingNutrition) -> ShoppingMetrics {
         let total = &nutrition.aggregated.total;
 
         // Find highest calorie and protein items
@@ -833,7 +832,7 @@ impl ShoppingNutritionCalculator {
 
     /// Merge duplicate items in shopping list
     #[must_use]
-    pub fn merge_duplicates(&self, items: Vec<ShoppingItem>) -> Vec<ShoppingItem> {
+    pub fn merge_duplicates(items: Vec<ShoppingItem>) -> Vec<ShoppingItem> {
         let mut merged: HashMap<String, ShoppingItem> = HashMap::new();
 
         for item in items {
@@ -860,7 +859,6 @@ impl ShoppingNutritionCalculator {
     /// Filter items by category
     #[must_use]
     pub fn filter_by_category<'a>(
-        &self,
         items: &'a [ShoppingItem],
         category: &str,
     ) -> Vec<&'a ShoppingItem> {
@@ -872,13 +870,13 @@ impl ShoppingNutritionCalculator {
 
     /// Get unchecked items only
     #[must_use]
-    pub fn unchecked_items<'a>(&self, items: &'a [ShoppingItem]) -> Vec<&'a ShoppingItem> {
+    pub fn unchecked_items(items: &[ShoppingItem]) -> Vec<&ShoppingItem> {
         items.iter().filter(|i| !i.checked).collect()
     }
 
     /// Calculate cost breakdown by category
     #[must_use]
-    pub fn cost_by_category(&self, items: &[ShoppingItem]) -> HashMap<String, f64> {
+    pub fn cost_by_category(items: &[ShoppingItem]) -> HashMap<String, f64> {
         let mut costs: HashMap<String, f64> = HashMap::new();
 
         for item in items {
@@ -1225,7 +1223,7 @@ mod tests {
 
     #[test]
     fn test_merge_duplicates() {
-        let calc = ShoppingNutritionCalculator::with_defaults();
+        let _calc = ShoppingNutritionCalculator::with_defaults();
 
         let items = vec![
             ShoppingItem::new("Chicken", 200.0, "g"),
@@ -1233,7 +1231,7 @@ mod tests {
             ShoppingItem::new("Rice", 100.0, "g"),
         ];
 
-        let merged = calc.merge_duplicates(items);
+        let merged = ShoppingNutritionCalculator::merge_duplicates(items);
         assert_eq!(merged.len(), 2);
 
         let chicken = merged.iter().find(|i| i.name == "Chicken");
@@ -1243,7 +1241,7 @@ mod tests {
 
     #[test]
     fn test_filter_by_category() {
-        let calc = ShoppingNutritionCalculator::with_defaults();
+        let _calc = ShoppingNutritionCalculator::with_defaults();
 
         let items = vec![
             ShoppingItem::new("Chicken", 100.0, "g").with_category("Meat"),
@@ -1251,13 +1249,13 @@ mod tests {
             ShoppingItem::new("Rice", 100.0, "g").with_category("Grains"),
         ];
 
-        let meat = calc.filter_by_category(&items, "Meat");
+        let meat = ShoppingNutritionCalculator::filter_by_category(&items, "Meat");
         assert_eq!(meat.len(), 2);
     }
 
     #[test]
     fn test_unchecked_items() {
-        let calc = ShoppingNutritionCalculator::with_defaults();
+        let _calc = ShoppingNutritionCalculator::with_defaults();
 
         let items = vec![
             ShoppingItem {
@@ -1274,14 +1272,14 @@ mod tests {
             ShoppingItem::new("Rice", 100.0, "g"),
         ];
 
-        let unchecked = calc.unchecked_items(&items);
+        let unchecked = ShoppingNutritionCalculator::unchecked_items(&items);
         assert_eq!(unchecked.len(), 1);
         assert_eq!(unchecked[0].name, "Rice");
     }
 
     #[test]
     fn test_cost_by_category() {
-        let calc = ShoppingNutritionCalculator::with_defaults();
+        let _calc = ShoppingNutritionCalculator::with_defaults();
 
         let items = vec![
             ShoppingItem::new("Chicken", 100.0, "g")
@@ -1295,7 +1293,7 @@ mod tests {
                 .with_price(2.0),
         ];
 
-        let costs = calc.cost_by_category(&items);
+        let costs = ShoppingNutritionCalculator::cost_by_category(&items);
         assert_eq!(costs.get("Meat"), Some(&13.0));
         assert_eq!(costs.get("Grains"), Some(&2.0));
     }

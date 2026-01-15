@@ -3,6 +3,9 @@
 //! Tests recipe listing, scraping, creation, and import operations.
 
 #![allow(clippy::expect_used)]
+#![allow(clippy::panic)]
+#![allow(clippy::manual_assert)]
+#![allow(clippy::approx_constant)]
 
 use meal_planner::tandoor::{
     CreateFoodRequest, CreateIngredientRequest, CreateKeywordRequest, CreateRecipeRequest,

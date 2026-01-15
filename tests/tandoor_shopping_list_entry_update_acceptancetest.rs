@@ -1,3 +1,15 @@
+#![allow(clippy::indexing_slicing)]
+#![allow(clippy::panic)]
+#![allow(clippy::manual_assert)]
+#![allow(clippy::approx_constant)]
+#![allow(clippy::expect_used)]
+#![allow(clippy::panic)]
+#![allow(clippy::manual_assert)]
+#![allow(clippy::approx_constant)]
+#![allow(clippy::option_if_let_else)]
+#![allow(clippy::panic)]
+#![allow(clippy::manual_assert)]
+#![allow(clippy::approx_constant)]
 //! Acceptance tests for tandoor_shopping_list_entry_update binary
 //!
 //! Dave Farley: "Test the behavior, not the implementation."

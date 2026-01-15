@@ -3,6 +3,9 @@
 //! Tests connection testing, auth failures, and client configuration.
 
 #![allow(clippy::expect_used)]
+#![allow(clippy::panic)]
+#![allow(clippy::manual_assert)]
+#![allow(clippy::approx_constant)]
 
 use meal_planner::tandoor::{ConnectionTestResult, TandoorClient, TandoorConfig};
 use serde_json::json;

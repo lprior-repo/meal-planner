@@ -11,6 +11,9 @@
 //! 4. **validation_rejection_workflow** - Multiple validation failures
 
 #![allow(clippy::unwrap_used, clippy::indexing_slicing)]
+#![allow(clippy::panic)]
+#![allow(clippy::manual_assert)]
+#![allow(clippy::approx_constant)]
 
 mod helpers;
 

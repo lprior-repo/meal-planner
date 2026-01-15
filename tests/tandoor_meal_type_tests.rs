@@ -3,6 +3,9 @@
 //! Tests meal type CRUD operations.
 
 #![allow(clippy::expect_used)]
+#![allow(clippy::panic)]
+#![allow(clippy::manual_assert)]
+#![allow(clippy::approx_constant)]
 
 use meal_planner::tandoor::{
     CreateMealTypeRequest, TandoorClient, TandoorConfig, UpdateMealTypeRequest,

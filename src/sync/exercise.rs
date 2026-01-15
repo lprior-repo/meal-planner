@@ -305,10 +305,7 @@ impl ExerciseEntry {
     #[must_use]
     pub fn calories_per_minute(&self) -> f64 {
         if self.duration_minutes > 0 {
-            #[allow(clippy::cast_precision_loss)]
-            {
-                self.calories_burned / self.duration_minutes as f64
-            }
+            self.calories_burned / f64::from(self.duration_minutes)
         } else {
             0.0
         }

@@ -17,6 +17,9 @@
 //! - Normal JSON operation still works (stdin without help flags)
 
 #![allow(clippy::unwrap_used, clippy::expect_used)]
+#![allow(clippy::panic)]
+#![allow(clippy::manual_assert)]
+#![allow(clippy::approx_constant)]
 
 use std::io::Write;
 use std::process::{Command, Stdio};

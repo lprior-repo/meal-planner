@@ -572,6 +572,8 @@ const UNIX_EPOCH_DATE: (i32, u32, u32) = (1970, 1, 1);
 /// // Invalid leap year
 /// assert!(validate_strict_date_format("2025-02-29").is_err());
 /// ```
+#[allow(clippy::too_many_lines)] // Complex validation - splitting would reduce readability
+#[allow(clippy::indexing_slicing)] // Safe: parts.len() validated to be 3 above each access
 pub fn validate_strict_date_format(date: &str) -> Result<(), String> {
     // Check exact length (YYYY-MM-DD = 10 characters)
     if date.len() != 10 {
@@ -673,7 +675,13 @@ pub fn validate_strict_date_format(date: &str) -> Result<(), String> {
                 28
             }
         }
-        _ => unreachable!("Month already validated to be 1-12"),
+        // Month already validated to be 1-12 above, but handle defensively
+        _ => {
+            return Err(format!(
+                "Invalid date '{}': internal error - invalid month {}",
+                date, month
+            ));
+        }
     };
 
     if day > max_days {
@@ -690,7 +698,8 @@ pub fn validate_strict_date_format(date: &str) -> Result<(), String> {
             10 => "October",
             11 => "November",
             12 => "December",
-            _ => unreachable!(),
+            // Validated above, but handle defensively
+            _ => "Unknown",
         };
 
         if month == 2 {
@@ -703,12 +712,11 @@ pub fn validate_strict_date_format(date: &str) -> Result<(), String> {
                 "Invalid date '{}': {} has {} days in {} (got {:02})",
                 date, month_name, max_days, leap_msg, day
             ));
-        } else {
-            return Err(format!(
-                "Invalid date '{}': {} has {} days (got {:02})",
-                date, month_name, max_days, day
-            ));
         }
+        return Err(format!(
+            "Invalid date '{}': {} has {} days (got {:02})",
+            date, month_name, max_days, day
+        ));
     }
 
     Ok(())

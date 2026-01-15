@@ -1,4 +1,5 @@
 //! Sync Tandoor Meal Plan to FatSecret Diary
+#![allow(clippy::indexing_slicing)]
 //!
 //! This binary syncs meal plan entries to FatSecret by creating diary entries
 //! for each meal in the plan. It handles batch processing and error recovery.

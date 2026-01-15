@@ -14,6 +14,9 @@
 //! - WINDMILL_WORKSPACE: Workspace name (default: meal-planner)
 
 #![allow(
+#![allow(clippy::panic)]
+#![allow(clippy::manual_assert)]
+#![allow(clippy::approx_constant)]
     clippy::unwrap_used,
     clippy::indexing_slicing,
     clippy::expect_used,

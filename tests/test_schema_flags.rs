@@ -33,6 +33,9 @@
 //! - Clear separation of concerns
 
 #![allow(clippy::unwrap_used, clippy::expect_used)]
+#![allow(clippy::panic)]
+#![allow(clippy::manual_assert)]
+#![allow(clippy::approx_constant)]
 
 use serde_json::Value;
 use std::process::Command;

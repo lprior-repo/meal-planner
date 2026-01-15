@@ -10,6 +10,9 @@
 //! Run with: cargo test --test tandoor_recipe_upload_image_windmill_test -- --ignored
 
 #![allow(clippy::unwrap_used, clippy::too_many_lines)]
+#![allow(clippy::panic)]
+#![allow(clippy::manual_assert)]
+#![allow(clippy::approx_constant)]
 
 use serde_json::{json, Value};
 use std::env;

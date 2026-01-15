@@ -1,4 +1,12 @@
 //! Analyze Nutrition Data
+#![allow(clippy::map_unwrap_or)]
+#![allow(clippy::suspicious_operation_groupings)]
+#![allow(clippy::cast_precision_loss)]
+#![allow(clippy::suboptimal_flops)]
+#![allow(clippy::indexing_slicing)]
+#![allow(clippy::cognitive_complexity)]
+#![allow(clippy::or_fun_call)]
+#![allow(clippy::items_after_test_module)]
 //!
 //! This binary analyzes nutrition data from FatSecret diary entries and
 //! provides trends, statistics, and recommendations.

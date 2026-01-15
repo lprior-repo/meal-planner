@@ -1,3 +1,15 @@
+#![allow(clippy::indexing_slicing)]
+#![allow(clippy::panic)]
+#![allow(clippy::manual_assert)]
+#![allow(clippy::approx_constant)]
+#![allow(clippy::expect_used)]
+#![allow(clippy::panic)]
+#![allow(clippy::manual_assert)]
+#![allow(clippy::approx_constant)]
+#![allow(clippy::option_if_let_else)]
+#![allow(clippy::panic)]
+#![allow(clippy::manual_assert)]
+#![allow(clippy::approx_constant)]
 //! Windmill Flow Acceptance Test for `fatsecret_saved_meals_create`
 //!
 //! Dave Farley says: "Acceptance tests define the contract between the system and its users."

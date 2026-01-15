@@ -9,6 +9,15 @@
 //!
 //! See `tests/helpers/support/*` for modular implementation
 
+// Test code - allow common test patterns
+#![allow(clippy::unwrap_used)]
+#![allow(clippy::expect_used)]
+#![allow(clippy::panic)]
+#![allow(clippy::indexing_slicing)]
+#![allow(clippy::too_many_lines)]
+#![allow(clippy::map_unwrap_or)]
+#![allow(clippy::redundant_closure_for_method_calls)]
+
 use serde_json::{json, Value};
 use std::env;
 use std::io::Write;

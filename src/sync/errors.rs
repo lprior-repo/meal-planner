@@ -484,6 +484,7 @@ impl SyncError {
 
     /// Get recommended retry delay in seconds (if applicable)
     #[must_use]
+    #[allow(clippy::wildcard_enum_match_arm)] // Only specific errors are retryable
     pub fn retry_after_seconds(&self) -> Option<u32> {
         match self {
             Self::FatSecretRateLimit { retry_after_seconds } => Some(*retry_after_seconds),

@@ -8,6 +8,9 @@
 //! - Manual testing instructions documented
 
 #![allow(clippy::unwrap_used, clippy::too_many_lines)]
+#![allow(clippy::panic)]
+#![allow(clippy::manual_assert)]
+#![allow(clippy::approx_constant)]
 
 #[test]
 fn all_flow_files_exist() {

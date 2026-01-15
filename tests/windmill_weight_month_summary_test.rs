@@ -8,6 +8,9 @@
 //! GATE-4: All functions ≤25 lines
 
 #![allow(clippy::unwrap_used, clippy::too_many_lines, dead_code)]
+#![allow(clippy::panic)]
+#![allow(clippy::manual_assert)]
+#![allow(clippy::approx_constant)]
 
 use serde_json::json;
 use std::env;

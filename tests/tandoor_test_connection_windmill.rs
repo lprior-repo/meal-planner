@@ -19,6 +19,9 @@
 //! - WINDMILL_WORKSPACE: Workspace name (default: meal-planner)
 
 #![allow(clippy::unwrap_used, clippy::expect_used, clippy::indexing_slicing)]
+#![allow(clippy::panic)]
+#![allow(clippy::manual_assert)]
+#![allow(clippy::approx_constant)]
 
 use serde_json::Value;
 use std::env;

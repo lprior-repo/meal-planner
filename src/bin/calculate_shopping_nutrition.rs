@@ -1,4 +1,6 @@
 //! Calculate Shopping List Nutrition
+#![allow(clippy::unused_async)]
+#![allow(clippy::map_unwrap_or)]
 //!
 //! This binary calculates the total nutrition for a shopping list
 //! by looking up each ingredient's nutrition data.

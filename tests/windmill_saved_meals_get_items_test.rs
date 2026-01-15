@@ -8,6 +8,9 @@
 //! - Binary contract matches the Windmill shell script
 
 #![allow(clippy::unwrap_used, clippy::indexing_slicing)]
+#![allow(clippy::panic)]
+#![allow(clippy::manual_assert)]
+#![allow(clippy::approx_constant)]
 
 use std::path::Path;
 

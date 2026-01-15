@@ -8,6 +8,9 @@
 //! - Manual testing instructions documented
 
 #![allow(clippy::unwrap_used)]
+#![allow(clippy::panic)]
+#![allow(clippy::manual_assert)]
+#![allow(clippy::approx_constant)]
 
 #[test]
 fn exercise_month_summary_script_exists() {

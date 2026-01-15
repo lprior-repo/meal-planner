@@ -384,13 +384,13 @@ impl MealPlanSyncer {
 
     /// Check if two entries conflict (same date and meal)
     #[must_use]
-    pub fn entries_conflict(&self, entry1: &DiaryEntry, entry2: &DiaryEntry) -> bool {
+    pub fn entries_conflict(entry1: &DiaryEntry, entry2: &DiaryEntry) -> bool {
         entry1.date == entry2.date && entry1.meal == entry2.meal && entry1.food_name == entry2.food_name
     }
 
     /// Merge nutrition from multiple entries for the same food
     #[must_use]
-    pub fn merge_entries(&self, entries: &[DiaryEntry]) -> Option<DiaryEntry> {
+    pub fn merge_entries(entries: &[DiaryEntry]) -> Option<DiaryEntry> {
         if entries.is_empty() {
             return None;
         }
@@ -415,10 +415,9 @@ impl MealPlanSyncer {
 
     /// Group entries by date
     #[must_use]
-    pub fn group_by_date<'a>(
-        &self,
-        entries: &'a [DiaryEntry],
-    ) -> std::collections::HashMap<String, Vec<&'a DiaryEntry>> {
+    pub fn group_by_date(
+        entries: &[DiaryEntry],
+    ) -> std::collections::HashMap<String, Vec<&DiaryEntry>> {
         let mut groups = std::collections::HashMap::new();
         for entry in entries {
             groups
@@ -431,7 +430,7 @@ impl MealPlanSyncer {
 
     /// Calculate daily totals from entries
     #[must_use]
-    pub fn calculate_daily_totals(&self, entries: &[DiaryEntry]) -> NutritionData {
+    pub fn calculate_daily_totals(entries: &[DiaryEntry]) -> NutritionData {
         entries
             .iter()
             .fold(NutritionData::zero(), |acc, e| acc.add(&e.nutrition))
@@ -440,7 +439,6 @@ impl MealPlanSyncer {
     /// Filter entries by date range
     #[must_use]
     pub fn filter_by_date_range<'a>(
-        &self,
         entries: &'a [MealPlanEntry],
         range: &DateRange,
     ) -> Vec<&'a MealPlanEntry> {
@@ -451,7 +449,7 @@ impl MealPlanSyncer {
     }
 
     /// Sort entries by date and meal type
-    pub fn sort_entries(&self, entries: &mut [MealPlanEntry]) {
+    pub fn sort_entries(entries: &mut [MealPlanEntry]) {
         entries.sort_by(|a, b| {
             let date_cmp = a.date.cmp(&b.date);
             if date_cmp != std::cmp::Ordering::Equal {
@@ -541,6 +539,7 @@ impl WeeklyMealPlanSummary {
             .fold(NutritionData::zero(), |acc, d| acc.add(&d.total_nutrition));
 
         let day_count = daily_summaries.len();
+        #[allow(clippy::cast_precision_loss)] // usize to f64 for averaging nutritional values
         let average_nutrition = if day_count > 0 {
             total_nutrition.scale(1.0 / day_count as f64)
         } else {
@@ -645,7 +644,7 @@ mod tests {
 
     #[test]
     fn test_entries_conflict() {
-        let syncer = MealPlanSyncer::with_defaults();
+        let _syncer = MealPlanSyncer::with_defaults();
 
         let entry1 = DiaryEntry {
             entry_id: None,
@@ -659,20 +658,20 @@ mod tests {
         };
 
         let entry2 = entry1.clone();
-        assert!(syncer.entries_conflict(&entry1, &entry2));
+        assert!(MealPlanSyncer::entries_conflict(&entry1, &entry2));
 
         let mut entry3 = entry1.clone();
         entry3.date = "2025-01-16".to_string();
-        assert!(!syncer.entries_conflict(&entry1, &entry3));
+        assert!(!MealPlanSyncer::entries_conflict(&entry1, &entry3));
 
         let mut entry4 = entry1.clone();
         entry4.meal = MealCategory::Lunch;
-        assert!(!syncer.entries_conflict(&entry1, &entry4));
+        assert!(!MealPlanSyncer::entries_conflict(&entry1, &entry4));
     }
 
     #[test]
     fn test_merge_entries() {
-        let syncer = MealPlanSyncer::with_defaults();
+        let _syncer = MealPlanSyncer::with_defaults();
 
         let entries = vec![
             DiaryEntry {
@@ -697,7 +696,7 @@ mod tests {
             },
         ];
 
-        let merged = syncer.merge_entries(&entries).unwrap();
+        let merged = MealPlanSyncer::merge_entries(&entries).unwrap();
 
         assert!((merged.servings - 2.0).abs() < 1e-10);
         assert!((merged.nutrition.calories - 400.0).abs() < 0.01);
@@ -706,7 +705,7 @@ mod tests {
 
     #[test]
     fn test_group_by_date() {
-        let syncer = MealPlanSyncer::with_defaults();
+        let _syncer = MealPlanSyncer::with_defaults();
 
         let entries = vec![
             DiaryEntry {
@@ -741,7 +740,7 @@ mod tests {
             },
         ];
 
-        let groups = syncer.group_by_date(&entries);
+        let groups = MealPlanSyncer::group_by_date(&entries);
 
         assert_eq!(groups.len(), 2);
         assert_eq!(groups.get("2025-01-15").unwrap().len(), 2);
@@ -750,7 +749,7 @@ mod tests {
 
     #[test]
     fn test_calculate_daily_totals() {
-        let syncer = MealPlanSyncer::with_defaults();
+        let _syncer = MealPlanSyncer::with_defaults();
 
         let entries = vec![
             DiaryEntry {
@@ -775,7 +774,7 @@ mod tests {
             },
         ];
 
-        let totals = syncer.calculate_daily_totals(&entries);
+        let totals = MealPlanSyncer::calculate_daily_totals(&entries);
 
         assert!((totals.calories - 350.0).abs() < 0.01);
         assert!((totals.protein - 20.0).abs() < 0.01);
@@ -785,7 +784,7 @@ mod tests {
 
     #[test]
     fn test_filter_by_date_range() {
-        let syncer = MealPlanSyncer::with_defaults();
+        let _syncer = MealPlanSyncer::with_defaults();
 
         let entries = vec![
             create_test_entry(1, 1, "2025-01-14", 1.0),
@@ -798,7 +797,7 @@ mod tests {
         let end = DateString::new("2025-01-16").unwrap();
         let range = DateRange::new(start, end).unwrap();
 
-        let filtered = syncer.filter_by_date_range(&entries, &range);
+        let filtered = MealPlanSyncer::filter_by_date_range(&entries, &range);
 
         assert_eq!(filtered.len(), 2);
         assert_eq!(filtered[0].date, "2025-01-15");

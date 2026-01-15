@@ -501,7 +501,7 @@ impl TandoorIngredient {
 }
 
 /// A step in a Tandoor recipe
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct TandoorStep {
     /// Step ID
     pub id: Option<i64>,
@@ -727,6 +727,7 @@ fn is_valid_date_format(date: &str) -> bool {
 }
 
 /// Calculate FatSecret date_int from year/month/day
+#[allow(clippy::integer_division)] // Intentional: calculating leap years since 1970
 fn calculate_date_int(year: i32, month: u32, day: u32) -> i32 {
     // Simplified calculation (actual implementation would use chrono)
     let days_from_year = (year - 1970) * 365 + (year - 1969) / 4;
@@ -797,7 +798,7 @@ pub enum SyncStatus {
 }
 
 /// Summary of a sync operation
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct SyncSummary {
     /// Status of the sync
     pub status: SyncStatus,
@@ -846,6 +847,7 @@ impl SyncSummary {
 
     /// Calculate success rate as percentage
     #[must_use]
+    #[allow(clippy::cast_precision_loss)] // Acceptable: calculating percentage for display
     pub fn success_rate(&self) -> f64 {
         if self.processed == 0 {
             return 0.0;

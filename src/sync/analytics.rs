@@ -138,7 +138,7 @@ impl DailyAnalysis {
     pub fn meets_target(&self, tolerance_percent: f64) -> bool {
         self.target_comparison
             .as_ref()
-            .map_or(false, |c| c.calories_diff_percent.abs() <= tolerance_percent)
+            .is_some_and(|c| c.calories_diff_percent.abs() <= tolerance_percent)
     }
 }
 
@@ -641,13 +641,13 @@ impl NutritionAnalyzer {
 
     /// Analyze a week
     #[must_use]
-    pub fn analyze_week(&self, daily: Vec<DailyAnalysis>) -> WeeklyAnalysis {
+    pub fn analyze_week(daily: Vec<DailyAnalysis>) -> WeeklyAnalysis {
         WeeklyAnalysis::from_daily(daily)
     }
 
     /// Analyze multiple days
     #[must_use]
-    pub fn analyze_days(&self, entries: &[DiaryEntry]) -> Vec<DailyAnalysis> {
+    pub fn analyze_days(entries: &[DiaryEntry]) -> Vec<DailyAnalysis> {
         let mut by_date: HashMap<String, Vec<&DiaryEntry>> = HashMap::new();
 
         for entry in entries {
@@ -672,7 +672,6 @@ impl NutritionAnalyzer {
     /// Compare to targets
     #[must_use]
     pub fn compare_to_target(
-        &self,
         analysis: &DailyAnalysis,
         target: &NutritionData,
     ) -> NutrientComparison {
@@ -825,7 +824,7 @@ mod tests {
 
     #[test]
     fn test_analyzer() {
-        let analyzer = NutritionAnalyzer::with_defaults();
+        let _analyzer = NutritionAnalyzer::with_defaults();
 
         let entries = vec![
             create_entry("2025-01-15", MealCategory::Breakfast, 400.0),
@@ -833,11 +832,11 @@ mod tests {
             create_entry("2025-01-16", MealCategory::Dinner, 800.0),
         ];
 
-        let analyses = analyzer.analyze_days(&entries);
+        let analyses = NutritionAnalyzer::analyze_days(&entries);
         assert_eq!(analyses.len(), 2);
 
         let target = NutritionData::macros_only(1000.0, 50.0, 40.0, 100.0);
-        let comparison = analyzer.compare_to_target(&analyses[0], &target);
+        let comparison = NutritionAnalyzer::compare_to_target(&analyses[0], &target);
         assert!(comparison.overall_score > 0.0);
     }
 

@@ -10,6 +10,9 @@
 //! These tests verify the Windmill script shell wrapper, not the underlying binary.
 
 #![allow(dead_code, clippy::unwrap_used, clippy::too_many_lines)]
+#![allow(clippy::panic)]
+#![allow(clippy::manual_assert)]
+#![allow(clippy::approx_constant)]
 
 use std::fs;
 use std::path::Path;

@@ -673,7 +673,7 @@ impl NutritionHistory {
             .collect();
 
         // Sort
-        self.sort_entries(&mut entries, query.sort);
+        Self::sort_entries(&mut entries, query.sort);
 
         let total_count = entries.len();
 
@@ -741,7 +741,7 @@ impl NutritionHistory {
     }
 
     /// Sort entries
-    fn sort_entries(&self, entries: &mut [HistoryEntry], order: SortOrder) {
+    fn sort_entries(entries: &mut [HistoryEntry], order: SortOrder) {
         match order {
             SortOrder::DateDescending => entries.sort_by(|a, b| b.date.cmp(&a.date)),
             SortOrder::DateAscending => entries.sort_by(|a, b| a.date.cmp(&b.date)),
@@ -759,6 +759,7 @@ impl NutritionHistory {
     }
 
     /// Calculate summary statistics
+    #[allow(clippy::indexing_slicing)] // Index 0 is safe because empty check is performed above
     fn calculate_summary(&self, entries: &[HistoryEntry]) -> QuerySummary {
         if entries.is_empty() {
             return QuerySummary {
@@ -878,7 +879,7 @@ impl NutritionHistory {
         let mut groups: BTreeMap<String, Vec<&HistoryEntry>> = BTreeMap::new();
 
         for entry in entries {
-            let key = self.get_period_key(&entry.date, period);
+            let key = Self::get_period_key(&entry.date, period);
             groups.entry(key).or_default().push(entry);
         }
 
@@ -886,16 +887,12 @@ impl NutritionHistory {
     }
 
     /// Get period key for date
-    fn get_period_key(&self, date: &str, period: AggregationPeriod) -> String {
+    fn get_period_key(date: &str, period: AggregationPeriod) -> String {
         match period {
             AggregationPeriod::Daily => date.to_string(),
             AggregationPeriod::Weekly => {
                 // Extract year and week number
-                if let Ok(parsed) = chrono::NaiveDate::parse_from_str(date, "%Y-%m-%d") {
-                    format!("{}-W{:02}", parsed.format("%G"), parsed.format("%V"))
-                } else {
-                    date[..7].to_string()
-                }
+                chrono::NaiveDate::parse_from_str(date, "%Y-%m-%d").map_or_else(|_| date[..7].to_string(), |parsed| format!("{}-W{:02}", parsed.format("%G"), parsed.format("%V")))
             }
             AggregationPeriod::Monthly => date[..7].to_string(),
         }
@@ -999,13 +996,13 @@ impl NutritionHistory {
             return None;
         }
 
-        let values: Vec<f64> = entries.iter().map(|e| self.get_nutrient(e, nutrient)).collect();
+        let values: Vec<f64> = entries.iter().map(|e| Self::get_nutrient(e, nutrient)).collect();
 
-        self.calculate_trend(nutrient, &values)
+        Self::calculate_trend(nutrient, &values)
     }
 
     /// Get nutrient value from entry
-    fn get_nutrient(&self, entry: &HistoryEntry, nutrient: &str) -> f64 {
+    fn get_nutrient(entry: &HistoryEntry, nutrient: &str) -> f64 {
         match nutrient.to_lowercase().as_str() {
             "calories" => entry.nutrition.calories,
             "protein" => entry.nutrition.protein,
@@ -1019,7 +1016,7 @@ impl NutritionHistory {
     }
 
     /// Calculate trend from values
-    fn calculate_trend(&self, nutrient: &str, values: &[f64]) -> Option<TrendAnalysis> {
+    fn calculate_trend(nutrient: &str, values: &[f64]) -> Option<TrendAnalysis> {
         if values.len() < 2 {
             return None;
         }
@@ -1092,7 +1089,7 @@ impl NutritionHistory {
         let window = self.config.moving_average_window;
         let entries: Vec<(&String, f64)> = self.entries
             .iter()
-            .map(|(date, entry)| (date, self.get_nutrient(entry, nutrient)))
+            .map(|(date, entry)| (date, Self::get_nutrient(entry, nutrient)))
             .collect();
 
         if entries.len() < window {
