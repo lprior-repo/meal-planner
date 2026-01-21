@@ -1,0 +1,271 @@
+{
+  "title": "Vertical Diet Recipe Integration",
+  "version": "1.0",
+  "date": "2026-01-15",
+  "description": "Complete guide for integrating Stan Efferding's Vertical Diet recipes with the Tandoor/FatSecret meal planning system",
+  "overview": {
+    "what_is_vertical_diet": "The Vertical Diet is a performance-based nutritional framework created by Stan Efferding. It emphasizes easily digestible foods to optimize nutrient absorption and athletic performance. The diet focuses on red meat, white rice, and low-FODMAP vegetables.",
+    "recipe_collection": "data/vertical-diet/vertical_diet_recipes.json contains curated recipes from the Vertical Diet, including the famous Monster Mash and variations.",
+    "goal": "Enable seamless import of Vertical Diet recipes into Tandoor, automatic nutrition calculation, and sync with FatSecret for meal tracking."
+  },
+  "architecture": {
+    "data_flow": [
+      "1. Vertical Diet recipes stored in JSON format (data/vertical-diet/)",
+      "2. Import script reads recipes and calls tandoor_create_recipe binary",
+      "3. Recipes created in Tandoor with proper structure (steps, ingredients, keywords)",
+      "4. Nutrition calculated via tandoor_recipe_calculate_nutrition binary",
+      "5. Recipes available for meal planning and FatSecret sync via sync_meal_plan"
+    ],
+    "key_binaries": {
+      "tandoor_create_recipe": "Creates recipe in Tandoor from JSON structure",
+      "tandoor_recipe_calculate_nutrition": "Calculates nutrition facts from ingredients",
+      "tandoor_recipe_update_nutrition": "Updates recipe with calculated nutrition",
+      "sync_meal_plan": "Syncs meal plan entries to FatSecret diary"
+    },
+    "import_script": "scripts/import_vertical_diet_recipes.sh - Batch imports all recipes"
+  },
+  "recipe_format": {
+    "description": "Vertical Diet recipes follow Tandoor's SourceImportRecipe format",
+    "structure": {
+      "name": "Recipe name (string, required)",
+      "description": "Recipe description (string, optional)",
+      "source_url": "Original source URL (string, optional)",
+      "servings": "Number of servings (integer, required)",
+      "servings_text": "Human-readable servings (string, optional)",
+      "working_time": "Active cooking time in minutes (integer, optional)",
+      "waiting_time": "Passive time in minutes (integer, optional)",
+      "keywords": "Array of keyword objects with 'name' field",
+      "steps": "Array of step objects",
+      "nutrition": "Nutrition facts object (optional, calculated if not provided)"
+    },
+    "step_structure": {
+      "name": "Step name (string, optional)",
+      "instruction": "Step instructions (string, required)",
+      "ingredients": "Array of ingredient objects"
+    },
+    "ingredient_structure": {
+      "amount": "Quantity (float, required)",
+      "unit": "Unit object with 'name' field (e.g., 'g', 'ml', 'cup')",
+      "food": "Food object with 'name' field",
+      "note": "Additional notes (string, optional)"
+    },
+    "nutrition_structure": {
+      "calories": "Total calories per serving (integer)",
+      "protein": "Protein in grams (float)",
+      "carbohydrate": "Carbs in grams (float)",
+      "fat": "Fat in grams (float)",
+      "fiber": "Fiber in grams (float, optional)",
+      "sodium": "Sodium in mg (integer, optional)"
+    }
+  },
+  "usage": {
+    "prerequisites": [
+      "Tandoor instance running and accessible",
+      "TANDOOR_BASE_URL environment variable set",
+      "TANDOOR_API_TOKEN environment variable set",
+      "meal-planner binaries built (cargo build)"
+    ],
+    "import_all_recipes": {
+      "command": "./scripts/import_vertical_diet_recipes.sh",
+      "description": "Imports all Vertical Diet recipes into Tandoor",
+      "output": "Logs success/failure for each recipe, creates log file in logs/vertical-diet-import/",
+      "notes": [
+        "Script adds 'vertical-diet' keyword to all recipes for easy filtering",
+        "Includes 0.5 second delay between recipes to avoid API rate limits",
+        "Creates detailed log file with timestamps"
+      ]
+    },
+    "import_single_recipe": {
+      "description": "Import a single recipe using tandoor_create_recipe",
+      "example_command": "echo '{\"tandoor\":{\"base_url\":\"http://localhost:8090\",\"api_token\":\"YOUR_TOKEN\"},\"recipe\":{...},\"additional_keywords\":[\"vertical-diet\"]}' | ./target/debug/tandoor_create_recipe",
+      "example_json": {
+        "tandoor": {
+          "base_url": "http://localhost:8090",
+          "api_token": "your-token-here"
+        },
+        "recipe": {
+          "name": "Monster Mash (Classic)",
+          "description": "Stan Efferding's signature Vertical Diet meal",
+          "servings": 4,
+          "working_time": 15,
+          "waiting_time": 25,
+          "keywords": [
+            {"name": "monster-mash"},
+            {"name": "high-protein"}
+          ],
+          "steps": [
+            {
+              "instruction": "Combine chicken broth and rice...",
+              "ingredients": [
+                {
+                  "amount": 185.0,
+                  "unit": {"name": "g"},
+                  "food": {"name": "white rice, uncooked"}
+                }
+              ]
+            }
+          ]
+        },
+        "additional_keywords": ["vertical-diet"]
+      }
+    },
+    "calculate_nutrition": {
+      "description": "After importing, calculate nutrition for recipes",
+      "command": "echo '{\"tandoor\":{\"base_url\":\"...\",\"api_token\":\"...\"},\"recipe_id\":123}' | ./target/debug/tandoor_recipe_calculate_nutrition",
+      "notes": "Uses FatSecret API to lookup nutrition for each ingredient and calculate totals"
+    },
+    "sync_to_fatsecret": {
+      "description": "Add recipes to meal plan and sync to FatSecret",
+      "workflow": [
+        "1. Create meal plan entries with recipe names and servings",
+        "2. Use sync_meal_plan binary to sync entries to FatSecret diary",
+        "3. Entries appear in FatSecret app with proper nutrition tracking"
+      ],
+      "example": "See examples/sync_meal_plan_basic.json for meal plan entry format"
+    }
+  },
+  "vertical_diet_principles": {
+    "macros": {
+      "protein": "1g per pound of bodyweight - primarily from red meat",
+      "fat": "0.3g per pound of bodyweight - from butter, beef tallow, ghee",
+      "carbs": "50-60% of total calories - primarily white rice and potatoes"
+    },
+    "food_emphasis": [
+      "Red meat (beef, bison) - highly bioavailable nutrients",
+      "White rice - easy to digest carb source",
+      "Low-FODMAP vegetables (bell peppers, spinach, carrots)",
+      "Bone broth - minerals and gut health",
+      "Pink Himalayan salt - electrolytes"
+    ],
+    "foods_to_avoid": [
+      "High-FODMAP vegetables (onions, garlic, cauliflower, broccoli)",
+      "Legumes (beans, lentils) - hard to digest",
+      "Dairy (except butter and some cheeses)",
+      "Processed foods and artificial sweeteners"
+    ]
+  },
+  "recipes_included": {
+    "count": 12,
+    "categories": {
+      "monster_mash_variations": [
+        "Monster Mash (Classic) - 438 cal, 32g protein per serving",
+        "Monster Mash (High Calorie) - 890 cal, 65g protein per serving",
+        "Bison Monster Mash - 380 cal, 34g protein (leaner option)"
+      ],
+      "main_dishes": [
+        "Grass-Fed Steak with Rice and Spinach",
+        "Bison Burger Bowls",
+        "Vertical Diet Ground Beef Tacos"
+      ],
+      "breakfast": [
+        "Vertical Diet Egg Scramble",
+        "Sweet Potato Hash with Ground Beef"
+      ],
+      "sides": [
+        "White Rice with Bone Broth",
+        "Sautéed Spinach with Butter",
+        "Roasted Carrots with Pink Salt"
+      ]
+    },
+    "file_location": "data/vertical-diet/vertical_diet_recipes.json",
+    "extended_collection": "data/vertical-diet/vertical_diet_recipes_extended.json (additional recipes)"
+  },
+  "integration_with_fatsecret": {
+    "workflow": [
+      "1. Import Vertical Diet recipes into Tandoor",
+      "2. Calculate nutrition for each recipe",
+      "3. Create meal plan with desired recipes",
+      "4. Use sync_meal_plan to log meals in FatSecret",
+      "5. Track progress and adjust macros as needed"
+    ],
+    "benefits": [
+      "Automated nutrition tracking",
+      "Consistent meal logging",
+      "Easy macro monitoring",
+      "Historical data for progress tracking"
+    ],
+    "meal_types": {
+      "breakfast": "Morning meals, typically eggs or breakfast hash",
+      "lunch": "Midday meals, often Monster Mash or steak",
+      "dinner": "Evening meals, larger portions for athletes",
+      "snack": "Between-meal additions to hit macro targets"
+    }
+  },
+  "troubleshooting": {
+    "import_fails": {
+      "symptom": "Recipe import returns error",
+      "possible_causes": [
+        "Invalid API token",
+        "Tandoor instance not accessible",
+        "Recipe JSON format mismatch",
+        "Missing required fields in recipe"
+      ],
+      "solutions": [
+        "Verify TANDOOR_API_TOKEN is set correctly",
+        "Check TANDOOR_BASE_URL is accessible (curl test)",
+        "Validate JSON with jq: jq . data/vertical-diet/vertical_diet_recipes.json",
+        "Check logs in logs/vertical-diet-import/ for detailed errors"
+      ]
+    },
+    "nutrition_calculation_fails": {
+      "symptom": "Recipe imported but nutrition is 0 or missing",
+      "possible_causes": [
+        "FatSecret API credentials not set",
+        "Ingredient names not found in FatSecret database",
+        "Network issues"
+      ],
+      "solutions": [
+        "Set FATSECRET_CONSUMER_KEY and FATSECRET_CONSUMER_SECRET",
+        "Use more generic ingredient names (e.g., 'ground beef' instead of 'ground beef, 93% lean, grass-fed')",
+        "Manually update nutrition using tandoor_recipe_update_nutrition"
+      ]
+    },
+    "sync_to_fatsecret_fails": {
+      "symptom": "sync_meal_plan returns errors",
+      "possible_causes": [
+        "OAuth tokens expired or invalid",
+        "Invalid meal_type value",
+        "Negative or out-of-range nutrition values",
+        "Invalid date format"
+      ],
+      "solutions": [
+        "Refresh OAuth tokens using OAuth flow",
+        "Use only: breakfast, lunch, dinner, or snack",
+        "Validate all nutrition values are >= 0",
+        "Use YYYY-MM-DD date format"
+      ]
+    }
+  },
+  "testing": {
+    "unit_tests": "All validation tests pass (test_input_validation.rs)",
+    "integration_tests": "Workflow tests cover meal plan sync (test_workflows.rs)",
+    "manual_testing": [
+      "1. Import one recipe: Use jq to extract first recipe and pipe to tandoor_create_recipe",
+      "2. Verify in Tandoor UI: Check recipe appears with correct steps and ingredients",
+      "3. Calculate nutrition: Run tandoor_recipe_calculate_nutrition",
+      "4. Create meal plan entry: Use sync_meal_plan with the recipe",
+      "5. Check FatSecret: Verify entry appears in diary with correct nutrition"
+    ],
+    "test_data": "examples/ directory contains sample inputs for all binaries"
+  },
+  "future_enhancements": {
+    "planned": [
+      "Auto-calculate nutrition during import (eliminate separate step)",
+      "Vertical Diet meal plan templates (weekly plans pre-built)",
+      "Macro calculator based on bodyweight and goals",
+      "Recipe scaling for different calorie targets",
+      "Integration with Windmill for automated meal planning"
+    ],
+    "contributions": "See CONTRIBUTING.md for guidelines on adding more recipes"
+  },
+  "references": {
+    "vertical_diet_resources": [
+      "https://www.stanefferding.com/vertical-diet/ - Official site",
+      "https://barbend.com/vertical-diet/ - Overview and review",
+      "https://www.healthline.com/nutrition/vertical-diet-review - Nutrition analysis"
+    ],
+    "tandoor_docs": "https://docs.tandoor.dev/",
+    "fatsecret_api": "https://platform.fatsecret.com/api/",
+    "project_architecture": "docs/ARCHITECTURE.md"
+  }
+}
