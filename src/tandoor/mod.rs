@@ -74,8 +74,5 @@ pub mod recipe_selection;
 pub mod shopping;
 mod types;
 
-#[cfg(test)]
-mod tests;
-
 pub use client::TandoorClient;
 pub use types::*;

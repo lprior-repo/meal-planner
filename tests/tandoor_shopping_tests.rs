@@ -18,8 +18,8 @@
 //! - tests::tandoor::shopping_list_entry_tests
 //! - tests::tandoor::shopping_list_recipe_tests
 
-#[cfg(test)]
-mod tandoor {
-    pub mod shopping_list_entry_tests;
-    pub mod shopping_list_recipe_tests;
-}
+#[path = "tandoor/shopping_list_entry_tests.rs"]
+pub mod shopping_list_entry_tests;
+
+#[path = "tandoor/shopping_list_recipe_tests.rs"]
+pub mod shopping_list_recipe_tests;

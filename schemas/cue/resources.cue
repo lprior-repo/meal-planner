@@ -3,6 +3,8 @@
 
 package mealplanner
 
+import "base"
+
 // =============================================================================
 // RESOURCE TYPE DEFINITIONS
 // These match the Windmill resource-type.yaml files
@@ -60,7 +62,7 @@ package mealplanner
 #FatSecretResourceInstance: {
 	path:         "u/admin/fatsecret_api"
 	resource_type: "fatsecret"
-	value: #FatSecretResource
+	value: base.#FatSecretResource
 }
 
 // Tandoor API Resource Instance
@@ -68,7 +70,7 @@ package mealplanner
 #TandoorResourceInstance: {
 	path:         "u/admin/tandoor_api"
 	resource_type: "tandoor"
-	value: #TandoorResource
+	value: base.#TandoorResource
 }
 
 // =============================================================================

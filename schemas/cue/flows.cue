@@ -3,6 +3,9 @@
 
 package mealplanner
 
+// Import statements are not needed when all files are in the same module context
+// The types should be available directly
+
 // =============================================================================
 // f/tandoor/weekly_grocery_list_builder
 // Build weekly grocery list: select recipes, create meal plans, populate shopping list
@@ -249,7 +252,7 @@ package mealplanner
 	c: #OAuthCompleteOutput
 
 	// Step d: get_profile (verification)
-	d: #GetProfileOutput
+	d: #ProfileGetOutput
 }
 
 #OAuthSetupFlow: {
@@ -382,14 +385,14 @@ package mealplanner
 }
 
 #ImportRecipeFlowOutput: {
-	// Step scrape
-	scrape: #TandoorScrapeRecipeOutput
+  // Step scrape
+  scrape: #TandoorScrapeRecipeOutput
 
-	// Step derive_source_tag
-	derive_source_tag: string  // e.g., "serious-eats"
+  // Step derive_source_tag
+  derive_source_tag: string  // e.g., "serious-eats"
 
-	// Step create
-	create: #TandoorCreateRecipeOutput
+  // Step create
+  create: #TandoorCreateRecipeOutput
 }
 
 #ImportRecipeFlow: {

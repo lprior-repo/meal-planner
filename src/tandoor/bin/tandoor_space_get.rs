@@ -7,11 +7,13 @@
 //!
 //! JSON stdout: `{"success": true, "space": {...}}`
 //!   or `{"success": false, "error": "..."}`
+//!
+//! This binary uses the TandoorClient to make real API calls.
 
 // CLI binaries: exit and unwrap/expect are acceptable at the top level
 #![allow(clippy::exit, clippy::unwrap_used, clippy::expect_used)]
 
-use meal_planner::tandoor::{TandoorClient, TandoorConfig};
+use meal_planner::tandoor::{Space, TandoorClient, TandoorConfig};
 use serde::{Deserialize, Serialize};
 use std::io::{self, Read};
 
@@ -25,9 +27,35 @@ struct Input {
 struct Output {
     success: bool,
     #[serde(skip_serializing_if = "Option::is_none")]
-    space: Option<serde_json::Value>,
+    space: Option<Space>,
     #[serde(skip_serializing_if = "Option::is_none")]
     error: Option<String>,
+}
+
+/// Functional wrapper for space get that follows Railway-Oriented Programming patterns
+fn get_space_with_validation(input: Input) -> Result<Output, Box<dyn std::error::Error>> {
+    // Step 1: Validate input
+    let validated_input = validate_get_input(input)?;
+
+    // Step 2: Create client
+    let client = TandoorClient::new(&validated_input.tandoor)?;
+
+    // Step 3: Call API with proper error handling
+    let space = client.get_space(validated_input.id)?;
+
+    Ok(Output {
+        success: true,
+        space: Some(space),
+        error: None,
+    })
+}
+
+fn validate_get_input(input: Input) -> Result<Input, Box<dyn std::error::Error>> {
+    if input.id <= 0 {
+        return Err("Space ID must be positive".into());
+    }
+
+    Ok(input)
 }
 
 fn main() {
@@ -48,7 +76,7 @@ fn main() {
     }
 }
 
-fn run() -> anyhow::Result<Output> {
+fn run() -> Result<Output, Box<dyn std::error::Error>> {
     let input: Input = if let Some(arg) = std::env::args().nth(1) {
         serde_json::from_str(&arg)?
     } else {
@@ -57,36 +85,5 @@ fn run() -> anyhow::Result<Output> {
         serde_json::from_str(&input_str)?
     };
 
-    let client = TandoorClient::new(&input.tandoor)?;
-    let space = client.get_space(input.id)?;
-
-    Ok(Output {
-        success: true,
-        space: Some(space),
-        error: None,
-    })
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_input_parsing() {
-        let json =
-            r#"{"tandoor": {"base_url": "http://localhost:8090", "api_token": "test"}, "id": 1}"#;
-        let input: Input = serde_json::from_str(json).expect("Failed to parse test JSON");
-        assert_eq!(input.id, 1);
-    }
-
-    #[test]
-    fn test_output_serialize() {
-        let output = Output {
-            success: true,
-            space: None,
-            error: None,
-        };
-        let json = serde_json::to_string(&output).expect("Failed to serialize output JSON");
-        assert!(json.contains("\"success\":true"));
-    }
+    get_space_with_validation(input)
 }

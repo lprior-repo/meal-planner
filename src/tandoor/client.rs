@@ -922,6 +922,147 @@ impl TandoorClient {
         Ok(())
     }
 
+    /// Create a new space
+    pub fn create_space(
+        &self,
+        name: &str,
+        description: Option<&str>,
+    ) -> Result<Space, TandoorError> {
+        let url = format!("{}/api/space/", self.base_url);
+        let request = CreateSpaceRequest {
+            name: name.to_string(),
+            description: description.map(|s| s.to_string()),
+        };
+        let response = self.post_request(&url, &request)?;
+        let status = response.status();
+
+        if status.as_u16() == 401 || status.as_u16() == 403 {
+            let body = response.text().unwrap_or_default();
+            return Err(TandoorError::AuthError(body));
+        }
+
+        if !status.is_success() {
+            let body = response.text().unwrap_or_default();
+            return Err(TandoorError::ApiError {
+                status: status.as_u16(),
+                message: body,
+            });
+        }
+
+        response
+            .json()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
+
+    /// Get a single space by ID
+    pub fn get_space(&self, id: i64) -> Result<Space, TandoorError> {
+        let url = format!("{}/api/space/{}/", self.base_url, id);
+        let response = self.client.get(&url).send()?;
+
+        if response.status().as_u16() == 401 || response.status().as_u16() == 403 {
+            return Err(TandoorError::AuthError(response.text().unwrap_or_default()));
+        }
+        if response.status().as_u16() == 404 {
+            return Err(TandoorError::ApiError {
+                status: 404,
+                message: "Space not found".to_string(),
+            });
+        }
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+
+        response
+            .json()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
+
+    /// Update an existing space
+    pub fn update_space(
+        &self,
+        id: i64,
+        name: Option<&str>,
+        description: Option<&str>,
+    ) -> Result<Space, TandoorError> {
+        let url = format!("{}/api/space/{}/", self.base_url, id);
+        let request = UpdateSpaceRequest {
+            name: name.map(|s| s.to_string()),
+            description: description.map(|s| s.to_string()),
+        };
+        let response = self.patch_request(&url, &request)?;
+        let status = response.status();
+
+        if status.as_u16() == 401 || status.as_u16() == 403 {
+            let body = response.text().unwrap_or_default();
+            return Err(TandoorError::AuthError(body));
+        }
+        if status.as_u16() == 404 {
+            return Err(TandoorError::ApiError {
+                status: 404,
+                message: "Space not found".to_string(),
+            });
+        }
+        if !status.is_success() {
+            let body = response.text().unwrap_or_default();
+            return Err(TandoorError::ApiError {
+                status: status.as_u16(),
+                message: body,
+            });
+        }
+
+        response
+            .json()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
+
+    /// Delete a space by ID
+    pub fn delete_space(&self, id: i64) -> Result<(), TandoorError> {
+        let url = format!("{}/api/space/{}/", self.base_url, id);
+        let response = self.client.delete(&url).send()?;
+
+        if response.status().as_u16() == 401 || response.status().as_u16() == 403 {
+            return Err(TandoorError::AuthError(response.text().unwrap_or_default()));
+        }
+        if response.status().as_u16() == 404 {
+            return Err(TandoorError::ApiError {
+                status: 404,
+                message: "Space not found".to_string(),
+            });
+        }
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        Ok(())
+    }
+
+    /// List all spaces
+    pub fn list_spaces(&self) -> Result<Vec<Space>, TandoorError> {
+        let url = format!("{}/api/space/", self.base_url);
+        let response = self.client.get(&url).send()?;
+
+        if response.status().as_u16() == 401 || response.status().as_u16() == 403 {
+            return Err(TandoorError::AuthError(response.text().unwrap_or_default()));
+        }
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+
+        // The API returns a paginated response, extract the results
+        let paginated: PaginatedResponse<Space> = response
+            .json()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))?;
+        Ok(paginated.results)
+    }
+
     /// Batch update multiple foods
     pub fn batch_update_foods(&self, updates: &[serde_json::Value]) -> Result<i32, TandoorError> {
         let url = format!("{}/api/food/batch_update/", self.base_url);
@@ -1458,36 +1599,6 @@ impl TandoorClient {
     /// Get a meal type by ID
     pub fn get_meal_type(&self, id: i64) -> Result<MealType, TandoorError> {
         let url = format!("{}/api/meal-type/{}/", self.base_url, id);
-        let response = self.client.get(&url).send()?;
-        if !response.status().is_success() {
-            return Err(TandoorError::ApiError {
-                status: response.status().as_u16(),
-                message: response.text().unwrap_or_default(),
-            });
-        }
-        response
-            .json()
-            .map_err(|e| TandoorError::ParseError(e.to_string()))
-    }
-
-    /// Get a space by ID
-    pub fn get_space(&self, id: i64) -> Result<serde_json::Value, TandoorError> {
-        let url = format!("{}/api/space/{}/", self.base_url, id);
-        let response = self.client.get(&url).send()?;
-        if !response.status().is_success() {
-            return Err(TandoorError::ApiError {
-                status: response.status().as_u16(),
-                message: response.text().unwrap_or_default(),
-            });
-        }
-        response
-            .json()
-            .map_err(|e| TandoorError::ParseError(e.to_string()))
-    }
-
-    /// List spaces
-    pub fn list_spaces(&self) -> Result<Vec<serde_json::Value>, TandoorError> {
-        let url = format!("{}/api/space/", self.base_url);
         let response = self.client.get(&url).send()?;
         if !response.status().is_success() {
             return Err(TandoorError::ApiError {

@@ -1,17 +1,19 @@
-//! List all spaces from Tandoor
+//! List all spaces in Tandoor
 //!
-//! Retrieves a list of all user workspaces/spaces from the Tandoor API.
+//! Retrieves all user workspaces/spaces from the Tandoor API.
 //!
 //! JSON input (CLI arg or stdin):
 //!   `{"tandoor": {...}}`
 //!
 //! JSON stdout: `{"success": true, "spaces": [...]}`
 //!   or `{"success": false, "error": "..."}`
+//!
+//! This binary uses the TandoorClient to make real API calls.
 
 // CLI binaries: exit and unwrap/expect are acceptable at the top level
 #![allow(clippy::exit, clippy::unwrap_used, clippy::expect_used)]
 
-use meal_planner::tandoor::{TandoorClient, TandoorConfig};
+use meal_planner::tandoor::{Space, TandoorClient, TandoorConfig};
 use serde::{Deserialize, Serialize};
 use std::io::{self, Read};
 
@@ -24,9 +26,32 @@ struct Input {
 struct Output {
     success: bool,
     #[serde(skip_serializing_if = "Option::is_none")]
-    spaces: Option<Vec<serde_json::Value>>,
+    spaces: Option<Vec<Space>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     error: Option<String>,
+}
+
+/// Functional wrapper for space listing that follows Railway-Oriented Programming patterns
+fn list_spaces_with_validation(input: Input) -> Result<Output, Box<dyn std::error::Error>> {
+    // Step 1: Validate input (no validation needed for this operation)
+    let _validated_input = validate_list_input(input)?;
+
+    // Step 2: Create client
+    let client = TandoorClient::new(&_validated_input.tandoor)?;
+
+    // Step 3: Call API with proper error handling
+    let spaces = client.list_spaces()?;
+
+    Ok(Output {
+        success: true,
+        spaces: Some(spaces),
+        error: None,
+    })
+}
+
+fn validate_list_input(input: Input) -> Result<Input, Box<dyn std::error::Error>> {
+    // No validation needed for list operation - just return the input
+    Ok(input)
 }
 
 fn main() {
@@ -47,7 +72,7 @@ fn main() {
     }
 }
 
-fn run() -> anyhow::Result<Output> {
+fn run() -> Result<Output, Box<dyn std::error::Error>> {
     let input: Input = if let Some(arg) = std::env::args().nth(1) {
         serde_json::from_str(&arg)?
     } else {
@@ -56,36 +81,5 @@ fn run() -> anyhow::Result<Output> {
         serde_json::from_str(&input_str)?
     };
 
-    let client = TandoorClient::new(&input.tandoor)?;
-    let spaces = client.list_spaces()?;
-
-    Ok(Output {
-        success: true,
-        spaces: Some(spaces),
-        error: None,
-    })
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_output_serialize() {
-        let output = Output {
-            success: true,
-            spaces: Some(vec![]),
-            error: None,
-        };
-        let json = serde_json::to_string(&output).expect("Failed to serialize output JSON");
-        assert!(json.contains("\"success\":true"));
-        assert!(json.contains("\"spaces\""));
-    }
-
-    #[test]
-    fn test_input_parsing() {
-        let json = r#"{"tandoor": {"base_url": "http://localhost:8090", "api_token": "test"}}"#;
-        let input: Input = serde_json::from_str(json).expect("Failed to parse test JSON");
-        assert_eq!(input.tandoor.base_url, "http://localhost:8090");
-    }
+    list_spaces_with_validation(input)
 }

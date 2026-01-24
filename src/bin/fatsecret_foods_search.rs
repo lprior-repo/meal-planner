@@ -9,10 +9,7 @@
 //!
 //! JSON stdout: `{"success": true, "foods": {...}}`
 
-// CLI binaries: exit and unwrap/expect are acceptable at the top level
-#![allow(clippy::exit, clippy::unwrap_used, clippy::expect_used)]
-
-use meal_planner::fatsecret::core::FatSecretConfig;
+use meal_planner::fatsecret::core::{FatSecretConfig};
 use meal_planner::fatsecret::foods::search_foods;
 use serde::{Deserialize, Serialize};
 use std::io::{self, Read};
@@ -54,40 +51,52 @@ struct ErrorOutput {
 async fn main() {
     match run().await {
         Ok(output) => {
-            println!(
-                "{}",
-                serde_json::to_string(&output).expect("Failed to serialize output JSON")
-            );
+            // Using to_string_pretty for better formatting
+            match serde_json::to_string(&output) {
+                Ok(json) => println!("{}", json),
+                Err(e) => {
+                    eprintln!("Failed to serialize output: {}", e);
+                    std::process::exit(1);
+                }
+            }
         }
         Err(e) => {
             let error = ErrorOutput {
                 success: false,
                 error: e.to_string(),
             };
-            println!(
-                "{}",
-                serde_json::to_string(&error).expect("Failed to serialize error JSON")
-            );
-            std::process::exit(1);
+            match serde_json::to_string(&error) {
+                Ok(json) => {
+                    eprintln!("{}", json);
+                    std::process::exit(1);
+                }
+                Err(e2) => {
+                    eprintln!("Failed to serialize error: {}", e2);
+                    std::process::exit(1);
+                }
+            }
         }
     }
 }
 
 async fn run() -> Result<Output, Box<dyn std::error::Error>> {
     // Read input: prefer CLI arg, fall back to stdin
-    let input: Input = if let Some(arg) = std::env::args().nth(1) {
-        serde_json::from_str(&arg)?
+    let input_str = if let Some(arg) = std::env::args().nth(1) {
+        arg
     } else {
         let mut input_str = String::new();
         io::stdin().read_to_string(&mut input_str)?;
-        serde_json::from_str(&input_str)?
+        input_str
     };
+
+    let input: Input = serde_json::from_str(&input_str)?;
 
     // Get config: prefer input, fall back to environment
     let config = match input.fatsecret {
         Some(resource) => FatSecretConfig::new(resource.consumer_key, resource.consumer_secret)
-            .expect("Invalid FatSecret credentials"),
-        None => FatSecretConfig::from_env().map_err(|e| format!("Invalid configuration: {}", e))?,
+            .map_err(|e| format!("Invalid FatSecret credentials: {}", e))?,
+        None => FatSecretConfig::from_env()
+            .map_err(|e| format!("Invalid configuration: {}", e))?,
     };
 
     // Set defaults

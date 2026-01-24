@@ -17,7 +17,5 @@
 //! This module includes:
 //! - tests::tandoor::ingredient_nutrition_core_tests
 
-#[cfg(test)]
-mod tandoor {
-    pub mod ingredient_nutrition_core_tests;
-}
+#[path = "tandoor/ingredient_nutrition_core_tests.rs"]
+pub mod ingredient_nutrition_core_tests;

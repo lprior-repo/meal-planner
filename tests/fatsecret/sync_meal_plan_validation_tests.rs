@@ -86,7 +86,9 @@ fn test_valid_meal_types_accepted() {
         let output = run_sync_meal_plan(&input);
 
         // Valid meal_types should not produce validation errors
-        let errors = output["errors"].as_array().expect("Should have errors array");
+        let errors = output["errors"]
+            .as_array()
+            .expect("Should have errors array");
         let has_validation_error = errors.iter().any(|e| {
             e.as_str()
                 .map(|s| s.contains("Invalid meal_type"))
@@ -96,8 +98,7 @@ fn test_valid_meal_types_accepted() {
         assert!(
             !has_validation_error,
             "Valid meal_type '{}' should not produce validation error. Errors: {:?}",
-            meal_type,
-            errors
+            meal_type, errors
         );
     }
 }
@@ -135,7 +136,9 @@ fn test_valid_meal_types_case_insensitive() {
 
         let output = run_sync_meal_plan(&input);
 
-        let errors = output["errors"].as_array().expect("Should have errors array");
+        let errors = output["errors"]
+            .as_array()
+            .expect("Should have errors array");
         let has_validation_error = errors.iter().any(|e| {
             e.as_str()
                 .map(|s| s.contains("Invalid meal_type"))
@@ -145,8 +148,7 @@ fn test_valid_meal_types_case_insensitive() {
         assert!(
             !has_validation_error,
             "Case variation '{}' should not produce validation error. Errors: {:?}",
-            meal_type,
-            errors
+            meal_type, errors
         );
     }
 }
@@ -188,7 +190,9 @@ fn test_invalid_meal_type_typo_rejected() {
     );
 
     // Should have error in errors array
-    let errors = output["errors"].as_array().expect("Should have errors array");
+    let errors = output["errors"]
+        .as_array()
+        .expect("Should have errors array");
     assert!(
         !errors.is_empty(),
         "Should have at least one error for invalid meal_type"
@@ -209,7 +213,10 @@ fn test_invalid_meal_type_typo_rejected() {
 
     // Error should be actionable (list valid options)
     assert!(
-        error_msg.contains("breakfast") || error_msg.contains("lunch") || error_msg.contains("dinner") || error_msg.contains("snack"),
+        error_msg.contains("breakfast")
+            || error_msg.contains("lunch")
+            || error_msg.contains("dinner")
+            || error_msg.contains("snack"),
         "Error should list valid meal types, got: {}",
         error_msg
     );
@@ -257,7 +264,9 @@ fn test_invalid_meal_type_empty_string_rejected() {
 
     assert_eq!(output["success"], false);
 
-    let errors = output["errors"].as_array().expect("Should have errors array");
+    let errors = output["errors"]
+        .as_array()
+        .expect("Should have errors array");
     assert!(!errors.is_empty());
 
     let error_msg = errors[0].as_str().expect("Error should be a string");
@@ -296,7 +305,9 @@ fn test_invalid_meal_type_custom_value_rejected() {
 
     assert_eq!(output["success"], false);
 
-    let errors = output["errors"].as_array().expect("Should have errors array");
+    let errors = output["errors"]
+        .as_array()
+        .expect("Should have errors array");
     assert!(!errors.is_empty());
 
     let error_msg = errors[0].as_str().expect("Error should be a string");
@@ -364,7 +375,9 @@ fn test_mixed_valid_and_invalid_meal_types() {
     );
 
     // Should have at least 1 error for the invalid meal_type
-    let errors = output["errors"].as_array().expect("Should have errors array");
+    let errors = output["errors"]
+        .as_array()
+        .expect("Should have errors array");
     let validation_errors: Vec<_> = errors
         .iter()
         .filter(|e| {
@@ -381,7 +394,9 @@ fn test_mixed_valid_and_invalid_meal_types() {
         errors
     );
 
-    let error_msg = validation_errors[0].as_str().expect("Error should be a string");
+    let error_msg = validation_errors[0]
+        .as_str()
+        .expect("Error should be a string");
     assert!(
         error_msg.contains("invalid_type"),
         "Error should mention the invalid value, got: {}",
@@ -426,7 +441,9 @@ fn test_error_message_format() {
 
     let output = run_sync_meal_plan(&input);
 
-    let errors = output["errors"].as_array().expect("Should have errors array");
+    let errors = output["errors"]
+        .as_array()
+        .expect("Should have errors array");
     let error_msg = errors[0].as_str().expect("Error should be a string");
 
     // The exact format specified in the requirements:
@@ -442,7 +459,10 @@ fn test_error_message_format() {
         error_msg
     );
     assert!(
-        error_msg.contains("must be") && error_msg.contains("breakfast") && error_msg.contains("lunch") && error_msg.contains("dinner"),
+        error_msg.contains("must be")
+            && error_msg.contains("breakfast")
+            && error_msg.contains("lunch")
+            && error_msg.contains("dinner"),
         "Error should list valid options, got: {}",
         error_msg
     );
@@ -489,7 +509,9 @@ fn test_negative_calories_rejected() {
     );
 
     // Should have error in errors array
-    let errors = output["errors"].as_array().expect("Should have errors array");
+    let errors = output["errors"]
+        .as_array()
+        .expect("Should have errors array");
     assert!(
         !errors.is_empty(),
         "Should have at least one error for negative calories"
@@ -498,7 +520,10 @@ fn test_negative_calories_rejected() {
     // Error message should mention the validation issue
     let error_msg = errors[0].as_str().expect("Error should be a string");
     assert!(
-        error_msg.contains("calories") && (error_msg.contains("negative") || error_msg.contains("must be") || error_msg.contains("0")),
+        error_msg.contains("calories")
+            && (error_msg.contains("negative")
+                || error_msg.contains("must be")
+                || error_msg.contains("0")),
         "Error should mention calories validation issue, got: {}",
         error_msg
     );
@@ -546,12 +571,17 @@ fn test_excessive_calories_rejected() {
 
     assert_eq!(output["success"], false);
 
-    let errors = output["errors"].as_array().expect("Should have errors array");
+    let errors = output["errors"]
+        .as_array()
+        .expect("Should have errors array");
     assert!(!errors.is_empty());
 
     let error_msg = errors[0].as_str().expect("Error should be a string");
     assert!(
-        error_msg.contains("calories") && (error_msg.contains("exceed") || error_msg.contains("maximum") || error_msg.contains("100000")),
+        error_msg.contains("calories")
+            && (error_msg.contains("exceed")
+                || error_msg.contains("maximum")
+                || error_msg.contains("100000")),
         "Error should mention calories exceeds maximum, got: {}",
         error_msg
     );
@@ -592,12 +622,15 @@ fn test_negative_protein_rejected() {
 
     assert_eq!(output["success"], false);
 
-    let errors = output["errors"].as_array().expect("Should have errors array");
+    let errors = output["errors"]
+        .as_array()
+        .expect("Should have errors array");
     assert!(!errors.is_empty());
 
     let error_msg = errors[0].as_str().expect("Error should be a string");
     assert!(
-        error_msg.contains("protein") && (error_msg.contains("negative") || error_msg.contains("must be")),
+        error_msg.contains("protein")
+            && (error_msg.contains("negative") || error_msg.contains("must be")),
         "Error should mention protein validation issue, got: {}",
         error_msg
     );
@@ -638,12 +671,17 @@ fn test_excessive_protein_rejected() {
 
     assert_eq!(output["success"], false);
 
-    let errors = output["errors"].as_array().expect("Should have errors array");
+    let errors = output["errors"]
+        .as_array()
+        .expect("Should have errors array");
     assert!(!errors.is_empty());
 
     let error_msg = errors[0].as_str().expect("Error should be a string");
     assert!(
-        error_msg.contains("protein") && (error_msg.contains("exceed") || error_msg.contains("maximum") || error_msg.contains("10000")),
+        error_msg.contains("protein")
+            && (error_msg.contains("exceed")
+                || error_msg.contains("maximum")
+                || error_msg.contains("10000")),
         "Error should mention protein exceeds maximum, got: {}",
         error_msg
     );
@@ -683,12 +721,15 @@ fn test_negative_carbohydrate_rejected() {
 
     assert_eq!(output["success"], false);
 
-    let errors = output["errors"].as_array().expect("Should have errors array");
+    let errors = output["errors"]
+        .as_array()
+        .expect("Should have errors array");
     assert!(!errors.is_empty());
 
     let error_msg = errors[0].as_str().expect("Error should be a string");
     assert!(
-        error_msg.contains("carbohydrate") && (error_msg.contains("negative") || error_msg.contains("must be")),
+        error_msg.contains("carbohydrate")
+            && (error_msg.contains("negative") || error_msg.contains("must be")),
         "Error should mention carbohydrate validation issue, got: {}",
         error_msg
     );
@@ -728,12 +769,17 @@ fn test_excessive_carbohydrate_rejected() {
 
     assert_eq!(output["success"], false);
 
-    let errors = output["errors"].as_array().expect("Should have errors array");
+    let errors = output["errors"]
+        .as_array()
+        .expect("Should have errors array");
     assert!(!errors.is_empty());
 
     let error_msg = errors[0].as_str().expect("Error should be a string");
     assert!(
-        error_msg.contains("carbohydrate") && (error_msg.contains("exceed") || error_msg.contains("maximum") || error_msg.contains("10000")),
+        error_msg.contains("carbohydrate")
+            && (error_msg.contains("exceed")
+                || error_msg.contains("maximum")
+                || error_msg.contains("10000")),
         "Error should mention carbohydrate exceeds maximum, got: {}",
         error_msg
     );
@@ -771,12 +817,15 @@ fn test_negative_fat_rejected() {
 
     assert_eq!(output["success"], false);
 
-    let errors = output["errors"].as_array().expect("Should have errors array");
+    let errors = output["errors"]
+        .as_array()
+        .expect("Should have errors array");
     assert!(!errors.is_empty());
 
     let error_msg = errors[0].as_str().expect("Error should be a string");
     assert!(
-        error_msg.contains("fat") && (error_msg.contains("negative") || error_msg.contains("must be")),
+        error_msg.contains("fat")
+            && (error_msg.contains("negative") || error_msg.contains("must be")),
         "Error should mention fat validation issue, got: {}",
         error_msg
     );
@@ -816,12 +865,17 @@ fn test_excessive_fat_rejected() {
 
     assert_eq!(output["success"], false);
 
-    let errors = output["errors"].as_array().expect("Should have errors array");
+    let errors = output["errors"]
+        .as_array()
+        .expect("Should have errors array");
     assert!(!errors.is_empty());
 
     let error_msg = errors[0].as_str().expect("Error should be a string");
     assert!(
-        error_msg.contains("fat") && (error_msg.contains("exceed") || error_msg.contains("maximum") || error_msg.contains("10000")),
+        error_msg.contains("fat")
+            && (error_msg.contains("exceed")
+                || error_msg.contains("maximum")
+                || error_msg.contains("10000")),
         "Error should mention fat exceeds maximum, got: {}",
         error_msg
     );
@@ -859,12 +913,17 @@ fn test_zero_servings_rejected() {
 
     assert_eq!(output["success"], false);
 
-    let errors = output["errors"].as_array().expect("Should have errors array");
+    let errors = output["errors"]
+        .as_array()
+        .expect("Should have errors array");
     assert!(!errors.is_empty());
 
     let error_msg = errors[0].as_str().expect("Error should be a string");
     assert!(
-        error_msg.contains("servings") && (error_msg.contains("must be greater than") || error_msg.contains("positive") || error_msg.contains("> 0")),
+        error_msg.contains("servings")
+            && (error_msg.contains("must be greater than")
+                || error_msg.contains("positive")
+                || error_msg.contains("> 0")),
         "Error should mention servings must be positive, got: {}",
         error_msg
     );
@@ -904,12 +963,15 @@ fn test_negative_servings_rejected() {
 
     assert_eq!(output["success"], false);
 
-    let errors = output["errors"].as_array().expect("Should have errors array");
+    let errors = output["errors"]
+        .as_array()
+        .expect("Should have errors array");
     assert!(!errors.is_empty());
 
     let error_msg = errors[0].as_str().expect("Error should be a string");
     assert!(
-        error_msg.contains("servings") && (error_msg.contains("must be greater than") || error_msg.contains("positive")),
+        error_msg.contains("servings")
+            && (error_msg.contains("must be greater than") || error_msg.contains("positive")),
         "Error should mention servings must be positive, got: {}",
         error_msg
     );
@@ -947,12 +1009,17 @@ fn test_excessive_servings_rejected() {
 
     assert_eq!(output["success"], false);
 
-    let errors = output["errors"].as_array().expect("Should have errors array");
+    let errors = output["errors"]
+        .as_array()
+        .expect("Should have errors array");
     assert!(!errors.is_empty());
 
     let error_msg = errors[0].as_str().expect("Error should be a string");
     assert!(
-        error_msg.contains("servings") && (error_msg.contains("exceed") || error_msg.contains("maximum") || error_msg.contains("1000")),
+        error_msg.contains("servings")
+            && (error_msg.contains("exceed")
+                || error_msg.contains("maximum")
+                || error_msg.contains("1000")),
         "Error should mention servings exceeds maximum, got: {}",
         error_msg
     );
@@ -989,7 +1056,9 @@ fn test_valid_edge_case_zero_calories() {
     let output = run_sync_meal_plan(&input);
 
     // Should not have validation errors for zero calories
-    let errors = output["errors"].as_array().expect("Should have errors array");
+    let errors = output["errors"]
+        .as_array()
+        .expect("Should have errors array");
     let has_validation_error = errors.iter().any(|e| {
         e.as_str()
             .map(|s| s.contains("calories") && (s.contains("negative") || s.contains("must be")))
@@ -1034,7 +1103,9 @@ fn test_valid_edge_case_maximum_values() {
     let output = run_sync_meal_plan(&input);
 
     // Should not have validation errors for maximum valid values
-    let errors = output["errors"].as_array().expect("Should have errors array");
+    let errors = output["errors"]
+        .as_array()
+        .expect("Should have errors array");
     let has_validation_error = errors.iter().any(|e| {
         e.as_str()
             .map(|s| s.contains("exceed") || s.contains("maximum"))
@@ -1080,16 +1151,17 @@ fn test_multiple_validation_errors() {
 
     assert_eq!(output["success"], false);
 
-    let errors = output["errors"].as_array().expect("Should have errors array");
-    assert!(
-        !errors.is_empty(),
-        "Should have validation errors"
-    );
+    let errors = output["errors"]
+        .as_array()
+        .expect("Should have errors array");
+    assert!(!errors.is_empty(), "Should have validation errors");
 
     // Should report the first validation error encountered
     let error_msg = errors[0].as_str().expect("Error should be a string");
     assert!(
-        error_msg.contains("servings") || error_msg.contains("calories") || error_msg.contains("protein"),
+        error_msg.contains("servings")
+            || error_msg.contains("calories")
+            || error_msg.contains("protein"),
         "Error should mention one of the invalid fields, got: {}",
         error_msg
     );
@@ -1154,12 +1226,16 @@ fn test_mixed_valid_and_invalid_numeric_entries() {
     );
 
     // Should have at least 1 error for the invalid entry
-    let errors = output["errors"].as_array().expect("Should have errors array");
+    let errors = output["errors"]
+        .as_array()
+        .expect("Should have errors array");
     let validation_errors: Vec<_> = errors
         .iter()
         .filter(|e| {
             e.as_str()
-                .map(|s| s.contains("calories") && (s.contains("negative") || s.contains("must be")))
+                .map(|s| {
+                    s.contains("calories") && (s.contains("negative") || s.contains("must be"))
+                })
                 .unwrap_or(false)
         })
         .collect();
@@ -1213,7 +1289,9 @@ fn test_recipe_name_valid_accepted() {
     let output = run_sync_meal_plan(&input);
 
     // Valid recipe_name should not produce validation errors
-    let errors = output["errors"].as_array().expect("Should have errors array");
+    let errors = output["errors"]
+        .as_array()
+        .expect("Should have errors array");
     let has_validation_error = errors.iter().any(|e| {
         e.as_str()
             .map(|s| s.contains("recipe_name") && (s.contains("empty") || s.contains("required")))
@@ -1262,7 +1340,9 @@ fn test_recipe_name_empty_string_rejected() {
         "Empty recipe_name should result in success: false"
     );
 
-    let errors = output["errors"].as_array().expect("Should have errors array");
+    let errors = output["errors"]
+        .as_array()
+        .expect("Should have errors array");
     assert!(
         !errors.is_empty(),
         "Should have at least one error for empty recipe_name"
@@ -1270,7 +1350,10 @@ fn test_recipe_name_empty_string_rejected() {
 
     let error_msg = errors[0].as_str().expect("Error should be a string");
     assert!(
-        error_msg.contains("recipe_name") && (error_msg.contains("empty") || error_msg.contains("cannot be empty") || error_msg.contains("required")),
+        error_msg.contains("recipe_name")
+            && (error_msg.contains("empty")
+                || error_msg.contains("cannot be empty")
+                || error_msg.contains("required")),
         "Error should mention recipe_name is empty/required, got: {}",
         error_msg
     );
@@ -1319,12 +1402,15 @@ fn test_recipe_name_whitespace_only_rejected() {
         let output = run_sync_meal_plan(&input);
 
         assert_eq!(
-            output["success"], false,
+            output["success"],
+            false,
             "Whitespace-only recipe_name '{}' should result in success: false",
             whitespace.escape_default()
         );
 
-        let errors = output["errors"].as_array().expect("Should have errors array");
+        let errors = output["errors"]
+            .as_array()
+            .expect("Should have errors array");
         assert!(
             !errors.is_empty(),
             "Should have at least one error for whitespace-only recipe_name"
@@ -1332,7 +1418,10 @@ fn test_recipe_name_whitespace_only_rejected() {
 
         let error_msg = errors[0].as_str().expect("Error should be a string");
         assert!(
-            error_msg.contains("recipe_name") && (error_msg.contains("empty") || error_msg.contains("cannot be empty") || error_msg.contains("required")),
+            error_msg.contains("recipe_name")
+                && (error_msg.contains("empty")
+                    || error_msg.contains("cannot be empty")
+                    || error_msg.contains("required")),
             "Error should mention recipe_name is empty/required for '{}', got: {}",
             whitespace.escape_default(),
             error_msg
@@ -1380,7 +1469,9 @@ fn test_recipe_name_with_leading_trailing_whitespace_trimmed() {
     let output = run_sync_meal_plan(&input);
 
     // recipe_name with visible characters (after trimming) should not produce validation errors
-    let errors = output["errors"].as_array().expect("Should have errors array");
+    let errors = output["errors"]
+        .as_array()
+        .expect("Should have errors array");
     let has_validation_error = errors.iter().any(|e| {
         e.as_str()
             .map(|s| s.contains("recipe_name") && (s.contains("empty") || s.contains("required")))

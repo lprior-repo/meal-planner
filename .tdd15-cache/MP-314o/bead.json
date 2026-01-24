@@ -1,0 +1,17 @@
+[
+  {
+    "id": "MP-314o",
+    "title": "Implement tandoor_space_create binary",
+    "description": "Implement the tandoor_space_create binary following the existing pattern of tandoor_space_list and tandoor_space_get binaries. This binary should create new spaces in Tandoor with proper JSON I/O interfaces, error handling, and unit tests.",
+    "status": "open",
+    "priority": 1,
+    "issue_type": "task",
+    "created_at": "2026-01-23T00:47:29.196011461-06:00",
+    "created_by": "lewis",
+    "updated_at": "2026-01-23T00:47:29.196011461-06:00",
+    "labels": [
+      "binary",
+      "tandoor"
+    ]
+  }
+]

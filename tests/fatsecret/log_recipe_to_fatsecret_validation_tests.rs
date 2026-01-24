@@ -124,7 +124,10 @@ fn test_base_url_empty_string_rejected() {
 
     let error = output["error"].as_str().expect("Error should be a string");
     assert!(
-        error.contains("base_url") && (error.contains("empty") || error.contains("cannot be empty") || error.contains("required")),
+        error.contains("base_url")
+            && (error.contains("empty")
+                || error.contains("cannot be empty")
+                || error.contains("required")),
         "Error should mention base_url is empty/required, got: {}",
         error
     );
@@ -159,14 +162,18 @@ fn test_base_url_whitespace_only_rejected() {
         let output = run_log_recipe_to_fatsecret(&input);
 
         assert_eq!(
-            output["success"], false,
+            output["success"],
+            false,
             "Whitespace-only base_url '{}' should result in success: false",
             whitespace.escape_default()
         );
 
         let error = output["error"].as_str().expect("Error should be a string");
         assert!(
-            error.contains("base_url") && (error.contains("empty") || error.contains("cannot be empty") || error.contains("required")),
+            error.contains("base_url")
+                && (error.contains("empty")
+                    || error.contains("cannot be empty")
+                    || error.contains("required")),
             "Error should mention base_url is empty/required for '{}', got: {}",
             whitespace.escape_default(),
             error
@@ -247,7 +254,10 @@ fn test_api_token_empty_string_rejected() {
 
     let error = output["error"].as_str().expect("Error should be a string");
     assert!(
-        error.contains("api_token") && (error.contains("empty") || error.contains("cannot be empty") || error.contains("required")),
+        error.contains("api_token")
+            && (error.contains("empty")
+                || error.contains("cannot be empty")
+                || error.contains("required")),
         "Error should mention api_token is empty/required, got: {}",
         error
     );
@@ -282,14 +292,18 @@ fn test_api_token_whitespace_only_rejected() {
         let output = run_log_recipe_to_fatsecret(&input);
 
         assert_eq!(
-            output["success"], false,
+            output["success"],
+            false,
             "Whitespace-only api_token '{}' should result in success: false",
             whitespace.escape_default()
         );
 
         let error = output["error"].as_str().expect("Error should be a string");
         assert!(
-            error.contains("api_token") && (error.contains("empty") || error.contains("cannot be empty") || error.contains("required")),
+            error.contains("api_token")
+                && (error.contains("empty")
+                    || error.contains("cannot be empty")
+                    || error.contains("required")),
             "Error should mention api_token is empty/required for '{}', got: {}",
             whitespace.escape_default(),
             error

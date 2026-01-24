@@ -6,10 +6,6 @@
 //! JSON stdout:
 //!   `{"success": true, "recipe_json": {...}, "images": [...]}`
 //!   `{"success": false, "error": "..."}`
-
-// CLI binaries: exit and JSON unwrap are acceptable at the top level
-#![allow(clippy::exit, clippy::unwrap_used)]
-
 use meal_planner::tandoor::{TandoorClient, TandoorConfig};
 use serde::{Deserialize, Serialize};
 use std::io::{self, Read};
@@ -31,27 +27,21 @@ struct Output {
     error: Option<String>,
 }
 
-fn main() {
-    let output = match run() {
-        Ok(o) => o,
-        Err(e) => Output {
-            success: false,
-            recipe_json: None,
-            images: None,
-            error: Some(e.to_string()),
-        },
-    };
-    println!("{}", serde_json::to_string(&output).unwrap());
+fn main() -> anyhow::Result<()> {
+    let output = run()?;
+
+    println!("{}", serde_json::to_string(&output)?);
+
     if !output.success {
         std::process::exit(1);
     }
+
+    Ok(())
 }
 
 fn run() -> anyhow::Result<Output> {
-    let mut input = String::new();
-    io::stdin().read_to_string(&mut input)?;
-
-    let parsed: Input = serde_json::from_str(&input)?;
+    let input_str = read_stdin()?;
+    let parsed: Input = serde_json::from_str(&input_str)?;
     let client = TandoorClient::new(&parsed.tandoor)?;
     let result = client.scrape_recipe_from_url(&parsed.url)?;
 
@@ -69,12 +59,16 @@ fn run() -> anyhow::Result<Output> {
     }
 
     match result.recipe {
-        Some(recipe) => Ok(Output {
-            success: true,
-            recipe_json: Some(serde_json::to_value(recipe)?),
-            images: result.images,
-            error: None,
-        }),
+        Some(recipe) => {
+            let recipe_json = serde_json::to_value(recipe)
+                .map_err(|e| anyhow::anyhow!("Failed to serialize recipe: {}", e))?;
+            Ok(Output {
+                success: true,
+                recipe_json: Some(recipe_json),
+                images: result.images,
+                error: None,
+            })
+        }
         None => Ok(Output {
             success: false,
             recipe_json: None,
@@ -82,4 +76,12 @@ fn run() -> anyhow::Result<Output> {
             error: Some("No recipe data returned from scraper".to_string()),
         }),
     }
+}
+
+fn read_stdin() -> anyhow::Result<String> {
+    let mut input = String::new();
+    io::stdin()
+        .read_to_string(&mut input)
+        .map_err(|e| anyhow::anyhow!("Failed to read stdin: {}", e))?;
+    Ok(input)
 }

@@ -665,15 +665,31 @@ path = "src/bin/tandoor_step_delete.rs"
 
 [[bin]]
 name = "tandoor_space_list"
-path = "src/bin/tandoor_space_list.rs"
+path = "src/tandoor/bin/tandoor_space_list.rs"
 
 [[bin]]
 name = "tandoor_space_get"
-path = "src/bin/tandoor_space_get.rs"
+path = "src/tandoor/bin/tandoor_space_get.rs"
+
+[[bin]]
+name = "tandoor_space_create"
+path = "src/tandoor/bin/tandoor_space_create.rs"
+
+[[bin]]
+name = "tandoor_space_update"
+path = "src/tandoor/bin/tandoor_space_update.rs"
+
+[[bin]]
+name = "tandoor_space_delete"
+path = "src/tandoor/bin/tandoor_space_delete.rs"
 
 [[bin]]
 name = "tandoor_supermarket_list"
 path = "src/bin/tandoor_supermarket_list.rs"
+
+[[bin]]
+name = "tandoor_unit_convert"
+path = "src/bin/tandoor_unit_convert.rs"
 
 [[bin]]
 name = "tandoor_supermarket_get"
@@ -724,6 +740,11 @@ path = "src/bin/tandoor_recipe_random_select.rs"
 [[bin]]
 name = "tandoor_recipe_select_by_calories"
 path = "src/bin/tandoor_recipe_select_by_calories.rs"
+
+# New functional binary demonstrating Railway-Oriented Programming
+[[bin]]
+name = "user_data_validator"
+path = "src/bin/user_data_validator.rs"
 
 # Ingredient binaries
 [[bin]]
